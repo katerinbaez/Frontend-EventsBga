@@ -1,30 +1,29 @@
-import React, { useState, useEffect } from "react";
-import { Text, View, Button, ActivityIndicator } from "react-native";
-import * as WebBrowser from "expo-web-browser";
-import axios from "axios";
-import { styles } from '../styles/LoginStyles';
+import React, { useState } from 'react';
+import { View, Vibration } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../context/AuthContext';
+import * as WebBrowser from 'expo-web-browser';
+import axios from 'axios';
+import CustomButton from './common/CustomButton';
+import { COLORS } from '../styles/theme';
 
-// Configuración de Auth0
 const AUTH0_DOMAIN = "eventsbga.us.auth0.com";
 const AUTH0_CLIENT_ID = "91dOXcXA8e1UToIQq8ArVy4jtuN4Yssn";
-
-// URL del backend y frontend
 const BACKEND_URL = "http://192.168.1.7:5000";
 const REDIRECT_URI = 'exp://192.168.1.7:8081';
-//const REDIRECT_URI = 'exp://ock00sg-katerinbaez-8081.exp.direct';
 
-// Configuración de Axios para CORS
 axios.defaults.headers.common['Origin'] = REDIRECT_URI;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 
-export default function LoginAuth({ onLoginSuccess }) {
-    const [user, setUser] = useState(null);
-    const [error, setError] = useState(null);
+const LoginAuth = () => {
     const [loading, setLoading] = useState(false);
-    const [backendStatus, setBackendStatus] = useState("checking");
+    const [error, setError] = useState(null);
+    const navigation = useNavigation();
+    const { isAuthenticated, handleLogin } = useAuth();
 
-    const login = async () => {
+    const handleLoginPress = async () => {
         try {
+            Vibration.vibrate(50);
             setLoading(true);
             setError(null);
             
@@ -36,18 +35,15 @@ export default function LoginAuth({ onLoginSuccess }) {
                 `&audience=${encodeURIComponent(`https://${AUTH0_DOMAIN}/api/v2/`)}` +
                 `&prompt=login`;
 
-            console.log("URL de autenticación:", authUrl);
-
             const result = await WebBrowser.openAuthSessionAsync(
                 authUrl,
-                REDIRECT_URI,
-                { showInRecents: true }
+                REDIRECT_URI
             );
 
-            if (result.type === 'success') {
-                const url = result.url;
+            if (result.type === 'success' && result.url) {
                 const params = {};
-                const hash = url.split('#')[1];
+                const hash = result.url.split('#')[1];
+                
                 if (hash) {
                     hash.split('&').forEach(param => {
                         const [key, value] = param.split('=');
@@ -56,130 +52,46 @@ export default function LoginAuth({ onLoginSuccess }) {
                 }
 
                 if (params.access_token) {
-                    await getUserData(params.access_token);
-                } else {
-                    setError("No se pudo obtener el token de acceso");
+                    const userInfoResponse = await axios.get(`https://${AUTH0_DOMAIN}/userinfo`, {
+                        headers: { 
+                            'Authorization': `Bearer ${params.access_token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    axios.defaults.headers.common['Authorization'] = `Bearer ${params.access_token}`;
+
+                    const loginResponse = await axios.post(`${BACKEND_URL}/auth/login`, {
+                        sub: userInfoResponse.data.sub,
+                        email: userInfoResponse.data.email,
+                        name: userInfoResponse.data.name,
+                        picture: userInfoResponse.data.picture
+                    });
+
+                    const userData = loginResponse.data.user;
+                    handleLogin(userData);
+                    navigation.replace(userData.role === 'admin' ? 'DashboardAdmin' : 'Dashboard');
                 }
-            } else {
-                setError("La autenticación no fue exitosa");
             }
         } catch (error) {
-            console.error("Error en login:", error);
+            console.error('Error en autenticación:', error);
             setError(error.message);
         } finally {
             setLoading(false);
         }
     };
 
-    const getUserData = async (token) => {
-        try {
-            const userInfoResponse = await axios.get(
-                `https://${AUTH0_DOMAIN}/userinfo`,
-                {
-                    headers: { 
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/json'
-                    }
-                }
-            );
-            
-            const userData = userInfoResponse.data;
-
-            const loginResponse = await axios.post(
-                `${BACKEND_URL}/auth/login`,
-                {
-                    sub: userData.sub,
-                    email: userData.email,
-                    name: userData.name,
-                    picture: userData.picture
-                },
-                { 
-                    headers: { 
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
-
-            setUser(loginResponse.data.user);
-            setBackendStatus("connected");
-            setError(null);
-            if (onLoginSuccess) {
-                onLoginSuccess(loginResponse.data.user);
-            }
-        } catch (error) {
-            if (error.response?.status === 401) {
-                const errorMsg = error.response.data?.details || error.response.data?.error || error.message;
-                setError(`Error de autenticación: ${errorMsg}`);
-            } else {
-                setError("Error al obtener datos del usuario: " + error.message);
-            }
-            setBackendStatus("error");
-        }
-    };
-
-    const logout = async () => {
-        try {
-            setLoading(true);
-            setUser(null);
-            setBackendStatus("needsAuth");
-            setError(null);
-
-            const logoutUrl = `https://${AUTH0_DOMAIN}/v2/logout?` +
-                `client_id=${AUTH0_CLIENT_ID}` +
-                `&returnTo=${encodeURIComponent(REDIRECT_URI)}`;
-
-            await WebBrowser.openAuthSessionAsync(logoutUrl);
-        } catch (error) {
-            console.error("Error al cerrar sesión:", error);
-            setError("Error al cerrar sesión");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        const checkBackend = async () => {
-            try {
-                const response = await axios.get(`${BACKEND_URL}/status`);
-                setBackendStatus("connected");
-            } catch (error) {
-                setBackendStatus("error");
-            }
-        };
-
-        checkBackend();
-    }, []);
-
     return (
-        <View style={styles.authContainer}>
-            {loading ? (
-                <ActivityIndicator size="large" color="#007AFF" />
-            ) : (
-                <>
-                    {user ? (
-                        <>
-                            <View style={styles.userInfo}>
-                                <Text style={styles.welcomeText}>¡Bienvenido!</Text>
-                                <Text style={styles.userName}>{user.name || 'Usuario'}</Text>
-                                <Text style={styles.userEmail}>{user.email || ''}</Text>
-                            </View>
-                            <Button 
-                                title="Cerrar Sesión" 
-                                onPress={logout}
-                                color="#ff3b30"
-                            />
-                        </>
-                    ) : (
-                        <Button 
-                            title="Iniciar Sesión" 
-                            onPress={login}
-                            color="#007AFF"
-                        />
-                    )}
-                    {error && <Text style={styles.errorText}>{error}</Text>}
-                </>
-            )}
+        <View>
+            <CustomButton
+                title={isAuthenticated ? 'Dashboard' : 'Iniciar Sesión'}
+                icon={isAuthenticated ? 'person' : 'log-in'}
+                onPress={handleLoginPress}
+                loading={loading}
+                type="primary"
+            />
         </View>
     );
-}
+};
+
+export default LoginAuth;

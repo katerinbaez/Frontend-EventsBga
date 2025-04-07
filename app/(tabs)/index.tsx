@@ -1,2 +1,7 @@
-import App from '../../App'; // Ajusta la ruta si es necesario
-export default App;
+import App from '../../App';
+
+const Index = () => {
+    return <App />;
+};
+
+export default Index;
