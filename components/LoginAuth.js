@@ -6,11 +6,7 @@ import * as WebBrowser from 'expo-web-browser';
 import axios from 'axios';
 import CustomButton from './common/CustomButton';
 import { COLORS } from '../styles/theme';
-
-const AUTH0_DOMAIN = "eventsbga.us.auth0.com";
-const AUTH0_CLIENT_ID = "91dOXcXA8e1UToIQq8ArVy4jtuN4Yssn";
-const BACKEND_URL = "http://192.168.1.7:5000";
-const REDIRECT_URI = 'exp://192.168.1.7:8081';
+import { AUTH0_DOMAIN, AUTH0_CLIENT_ID, BACKEND_URL, REDIRECT_URI } from '../constants/config';
 
 axios.defaults.headers.common['Origin'] = REDIRECT_URI;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
@@ -19,7 +15,8 @@ const LoginAuth = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const navigation = useNavigation();
-    const { isAuthenticated, handleLogin } = useAuth();
+
+    const { isAuthenticated, handleLogin } = useAuth(); // ya no usamos setToken directamente
 
     const handleLoginPress = async () => {
         try {
@@ -52,6 +49,8 @@ const LoginAuth = () => {
                 }
 
                 if (params.access_token) {
+                    console.log('Token obtenido:', params.access_token);
+
                     const userInfoResponse = await axios.get(`https://${AUTH0_DOMAIN}/userinfo`, {
                         headers: { 
                             'Authorization': `Bearer ${params.access_token}`,
@@ -69,7 +68,10 @@ const LoginAuth = () => {
                     });
 
                     const userData = loginResponse.data.user;
-                    handleLogin(userData);
+
+                    // Guardamos token desde handleLogin
+                    handleLogin(userData, params.access_token);
+
                     navigation.replace(userData.role === 'admin' ? 'DashboardAdmin' : 'Dashboard');
                 }
             }
@@ -84,9 +86,9 @@ const LoginAuth = () => {
     return (
         <View>
             <CustomButton
+                onPress={handleLoginPress}
                 title={isAuthenticated ? 'Dashboard' : 'Iniciar Sesión'}
                 icon={isAuthenticated ? 'person' : 'log-in'}
-                onPress={handleLoginPress}
                 loading={loading}
                 type="primary"
             />

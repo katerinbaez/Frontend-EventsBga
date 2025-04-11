@@ -7,7 +7,7 @@ import CulturalSpaceCard from './CulturalSpaceCard';
 import AdminAccess from './AdminAccess';
 import * as WebBrowser from 'expo-web-browser';
 import axios from 'axios';
-
+import { BACKEND_URL } from '../constants/config';
 
 const sampleArtists = [
     {
@@ -26,7 +26,6 @@ const sampleArtists = [
     }
 ];
 
-
 const sampleSpaces = [
     {
         id: 1,
@@ -44,25 +43,21 @@ const sampleSpaces = [
     }
 ];
 
-
 const AUTH0_DOMAIN = "eventsbga.us.auth0.com";
 const AUTH0_CLIENT_ID = "91dOXcXA8e1UToIQq8ArVy4jtuN4Yssn";
-const BACKEND_URL = "http://192.168.1.7:5000";
 const REDIRECT_URI = 'exp://192.168.1.7:8081';
 
 axios.defaults.headers.common['Origin'] = REDIRECT_URI;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 
 const HomeScreen = ({ navigation }) => {
-    const { isAuthenticated, handleLogin, user } = useAuth();
+    const { isAuthenticated, handleLogin } = useAuth();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
     const { width } = Dimensions.get('window');
 
     const handleLoginPress = async () => {
         try {
             setLoading(true);
-            setError(null);
             
             const authUrl = `https://${AUTH0_DOMAIN}/authorize?` +
                 `response_type=token` +

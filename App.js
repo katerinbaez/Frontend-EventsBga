@@ -1,11 +1,16 @@
+import 'react-native-gesture-handler';
 import React from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { StatusBar } from 'react-native';
 
 // Componentes
 import HomeScreen from './components/HomeScreen';
 import LoginAuth from './components/LoginAuth';
 import DashboardUser from './components/DashboardUser';
+import DashboardArtist from './components/DashboardArtist';
+import DashboardManager from './components/DashboardManager';
 import DashboardAdmin from './components/DashboardAdmin';
 import ArtistProfile from './components/ArtistProfile';
 import CulturalSpace from './components/CulturalSpace';
@@ -15,6 +20,8 @@ import EventDetail from './components/EventDetail';
 import NotificationCenter from './components/NotificationCenter';
 import FavoritesList from './components/FavoritesList';
 import RoleRequestForm from './components/RoleRequestForm';
+import ViewRoleRequests from './components/ViewRoleRequest';
+import RoleRequestList from './components/RoleRequestList';
 import AdminMetrics from './components/AdminMetrics';
 
 const Stack = createNativeStackNavigator();
@@ -99,6 +106,11 @@ const Navigation = () => {
                 options={{ title: 'Mis Favoritos' }}
             />
             <Stack.Screen 
+                name="ViewRoleRequests" 
+                component={ViewRoleRequests}
+                options={{ title: 'Solicitudes de Rol' }}
+            />
+            <Stack.Screen 
                 name="RoleRequest" 
                 component={RoleRequestForm}
                 options={{ title: 'Solicitar Rol' }}
@@ -114,9 +126,12 @@ const Navigation = () => {
 
 const App = () => {
     return (
-        <AuthProvider>
-            <Navigation />
-        </AuthProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            <AuthProvider>
+                <StatusBar barStyle="light-content" />
+                <Navigation />
+            </AuthProvider>
+        </GestureHandlerRootView>
     );
 };
 

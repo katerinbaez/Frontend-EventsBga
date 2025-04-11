@@ -14,6 +14,7 @@ import { useAuth } from '../context/AuthContext';
 import CustomInput from './common/CustomInput';
 import CustomButton from './common/CustomButton';
 import { COLORS, COMMON_STYLES, SIZES } from '../styles/theme';
+import { styles } from '../styles/AdminAccessStyles';
 
 const AdminAccess = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -59,7 +60,7 @@ const AdminAccess = () => {
           setCode('');
           setModalVisible(false);
           setShowSuccess(false);
-          navigation.replace('Dashboard');
+          navigation.replace('DashboardAdmin');
         }, 1000);
       } else {
         Vibration.vibrate([0, 50, 100, 50]);
@@ -185,90 +186,6 @@ const AdminAccess = () => {
       </Modal>
     </>
   );
-};
-
-const styles = {
-  adminButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    padding: 0,
-    backgroundColor: COLORS.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-  },
-  modalHeader: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  iconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: 'transparent',
-    borderWidth: 2,
-    borderColor: '#FF0000',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 15,
-  },
-  modalTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    marginBottom: 20,
-    textAlign: 'center',
-    textShadowColor: '#FF0000',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 10,
-  },
-  welcomeText: {
-    ...COMMON_STYLES.fonts.h2,
-    color: COLORS.text.primary,
-    marginBottom: SIZES.margin.sm,
-  },
-  instructionText: {
-    ...COMMON_STYLES.fonts.body,
-    color: COLORS.text.secondary,
-    marginBottom: SIZES.margin.lg,
-  },
-  modalContent: {
-    backgroundColor: '#000000',
-    padding: 30,
-    borderRadius: 20,
-    width: '85%',
-    alignItems: 'center',
-    borderWidth: 3,
-    borderColor: '#FF0000',
-    shadowColor: '#FF0000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 8,
-  },
-  input: {
-    width: '100%',
-    height: 50,
-    backgroundColor: 'transparent',
-    borderWidth: 2,
-    borderColor: '#FF0000',
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 20,
-    color: '#FFFFFF',
-    fontSize: 16,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    gap: SIZES.padding.md,
-  },
 };
 
 export default AdminAccess;

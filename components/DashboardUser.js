@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import NotificationCenter from './NotificationCenter';
 import { View, Text, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../context/AuthContext';
 import RoleRequestForm from './RoleRequestForm';
 import { StyleSheet } from 'react-native';
+import axios from 'axios';
+
+const BACKEND_URL = "http://192.168.1.7:5000";
 
 const DashboardUser = () => {
   const { user, handleLogout } = useAuth();
   const navigation = useNavigation();
   const [showRoleRequest, setShowRoleRequest] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
 
   const handleLogoutAndNavigate = async () => {
@@ -18,41 +23,37 @@ const DashboardUser = () => {
   };
 
   useEffect(() => {
-    checkRoleStatus();
+    if (user?.id) {
+      setShowRoleRequest(false);
+    }
   }, [user]);
 
-  const checkRoleStatus = () => {
-    try {
-      if (user?.role) {
-        return;
-      }
-
-      setNotifications(prev => [
-        ...prev,
-        {
-          id: Date.now(),
-          type: 'roleInfo',
-          mensaje: '¿Eres artista o gestor cultural? ¡Solicita tu rol especial para acceder a funciones exclusivas!',
-          action: () => setShowRoleRequest(true),
-          dismissable: true
-        }
-      ]);
-    } catch (error) {
-      console.error('Error al verificar estado de rol:', error);
+  useEffect(() => {
+    if (user?.id) {
+      fetchNotifications();
     }
-  };
+  }, [user]);
 
-  const handleNotificationDismiss = (notificationId) => {
-    setNotifications(prev => prev.filter(n => n.id !== notificationId));
+  const fetchNotifications = async () => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}/api/notifications/${user.id}`);
+      setNotifications(prev => [...prev, ...response.data]);
+    } catch (error) {
+      console.error('Error al obtener notificaciones:', error);
+    }
   };
 
   const handleRoleRequest = async (formData) => {
     try {
-      console.log('Enviando solicitud:', formData);
       setShowRoleRequest(false);
     } catch (error) {
       console.error('Error al enviar solicitud:', error);
     }
+  };
+
+  const handleShowRoleRequest = () => {
+    setShowNotifications(false);
+    setShowRoleRequest(true);
   };
 
   const renderUserWelcome = () => (
@@ -68,34 +69,6 @@ const DashboardUser = () => {
           <Text style={styles.requestRoleText}>Solicitar Rol</Text>
         </TouchableOpacity>
       )}
-    </View>
-  );
-
-  const renderNotifications = () => (
-    <View style={styles.notificationsContainer}>
-      {notifications.map(notification => (
-        <View key={notification.id} style={styles.notification}>
-          <Text style={styles.notificationText}>{notification.mensaje}</Text>
-          <View style={styles.notificationActions}>
-            {notification.action && (
-              <TouchableOpacity 
-                style={styles.notificationButton}
-                onPress={notification.action}
-              >
-                <Text style={styles.notificationButtonText}>Solicitar Rol</Text>
-              </TouchableOpacity>
-            )}
-            {notification.dismissable && (
-              <TouchableOpacity 
-                style={[styles.notificationButton, styles.dismissButton]}
-                onPress={() => handleNotificationDismiss(notification.id)}
-              >
-                <Text style={styles.notificationButtonText}>Descartar</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
-      ))}
     </View>
   );
 
@@ -130,14 +103,28 @@ const DashboardUser = () => {
 
       <TouchableOpacity 
         style={styles.optionCard}
-        onPress={() => navigation.navigate('Notifications')}
+        onPress={() => setShowNotifications(true)}
       >
         <Ionicons name="notifications" size={40} color="#4A90E2" />
         <Text style={styles.optionTitle}>Notificaciones</Text>
-        <Text style={styles.optionDescription}>Centro de notificaciones</Text>
+        <Text style={styles.optionDescription}>Centro de notificaciones {notifications.length > 0 ? `(${notifications.length})` : ''}</Text>
       </TouchableOpacity>
     </View>
   );
+
+  const handleNotificationDismiss = async (notificationId, isLocal = false) => {
+    try {
+      console.log('Descartando notificación:', notificationId, 'Local:', isLocal);
+      
+      if (!isLocal) {
+        await axios.delete(`${BACKEND_URL}/api/notifications/${notificationId}`);
+      }
+      
+      setNotifications(prev => prev.filter(n => n.id !== notificationId));
+    } catch (error) {
+      console.error('Error al descartar notificación:', error);
+    }
+  };
 
   return (
     <>
@@ -145,13 +132,13 @@ const DashboardUser = () => {
         <View style={styles.header}>
           {renderUserWelcome()}
           <TouchableOpacity 
-            onPress={handleLogoutAndNavigate}
             style={styles.headerButton}
+            onPress={handleLogoutAndNavigate}
           >
             <Text style={styles.headerButtonText}>Cerrar Sesión</Text>
           </TouchableOpacity>
         </View>
-        {renderNotifications()}
+
         {renderVisitorOptions()}
       </ScrollView>
 
@@ -165,11 +152,60 @@ const DashboardUser = () => {
           onCancel={() => setShowRoleRequest(false)}
         />
       </Modal>
+
+      <Modal
+        visible={showNotifications}
+        animationType="slide"
+        onRequestClose={() => setShowNotifications(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalTitle}>Notificaciones</Text>
+            <TouchableOpacity 
+              onPress={() => setShowNotifications(false)}
+              style={styles.closeButton}
+            >
+              <Ionicons name="close" size={24} color="#FFF" />
+            </TouchableOpacity>
+          </View>
+          <NotificationCenter onAction={handleShowRoleRequest} />
+        </View>
+      </Modal>
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    backgroundColor: '#000000',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: '#1a1a1a',
+    borderBottomWidth: 1,
+    borderBottomColor: '#333',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#ffffff',
+  },
+  closeButton: {
+    padding: 8,
+  },
+  notificationsList: {
+    flex: 1,
+  },
+  noNotificationsText: {
+    color: '#ffffff',
+    textAlign: 'center',
+    fontSize: 16,
+    marginTop: 20,
+  },
   container: {
     flex: 1,
     backgroundColor: '#000000',
@@ -232,19 +268,13 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     gap: 10,
   },
-  notificationButton: {
-    backgroundColor: '#ff4757',
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  dismissButton: {
-    backgroundColor: '#404040',
-  },
   notificationButtonText: {
     color: '#ffffff',
     fontSize: 14,
     fontWeight: 'bold',
+  },
+  dismissButton: {
+    backgroundColor: '#404040',
   },
   notificationsContainer: {
     marginBottom: 20,
@@ -294,7 +324,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontSize: 16,
     fontWeight: 'bold',
-  },
+  }
 });
 
 export default DashboardUser;
