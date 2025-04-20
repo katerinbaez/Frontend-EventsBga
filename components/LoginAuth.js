@@ -8,8 +8,22 @@ import CustomButton from './common/CustomButton';
 import { COLORS } from '../styles/theme';
 import { AUTH0_DOMAIN, AUTH0_CLIENT_ID, BACKEND_URL, REDIRECT_URI } from '../constants/config';
 
+// Configuración global de axios
 axios.defaults.headers.common['Origin'] = REDIRECT_URI;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
+axios.defaults.headers.common['Accept'] = 'application/json';
+
+// Interceptor para manejar errores globalmente
+axios.interceptors.response.use(
+    response => response,
+    error => {
+        if (error.response?.status === 401) {
+            console.log('Token expirado o inválido');
+            // Aquí podrías implementar un refresh token si lo necesitas
+        }
+        return Promise.reject(error);
+    }
+);
 
 const LoginAuth = () => {
     const [loading, setLoading] = useState(false);
@@ -51,15 +65,11 @@ const LoginAuth = () => {
                 if (params.access_token) {
                     console.log('Token obtenido:', params.access_token);
 
-                    const userInfoResponse = await axios.get(`https://${AUTH0_DOMAIN}/userinfo`, {
-                        headers: { 
-                            'Authorization': `Bearer ${params.access_token}`,
-                            'Accept': 'application/json'
-                        }
-                    });
-
+                    // Configurar el token en axios
                     axios.defaults.headers.common['Authorization'] = `Bearer ${params.access_token}`;
 
+                    const userInfoResponse = await axios.get(`https://${AUTH0_DOMAIN}/userinfo`);
+                    
                     const loginResponse = await axios.post(`${BACKEND_URL}/auth/login`, {
                         sub: userInfoResponse.data.sub,
                         email: userInfoResponse.data.email,
@@ -68,9 +78,10 @@ const LoginAuth = () => {
                     });
 
                     const userData = loginResponse.data.user;
-
-                    // Guardamos token desde handleLogin
                     handleLogin(userData, params.access_token);
+
+                    // Verificar que el token se guardó
+                    console.log('Token guardado en el contexto');
 
                     navigation.replace(userData.role === 'admin' ? 'DashboardAdmin' : 'Dashboard');
                 }

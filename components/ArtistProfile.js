@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import axios from 'axios';
+import { BACKEND_URL } from '../constants/config';
+import { useAuth } from '../context/AuthContext';
 
-const ArtistProfile = ({ user, navigation }) => {
+const ArtistProfile = ({ route, navigation }) => {
+  const [newSkill, setNewSkill] = useState('');
+  const { user } = useAuth();
   const [profile, setProfile] = useState({
+    id: '',
     nombreArtistico: '',
     biografia: '',
     habilidades: [],
@@ -21,7 +27,8 @@ const ArtistProfile = ({ user, navigation }) => {
       email: user?.email || '',
       telefono: '',
       ciudad: ''
-    }
+    },
+    isProfileComplete: false
   });
 
   const [isEditing, setIsEditing] = useState(false);
@@ -33,33 +40,54 @@ const ArtistProfile = ({ user, navigation }) => {
 
   const loadArtistProfile = async () => {
     try {
-      const response = await fetch(`/api/artists/profile/${user.id}`);
-      const data = await response.json();
-      if (data) {
-        setProfile(data);
+      const response = await axios.get(`${BACKEND_URL}/api/artists/profile/${user.id}`);
+      if (response.data.success) {
+        setProfile(prevProfile => ({
+          ...prevProfile,
+          ...response.data.artist,
+          contacto: {
+            ...prevProfile.contacto,
+            ...response.data.artist.contacto
+          }
+        }));
       }
     } catch (error) {
-      console.error('Error al cargar perfil:', error);
+      if (error.response?.status !== 404) {
+        console.log('Perfil no encontrado - creando nuevo perfil');
+      }
     }
+  };
+
+  const handleAddSkill = () => {
+    if (newSkill.trim()) {
+      setProfile(prev => ({
+        ...prev,
+        habilidades: [...prev.habilidades, newSkill.trim()]
+      }));
+      setNewSkill('');
+    }
+  };
+
+  const handleRemoveSkill = (index) => {
+    setProfile(prev => ({
+      ...prev,
+      habilidades: prev.habilidades.filter((_, i) => i !== index)
+    }));
   };
 
   const handleSave = async () => {
     try {
-      const response = await fetch(`/api/artists/profile/${user.id}`, {
-        method: profile.id ? 'PUT' : 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(profile),
-      });
+      const method = profile.id ? 'put' : 'post';
+      const response = await axios[method](`${BACKEND_URL}/api/artists/profile/${user.id}`, profile);
 
-      if (response.ok) {
+      if (response.data.success) {
         setIsEditing(false);
-        // Recargar el perfil
         loadArtistProfile();
+      } else {
+        console.log('Error al guardar el perfil - intente nuevamente');
       }
     } catch (error) {
-      console.error('Error al guardar perfil:', error);
+      console.log('Error al guardar el perfil - intente nuevamente');
     }
   };
 
@@ -154,16 +182,37 @@ const ArtistProfile = ({ user, navigation }) => {
       </View>
 
       <View style={styles.inputGroup}>
-        <Text style={styles.label}>Habilidades (separadas por coma)</Text>
-        <TextInput
-          style={styles.input}
-          value={profile.habilidades.join(', ')}
-          onChangeText={(text) => setProfile(prev => ({ 
-            ...prev, 
-            habilidades: text.split(',').map(skill => skill.trim()).filter(Boolean)
-          }))}
-          placeholder="Ejemplo: Pintura, Escultura, Música"
-        />
+        <Text style={styles.label}>Habilidades</Text>
+        <View style={styles.skillsInputContainer}>
+          <TextInput
+            style={styles.skillInput}
+            value={newSkill}
+            onChangeText={setNewSkill}
+            placeholder="Agregar habilidad"
+            onSubmitEditing={handleAddSkill}
+          />
+          <TouchableOpacity 
+            style={styles.addSkillButton}
+            onPress={handleAddSkill}
+          >
+            <Ionicons name="add-circle" size={24} color="#4A90E2" />
+          </TouchableOpacity>
+        </View>
+        <ScrollView horizontal style={styles.skillsScrollView}>
+          <View style={styles.skillsContainer}>
+            {profile.habilidades.map((skill, index) => (
+              <View key={index} style={styles.skillChip}>
+                <Text style={styles.skillChipText}>{skill}</Text>
+                <TouchableOpacity 
+                  onPress={() => handleRemoveSkill(index)}
+                  style={styles.removeSkillButton}
+                >
+                  <Ionicons name="close-circle" size={20} color="#FF4757" />
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+        </ScrollView>
       </View>
 
       <View style={styles.inputGroup}>
@@ -208,6 +257,51 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFF',
     padding: 20,
+  },
+  skillsInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  skillInput: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    color: '#2C3E50',
+    marginRight: 10,
+  },
+  addSkillButton: {
+    padding: 8,
+  },
+  skillsScrollView: {
+    maxHeight: 100,
+    marginBottom: 10,
+  },
+  skillsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    padding: 5,
+  },
+  skillChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F0F7FF',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  skillChipText: {
+    color: '#4A90E2',
+    fontSize: 14,
+    marginRight: 5,
+  },
+  removeSkillButton: {
+    padding: 2,
   },
   header: {
     flexDirection: 'row',

@@ -5,18 +5,19 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
-    const [token, setToken] = useState(null); // 👉 Agregado para el token
+    const [token, setToken] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const handleLogin = (userData) => {
+    const handleLogin = (userData, accessToken) => {
         setUser(userData);
+        setToken(accessToken);
         setIsAuthenticated(true);
     };
 
     const handleLogout = () => {
         setUser(null);
+        setToken(null);
         setIsAuthenticated(false);
-        setToken(null); // 👉 Limpia el token al cerrar sesión
     };
 
     return (
@@ -24,12 +25,12 @@ export const AuthProvider = ({ children }) => {
             value={{
                 isAuthenticated,
                 user,
-                token,            // 👉 Agregado
+                token,
                 loading,
                 setLoading,
                 handleLogin,
                 handleLogout,
-                setToken          // 👉 Agregado
+                setToken
             }}
         >
             {children}
