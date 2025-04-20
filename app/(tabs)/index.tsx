@@ -1,7 +1,7 @@
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import App from '../../App';
 
-const Index = () => {
-    return <App />;
-};
-
-export default Index;
+export default function Index() {
+  return <App />;
+}
