@@ -85,11 +85,11 @@ const NotificationItem = ({ notification, onDismiss, onNavigate, onMarkAsRead })
   );
 };
 
-const NotificationCenter = ({ onAction }) => {
-  const { user } = useAuth();
-  const navigation = useNavigation();
+const NotificationCenter = ({ onAction, onProfileNavigation }) => {
   const [notifications, setNotifications] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const { user } = useAuth();
+  const navigation = useNavigation();
 
   const loadNotifications = async () => {
     if (!user?.id) return;
@@ -218,10 +218,48 @@ const NotificationCenter = ({ onAction }) => {
     }
   };
 
-  const handleRoleNavigation = (roleType) => {
+  const handleRoleNavigation = async (roleType) => {
     if (!roleType) return;
-    const screen = roleType === 'manager' ? 'ManagerDashboard' : 'ArtistProfile';
-    navigation.navigate(screen);
+    
+    try {
+      if (roleType === 'manager') {
+        // Verificar si existe perfil de gestor
+        try {
+          const response = await axios.get(`${BACKEND_URL}/api/managers/profile/${user.id}`);
+          if (response.data.success) {
+            // Si existe perfil, ir al dashboard
+            navigation.replace('DashboardManager');
+          }
+        } catch (error) {
+          if (error.response?.status === 404) {
+            // No existe perfil, ir a registro
+            navigation.replace('ManagerRegistration');
+          } else {
+            console.error('Error al verificar perfil de gestor:', error);
+            Alert.alert('Error', 'No se pudo verificar el perfil de gestor cultural');
+          }
+        }
+      } else if (roleType === 'artist') {
+        // Verificar si existe perfil de artista
+        try {
+          const response = await axios.get(`${BACKEND_URL}/api/artists/profile/${user.id}`);
+          if (response.data.success) {
+            // Si existe perfil, ir al dashboard
+            navigation.replace('DashboardArtist');
+          }
+        } catch (error) {
+          if (error.response?.status === 404) {
+            // No existe perfil, ir a registro
+            navigation.replace('ArtistRegistration');
+          } else {
+            console.error('Error al verificar perfil de artista:', error);
+            Alert.alert('Error', 'No se pudo verificar el perfil de artista');
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error en navegación de rol:', error);
+    }
   };
 
   const renderNotification = ({ item }) => (

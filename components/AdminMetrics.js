@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, Dimensions } from 'react-native';
 import { LineChart, BarChart, PieChart } from 'react-native-chart-kit';
 import { Ionicons } from '@expo/vector-icons';
+import { BACKEND_URL } from '../constants/config';
 
 const AdminMetrics = () => {
   const [metrics, setMetrics] = useState({
@@ -19,24 +20,55 @@ const AdminMetrics = () => {
   const loadMetrics = async () => {
     try {
       const [general, events, users, categories, spaces] = await Promise.all([
-        fetch('/api/metrics/general').then(res => res.json()),
-        fetch('/api/metrics/events').then(res => res.json()),
-        fetch('/api/metrics/users').then(res => res.json()),
-        fetch('/api/metrics/categories').then(res => res.json()),
-        fetch('/api/metrics/spaces').then(res => res.json())
+        fetch(`${BACKEND_URL}/api/metrics/general`).then(res => res.json()),
+        fetch(`${BACKEND_URL}/api/metrics/events`).then(res => res.json()),
+        fetch(`${BACKEND_URL}/api/metrics/users`).then(res => res.json()),
+        fetch(`${BACKEND_URL}/api/metrics/categories`).then(res => res.json()),
+        fetch(`${BACKEND_URL}/api/metrics/spaces`).then(res => res.json())
       ]);
 
-      setMetrics({
+      console.log('Raw metrics:', {
         general,
-        eventMetrics: events,
-        userMetrics: users,
-        categoryMetrics: categories,
-        spaceMetrics: spaces
+        events,
+        users,
+        categories,
+        spaces
       });
+
+      // Asegurar que todos los datos de gráficos tengan el formato correcto
+      const formattedMetrics = {
+        general,
+        eventMetrics: {
+          ...events,
+          trend: events?.trend || { labels: [], datasets: [{ data: [] }] }
+        },
+        userMetrics: users,
+        categoryMetrics: {
+          ...categories,
+          distribution: categories?.distribution || []
+        },
+        spaceMetrics: {
+          ...spaces,
+          topSpaces: spaces?.topSpaces || { labels: [], datasets: [{ data: [] }] }
+        }
+      };
+
+      console.log('Formatted metrics:', formattedMetrics);
+
+      setMetrics(formattedMetrics);
     } catch (error) {
       console.error('Error loading metrics:', error);
     }
   };
+
+  // Verificar que tenemos datos antes de renderizar
+  if (!metrics.general) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Cargando métricas...</Text>
+      </View>
+    );
+  }
 
   const screenWidth = Dimensions.get('window').width;
 
@@ -51,14 +83,6 @@ const AdminMetrics = () => {
     }
   };
 
-  if (!metrics.general) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Text>Cargando métricas...</Text>
-      </View>
-    );
-  }
-
   return (
     <ScrollView style={styles.container}>
       {/* Resumen General */}
@@ -67,67 +91,73 @@ const AdminMetrics = () => {
         <View style={styles.statsGrid}>
           <View style={styles.statCard}>
             <Ionicons name="people" size={32} color="#4A90E2" />
-            <Text style={styles.statNumber}>{metrics.general.totalUsers}</Text>
+            <Text style={styles.statNumber}>{metrics.general.totalUsers || 0}</Text>
             <Text style={styles.statLabel}>Usuarios Totales</Text>
           </View>
           <View style={styles.statCard}>
             <Ionicons name="calendar" size={32} color="#4A90E2" />
-            <Text style={styles.statNumber}>{metrics.general.totalEvents}</Text>
+            <Text style={styles.statNumber}>{metrics.general.totalEvents || 0}</Text>
             <Text style={styles.statLabel}>Eventos Realizados</Text>
           </View>
           <View style={styles.statCard}>
             <Ionicons name="business" size={32} color="#4A90E2" />
-            <Text style={styles.statNumber}>{metrics.general.activeSpaces}</Text>
+            <Text style={styles.statNumber}>{metrics.general.activeSpaces || 0}</Text>
             <Text style={styles.statLabel}>Espacios Activos</Text>
           </View>
           <View style={styles.statCard}>
             <Ionicons name="ticket" size={32} color="#4A90E2" />
-            <Text style={styles.statNumber}>{metrics.general.totalAttendance}</Text>
+            <Text style={styles.statNumber}>{metrics.general.totalAttendance || 0}</Text>
             <Text style={styles.statLabel}>Asistentes Totales</Text>
           </View>
         </View>
       </View>
 
       {/* Tendencia de Eventos */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Tendencia de Eventos</Text>
-        <LineChart
-          data={metrics.eventMetrics.trend}
-          width={screenWidth - 32}
-          height={220}
-          chartConfig={chartConfig}
-          bezier
-          style={styles.chart}
-        />
-      </View>
+      {metrics.eventMetrics?.trend?.datasets?.[0]?.data?.length > 0 && (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Tendencia de Eventos</Text>
+          <LineChart
+            data={metrics.eventMetrics.trend}
+            width={screenWidth - 32}
+            height={220}
+            chartConfig={chartConfig}
+            bezier
+            style={styles.chart}
+          />
+        </View>
+      )}
 
       {/* Distribución por Categoría */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Eventos por Categoría</Text>
-        <PieChart
-          data={metrics.categoryMetrics.distribution}
-          width={screenWidth - 32}
-          height={220}
-          chartConfig={chartConfig}
-          accessor="value"
-          backgroundColor="transparent"
-          paddingLeft="15"
-          style={styles.chart}
-        />
-      </View>
+      {metrics.categoryMetrics?.distribution?.length > 0 && (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Eventos por Categoría</Text>
+          <PieChart
+            data={metrics.categoryMetrics.distribution}
+            width={screenWidth - 32}
+            height={220}
+            chartConfig={chartConfig}
+            accessor="value"
+            backgroundColor="transparent"
+            paddingLeft="15"
+            style={styles.chart}
+          />
+        </View>
+      )}
 
       {/* Espacios más Activos */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Espacios más Activos</Text>
-        <BarChart
-          data={metrics.spaceMetrics.topSpaces}
-          width={screenWidth - 32}
-          height={220}
-          chartConfig={chartConfig}
-          style={styles.chart}
-          verticalLabelRotation={30}
-        />
-      </View>
+      {metrics.spaceMetrics?.topSpaces?.datasets?.[0]?.data?.length > 0 && (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Espacios más Activos</Text>
+          <BarChart
+            data={metrics.spaceMetrics.topSpaces}
+            width={screenWidth - 32}
+            height={220}
+            chartConfig={chartConfig}
+            style={styles.chart}
+            verticalLabelRotation={30}
+          />
+        </View>
+      )}
 
       {/* Métricas de Usuarios */}
       <View style={styles.section}>
@@ -135,19 +165,19 @@ const AdminMetrics = () => {
         <View style={styles.userMetrics}>
           <View style={styles.metricRow}>
             <Text style={styles.metricLabel}>Nuevos usuarios (último mes):</Text>
-            <Text style={styles.metricValue}>{metrics.userMetrics.newUsers}</Text>
+            <Text style={styles.metricValue}>{metrics.userMetrics.newUsers || 0}</Text>
           </View>
           <View style={styles.metricRow}>
             <Text style={styles.metricLabel}>Usuarios activos:</Text>
-            <Text style={styles.metricValue}>{metrics.userMetrics.activeUsers}</Text>
+            <Text style={styles.metricValue}>{metrics.userMetrics.activeUsers || 0}</Text>
           </View>
           <View style={styles.metricRow}>
             <Text style={styles.metricLabel}>Artistas verificados:</Text>
-            <Text style={styles.metricValue}>{metrics.userMetrics.verifiedArtists}</Text>
+            <Text style={styles.metricValue}>{metrics.userMetrics.verifiedArtists || 0}</Text>
           </View>
           <View style={styles.metricRow}>
             <Text style={styles.metricLabel}>Gestores culturales:</Text>
-            <Text style={styles.metricValue}>{metrics.userMetrics.culturalManagers}</Text>
+            <Text style={styles.metricValue}>{metrics.userMetrics.culturalManagers || 0}</Text>
           </View>
         </View>
       </View>
@@ -163,7 +193,7 @@ const AdminMetrics = () => {
           </View>
           <View style={styles.impactCard}>
             <Text style={styles.impactTitle}>Alcance Comunitario</Text>
-            <Text style={styles.impactNumber}>{metrics.general.communityReach}</Text>
+            <Text style={styles.impactNumber}>{metrics.general.communityReach || 0}</Text>
             <Text style={styles.impactDescription}>Personas alcanzadas</Text>
           </View>
           <View style={styles.impactCard}>
@@ -180,7 +210,7 @@ const AdminMetrics = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF',
+    backgroundColor: 'black',
   },
   loadingContainer: {
     flex: 1,
