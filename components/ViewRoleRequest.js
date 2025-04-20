@@ -358,10 +358,13 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: '#000000',
+    
   },
   card: {
     backgroundColor: '#1a1a1a',
     borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#FF0000',
     padding: 16,
     marginBottom: 16,
     elevation: 2,
@@ -395,6 +398,7 @@ const styles = StyleSheet.create({
   documentViewer: {
     flex: 1,
     backgroundColor: '#000000'
+    
   },
   documentHeader: {
     height: 60,
@@ -445,7 +449,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    backgroundColor: 'rgba(208, 9, 9, 0.9)',
     padding: 20
   },
   modalContent: {
