@@ -1,24 +1,59 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
+import { BACKEND_URL } from '../constants/config';
 
 const DashboardManager = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [managerData, setManagerData] = useState(null);
   const { user, handleLogout } = useAuth();
   const navigation = useNavigation();
+
+  useEffect(() => {
+    checkManagerProfile();
+  }, []);
+
+  const checkManagerProfile = async () => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}/api/managers/profile/${user.id}`);
+      if (response.data.success) {
+        setManagerData(response.data.manager);
+      }
+      setIsLoading(false);
+    } catch (error) {
+      if (error.response?.status === 404) {
+        // No existe perfil, redirigir a registro
+        navigation.replace('ManagerRegistration');
+      } else {
+        console.error('Error al verificar perfil:', error);
+        Alert.alert('Error', 'No se pudo verificar el perfil de gestor cultural');
+        setIsLoading(false);
+      }
+    }
+  };
 
   const handleLogoutAndNavigate = async () => {
     await handleLogout();
     navigation.replace('Home');
   };
 
+  if (isLoading) {
+    return (
+      <View style={[styles.container, styles.centerContent]}>
+        <ActivityIndicator size="large" color="#007AFF" />
+      </View>
+    );
+  }
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.welcomeContainer}>
           <Text style={styles.welcome}>¡Bienvenido Gestor,</Text>
-          <Text style={styles.userName}>{user?.name}!</Text>
+          <Text style={styles.userName}>{managerData?.nombreEspacio || user?.name}!</Text>
         </View>
         <TouchableOpacity 
           onPress={handleLogoutAndNavigate}
@@ -73,6 +108,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000000',
+  },
+  centerContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   header: {
     paddingTop: 50,
@@ -142,6 +181,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     textAlign: 'center',
   },
+
 });
 
 export default DashboardManager;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import NotificationCenter from './NotificationCenter';
-import { View, Text, TouchableOpacity, ScrollView, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Modal, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../context/AuthContext';
@@ -16,6 +16,8 @@ const DashboardUser = () => {
   const [showRoleRequest, setShowRoleRequest] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [hasArtistProfile, setHasArtistProfile] = useState(false);
+  const [hasManagerProfile, setHasManagerProfile] = useState(false);
 
   const handleLogoutAndNavigate = async () => {
     await handleLogout();
@@ -25,6 +27,8 @@ const DashboardUser = () => {
   useEffect(() => {
     if (user?.id) {
       setShowRoleRequest(false);
+      checkArtistProfile();
+      checkManagerProfile();
     }
   }, [user]);
 
@@ -33,6 +37,45 @@ const DashboardUser = () => {
       fetchNotifications();
     }
   }, [user]);
+
+  // Verificar si el usuario ya tiene perfil de artista
+  const checkArtistProfile = async () => {
+    if (user?.id) {
+      try {
+        const response = await axios.get(`${BACKEND_URL}/api/artists/profile/${user.id}`);
+        if (response.data && response.data.success) {
+          setHasArtistProfile(true);
+        } else {
+          setHasArtistProfile(false);
+        }
+      } catch (error) {
+        // Silenciamos el error 404 que es normal cuando no existe perfil
+        if (error.response?.status !== 404) {
+          console.error('Error al verificar perfil de artista:', error);
+        }
+        setHasArtistProfile(false);
+      }
+    }
+  };
+
+  // Verificar si el usuario ya tiene perfil de gestor cultural
+  const checkManagerProfile = async () => {
+    if (user?.id) {
+      try {
+        const response = await axios.get(`${BACKEND_URL}/api/managers/profile/${user.id}`);
+        if (response.data && response.data.success) {
+          setHasManagerProfile(true);
+        } else {
+          setHasManagerProfile(false);
+        }
+      } catch (error) {
+        if (error.response?.status !== 404) {
+          console.error('Error al verificar perfil de gestor cultural:', error);
+        }
+        setHasManagerProfile(false);
+      }
+    }
+  };
 
   const fetchNotifications = async () => {
     try {
@@ -56,21 +99,45 @@ const DashboardUser = () => {
     setShowRoleRequest(true);
   };
 
-  const renderUserWelcome = () => (
-    <View style={styles.welcomeContainer}>
-      <Text style={styles.welcome}>¡Bienvenido,</Text>
-      <Text style={styles.userName}>{user?.name}!</Text>
-      {!user?.role && (
-        <TouchableOpacity 
-          style={styles.requestRoleButton}
-          onPress={() => setShowRoleRequest(true)}
-        >
-          <Ionicons name="person-add" size={20} color="#FFF" />
-          <Text style={styles.requestRoleText}>Solicitar Rol</Text>
-        </TouchableOpacity>
-      )}
-    </View>
-  );
+  // Función para ir al perfil de artista
+  const goToArtistDashboard = () => {
+    navigation.replace('DashboardArtist');
+  };
+
+  // Función para ir al perfil de gestor cultural
+  const goToManagerDashboard = () => {
+    navigation.replace('DashboardManager');
+  };
+
+  // Función para manejar el clic en 'Ir a Mi Perfil de Artista' desde notificaciones
+  const handleArtistProfileNavigation = () => {
+    if (hasArtistProfile) {
+      navigation.navigate('DashboardArtist');
+    } else {
+      // Redirigir directamente al registro sin mensaje
+      navigation.navigate('ArtistRegistration');
+    }
+  };
+
+  const renderUserWelcome = () => {
+    if (!user) return null;
+    
+    return (
+      <View style={styles.welcomeContainer}>
+        <Text style={styles.welcome}>¡Bienvenido,</Text>
+        <Text style={styles.userName}>{user.name}!</Text>
+        {!user?.role && (
+          <TouchableOpacity 
+            style={styles.requestRoleButton}
+            onPress={() => setShowRoleRequest(true)}
+          >
+            <Ionicons name="person-add" size={20} color="#FFF" />
+            <Text style={styles.requestRoleText}>Solicitar Rol</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  };
 
   const renderVisitorOptions = () => (
     <View style={styles.optionsContainer}>
@@ -126,6 +193,8 @@ const DashboardUser = () => {
     }
   };
 
+
+
   return (
     <>
       <ScrollView style={styles.container}>
@@ -137,6 +206,29 @@ const DashboardUser = () => {
           >
             <Text style={styles.headerButtonText}>Cerrar Sesión</Text>
           </TouchableOpacity>
+        </View>
+
+        {/* Botones de acceso rápido a perfiles (solo se muestran si existen) */}
+        <View style={styles.profileButtonsContainer}>
+          {hasArtistProfile && (
+            <TouchableOpacity 
+              onPress={goToArtistDashboard}
+              style={styles.profileButton}
+            >
+              <Ionicons name="person-circle-outline" size={24} color="#fff" />
+              <Text style={styles.profileButtonText}>Ir a Mi Perfil de Artista</Text>
+            </TouchableOpacity>
+          )}
+          
+          {hasManagerProfile && (
+            <TouchableOpacity 
+              onPress={goToManagerDashboard}
+              style={[styles.profileButton, styles.managerButton]}
+            >
+              <Ionicons name="business-outline" size={24} color="#fff" />
+              <Text style={styles.profileButtonText}>Ir a Mi Espacio Cultural</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {renderVisitorOptions()}
@@ -168,9 +260,11 @@ const DashboardUser = () => {
               <Ionicons name="close" size={24} color="#FFF" />
             </TouchableOpacity>
           </View>
-          <NotificationCenter onAction={handleShowRoleRequest} />
+          <NotificationCenter onAction={handleShowRoleRequest} onProfileNavigation={handleArtistProfileNavigation} />
         </View>
       </Modal>
+
+
     </>
   );
 };
@@ -273,6 +367,32 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
   },
+  artistButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  profileButtonsContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 10,
+  },
+  profileButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#007AFF',
+    marginVertical: 8,
+    padding: 15,
+    borderRadius: 10,
+  },
+  managerButton: {
+    backgroundColor: '#00b894',
+  },
+  profileButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 10,
+  },
   dismissButton: {
     backgroundColor: '#404040',
   },
@@ -324,7 +444,8 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontSize: 16,
     fontWeight: 'bold',
-  }
+  },
+
 });
 
 export default DashboardUser;

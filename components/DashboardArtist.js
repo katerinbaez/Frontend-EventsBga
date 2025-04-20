@@ -1,24 +1,59 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import axios from 'axios';
+import { BACKEND_URL } from '../constants/config';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../context/AuthContext';
 
 const DashboardArtist = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [artistData, setArtistData] = useState(null);
   const { user, handleLogout } = useAuth();
   const navigation = useNavigation();
+
+  useEffect(() => {
+    checkArtistProfile();
+  }, []);
+
+  const checkArtistProfile = async () => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}/api/artists/profile/${user.id}`);
+      if (response.data.success) {
+        setArtistData(response.data.artist);
+      }
+      setIsLoading(false);
+    } catch (error) {
+      if (error.response?.status === 404) {
+        // No existe perfil, redirigir a registro
+        navigation.replace('ArtistRegistration');
+      } else {
+        console.error('Error al verificar perfil:', error);
+        Alert.alert('Error', 'No se pudo verificar el perfil de artista');
+        setIsLoading(false);
+      }
+    }
+  };
 
   const handleLogoutAndNavigate = async () => {
     await handleLogout();
     navigation.replace('Home');
   };
 
+  if (isLoading) {
+    return (
+      <View style={[styles.container, styles.centerContent]}>
+        <ActivityIndicator size="large" color="#007AFF" />
+      </View>
+    );
+  }
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.welcomeContainer}>
           <Text style={styles.welcome}>¡Bienvenido Artista,</Text>
-          <Text style={styles.userName}>{user?.name}!</Text>
+          <Text style={styles.userName}>{artistData?.nombreArtistico || user?.name}!</Text>
         </View>
         <TouchableOpacity 
           onPress={handleLogoutAndNavigate}
@@ -70,6 +105,10 @@ const DashboardArtist = () => {
 };
 
 const styles = StyleSheet.create({
+  centerContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
     backgroundColor: '#000000',
