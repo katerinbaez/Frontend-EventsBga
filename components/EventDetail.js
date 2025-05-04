@@ -7,39 +7,110 @@ import {
   Image,
   StyleSheet,
   Share,
-  Alert
+  Alert,
+  ActivityIndicator
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import axios from 'axios';
+import { BACKEND_URL } from '../constants/config';
+import { useAuth } from '../context/AuthContext';
 
-const EventDetail = ({ route, navigation, user }) => {
-  const { eventId } = route.params;
+const EventDetail = ({ route, navigation }) => {
+  const { eventId } = route.params || {};
   const [event, setEvent] = useState(null);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
   useEffect(() => {
-    loadEventDetails();
-    checkIfFavorite();
-  }, [eventId]);
+    if (eventId) {
+      loadEventDetails();
+      if (user) {
+        checkIfFavorite();
+      }
+    } else {
+      setLoading(false);
+      Alert.alert('Error', 'No se pudo identificar el evento');
+    }
+  }, [eventId, user]);
 
   const loadEventDetails = async () => {
     try {
-      const response = await fetch(`/api/events/${eventId}`);
-      const data = await response.json();
-      setEvent(data);
+      setLoading(true);
+      console.log('Cargando detalles del evento con ID:', eventId);
+      console.log('Tipo de ID:', typeof eventId);
+      
+      // Intentar cargar desde la API unificada de eventos
+      const url = `${BACKEND_URL}/api/events/${eventId}`;
+      console.log('URL de la solicitud:', url);
+      
+      const response = await axios.get(url);
+      
+      console.log('Respuesta del servidor:', JSON.stringify(response.data, null, 2));
+      
+      if (response.data && response.data.success && response.data.event) {
+        console.log('Evento cargado correctamente:', response.data.event);
+        setEvent(response.data.event);
+      } else {
+        console.error('Respuesta incompleta del servidor:', response.data);
+        Alert.alert(
+          'Error', 
+          'La información del evento está incompleta. Por favor, inténtelo de nuevo más tarde.'
+        );
+      }
     } catch (error) {
-      console.error('Error loading event details:', error);
-      Alert.alert('Error', 'No se pudo cargar el evento');
+      console.error('Error al cargar detalles del evento:', error);
+      
+      // Mostrar mensaje de error más específico
+      if (error.response) {
+        // El servidor respondió con un código de estado fuera del rango 2xx
+        console.error('Detalles del error:', JSON.stringify(error.response.data, null, 2));
+        
+        if (error.response.status === 404) {
+          Alert.alert(
+            'Evento no encontrado', 
+            'El evento que estás buscando no existe o ha sido eliminado.'
+          );
+        } else {
+          Alert.alert(
+            'Error del servidor', 
+            `Ocurrió un problema al cargar el evento (${error.response.status}). Por favor, inténtalo más tarde.`
+          );
+        }
+      } else if (error.request) {
+        // La solicitud se realizó pero no se recibió respuesta
+        console.error('No se recibió respuesta:', error.request);
+        Alert.alert(
+          'Error de conexión', 
+          'No se pudo conectar con el servidor. Verifica tu conexión a internet e inténtalo de nuevo.'
+        );
+      } else {
+        // Algo sucedió en la configuración de la solicitud que desencadenó un error
+        console.error('Error de configuración:', error.message);
+        Alert.alert(
+          'Error', 
+          'Ocurrió un problema al cargar el evento. Por favor, inténtalo más tarde.'
+        );
+      }
+      
+      // Navegar hacia atrás después de mostrar el error
+      setTimeout(() => {
+        navigation.goBack();
+      }, 1500);
+    } finally {
+      setLoading(false);
     }
   };
 
   const checkIfFavorite = async () => {
-    if (!user) return;
+    if (!user || !eventId) return;
     try {
-      const response = await fetch(`/api/favorites/check?userId=${user.id}&eventId=${eventId}`);
-      const { isFavorite } = await response.json();
-      setIsFavorite(isFavorite);
+      const response = await axios.get(`${BACKEND_URL}/api/favorites/check?userId=${user.id || user.sub}&eventId=${eventId}`);
+      if (response.data && typeof response.data.isFavorite === 'boolean') {
+        setIsFavorite(response.data.isFavorite);
+      }
     } catch (error) {
-      console.error('Error checking favorite status:', error);
+      console.error('Error al verificar estado de favorito:', error);
     }
   };
 
@@ -57,159 +128,166 @@ const EventDetail = ({ route, navigation, user }) => {
     }
 
     try {
-      const method = isFavorite ? 'DELETE' : 'POST';
-      const response = await fetch('/api/favorites', {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: user.id,
+      if (isFavorite) {
+        await axios.delete(`${BACKEND_URL}/api/favorites?userId=${user.id || user.sub}&eventId=${eventId}`);
+      } else {
+        await axios.post(`${BACKEND_URL}/api/favorites`, {
+          userId: user.id || user.sub,
           eventId: eventId
-        }),
-      });
-
-      if (response.ok) {
-        setIsFavorite(!isFavorite);
+        });
       }
+      setIsFavorite(!isFavorite);
     } catch (error) {
-      console.error('Error toggling favorite:', error);
-      Alert.alert('Error', 'No se pudo actualizar favoritos');
+      console.error('Error al actualizar favorito:', error);
+      Alert.alert('Error', 'No se pudo actualizar el estado de favorito');
     }
   };
 
   const shareEvent = async () => {
+    if (!event) return;
+    
     try {
       await Share.share({
-        message: `¡Mira este evento en EventsBga!\n\n${event.titulo}\n${event.descripcion}\n\nFecha: ${new Date(event.fechaInicio).toLocaleDateString()}\nLugar: ${event.space?.nombre || 'Por confirmar'}\n\nDescarga la app para más información.`,
+        message: `¡Mira este evento cultural! "${event.titulo}" - ${event.descripcion}`,
+        title: event.titulo
       });
     } catch (error) {
-      console.error('Error sharing event:', error);
+      console.error('Error al compartir evento:', error);
     }
   };
 
-  if (!event) {
+  if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <Text>Cargando...</Text>
+        <ActivityIndicator size="large" color="#FF3A5E" />
+        <Text style={styles.loadingText}>Cargando evento...</Text>
+      </View>
+    );
+  }
+
+  if (!event) {
+    return (
+      <View style={styles.errorContainer}>
+        <Ionicons name="alert-circle-outline" size={64} color="#FF3A5E" />
+        <Text style={styles.errorText}>No se pudo cargar el evento</Text>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={styles.backButtonText}>Volver</Text>
+        </TouchableOpacity>
       </View>
     );
   }
 
   return (
     <ScrollView style={styles.container}>
-      <Image
-        source={{ uri: event.imagen || 'https://via.placeholder.com/400x200' }}
-        style={styles.eventImage}
-      />
-
+      {event.imagenUrl ? (
+        <Image 
+          source={{ uri: event.imagenUrl }} 
+          style={styles.eventImage}
+          resizeMode="cover"
+        />
+      ) : (
+        <View style={styles.placeholderImage}>
+          <Ionicons name="image-outline" size={80} color="#CCC" />
+        </View>
+      )}
+      
       <View style={styles.header}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>{event.titulo}</Text>
-          <View style={styles.categoryContainer}>
-            <Text style={styles.category}>{event.categoria}</Text>
+          <Text style={styles.eventTitle}>{event.titulo}</Text>
+          <View style={styles.categoryTag}>
+            <Text style={styles.categoryText}>{event.categoria}</Text>
           </View>
         </View>
-
-        <View style={styles.actions}>
+        
+        <View style={styles.actionsContainer}>
           <TouchableOpacity 
             style={styles.actionButton}
             onPress={toggleFavorite}
           >
-            <Ionicons
-              name={isFavorite ? 'heart' : 'heart-outline'}
-              size={24}
-              color={isFavorite ? '#FF6B6B' : '#7F8C8D'}
+            <Ionicons 
+              name={isFavorite ? "heart" : "heart-outline"} 
+              size={24} 
+              color={isFavorite ? "#FF3A5E" : "#666"} 
             />
           </TouchableOpacity>
-
+          
           <TouchableOpacity 
             style={styles.actionButton}
             onPress={shareEvent}
           >
-            <Ionicons name="share-social" size={24} color="#7F8C8D" />
+            <Ionicons name="share-social-outline" size={24} color="#666" />
           </TouchableOpacity>
         </View>
       </View>
-
-      <View style={styles.infoContainer}>
+      
+      <View style={styles.infoSection}>
         <View style={styles.infoItem}>
-          <Ionicons name="calendar" size={20} color="#4A90E2" />
+          <Ionicons name="calendar-outline" size={20} color="#FF3A5E" />
           <Text style={styles.infoText}>
-            {new Date(event.fechaInicio).toLocaleDateString('es-ES', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            })}
+            {event.isEventRequest && event.fechaInicio 
+              ? new Date(event.fechaInicio).toLocaleDateString('es-ES', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })
+              : event.fechaProgramada 
+                ? new Date(event.fechaProgramada).toLocaleDateString('es-ES', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })
+                : 'Fecha por confirmar'}
           </Text>
         </View>
-
+        
         <View style={styles.infoItem}>
-          <Ionicons name="time" size={20} color="#4A90E2" />
+          <Ionicons name="time-outline" size={20} color="#FF3A5E" />
           <Text style={styles.infoText}>
-            {new Date(event.fechaInicio).toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit'
-            })}
-            {' - '}
-            {new Date(event.fechaFin).toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit'
-            })}
+            {event.isEventRequest && event.fechaInicio 
+              ? new Date(event.fechaInicio).toLocaleTimeString('es-ES', {
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })
+              : event.fechaProgramada 
+                ? new Date(event.fechaProgramada).toLocaleTimeString('es-ES', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })
+                : 'Hora por confirmar'}
           </Text>
         </View>
-
+        
         <View style={styles.infoItem}>
-          <Ionicons name="location" size={20} color="#4A90E2" />
-          <Text 
-            style={[styles.infoText, styles.locationText]}
-            onPress={() => navigation.navigate('CulturalSpace', { 
-              spaceId: event.space?.id 
-            })}
-          >
+          <Ionicons name="location-outline" size={20} color="#FF3A5E" />
+          <Text style={styles.infoText}>
             {event.space?.nombre || 'Ubicación por confirmar'}
           </Text>
         </View>
-
+        
         <View style={styles.infoItem}>
-          <Ionicons name="person" size={20} color="#4A90E2" />
-          <Text 
-            style={[styles.infoText, styles.artistText]}
-            onPress={() => navigation.navigate('ArtistProfile', { 
-              artistId: event.artist?.id 
-            })}
-          >
-            {event.artist?.nombreArtistico || 'Artista por confirmar'}
+          <Ionicons name="person-outline" size={20} color="#FF3A5E" />
+          <Text style={styles.infoText}>
+            {event.isEventRequest 
+              ? (event.artist?.nombreArtistico || 'Artista por confirmar')
+              : (event.space?.nombre || 'Espacio cultural por confirmar')}
           </Text>
         </View>
-
-        {event.precio > 0 ? (
-          <View style={styles.infoItem}>
-            <Ionicons name="ticket" size={20} color="#4A90E2" />
-            <Text style={styles.infoText}>${event.precio}</Text>
-          </View>
-        ) : (
-          <View style={styles.infoItem}>
-            <Ionicons name="ticket" size={20} color="#2ECC71" />
-            <Text style={[styles.infoText, styles.freeText]}>Entrada Libre</Text>
-          </View>
-        )}
       </View>
-
-      <View style={styles.descriptionContainer}>
-        <Text style={styles.descriptionTitle}>Descripción</Text>
-        <Text style={styles.description}>{event.descripcion}</Text>
+      
+      <View style={styles.descriptionSection}>
+        <Text style={styles.sectionTitle}>Descripción</Text>
+        <Text style={styles.descriptionText}>{event.descripcion || 'Sin descripción disponible'}</Text>
       </View>
-
-      {event.precio > 0 && (
-        <TouchableOpacity 
-          style={styles.reserveButton}
-          onPress={() => navigation.navigate('EventReservation', { eventId })}
-        >
-          <Text style={styles.reserveButtonText}>Reservar Entrada</Text>
-        </TouchableOpacity>
-      )}
+      
+      <TouchableOpacity
+        style={styles.registerButton}
+        onPress={() => navigation.navigate('EventRegistration', { eventId: event.id })}
+      >
+        <Text style={styles.registerButtonText}>Registrarme</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -217,59 +295,95 @@ const EventDetail = ({ route, navigation, user }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF',
+    backgroundColor: '#1E1E1E',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#1E1E1E',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#FFF',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#1E1E1E',
+    padding: 20,
+  },
+  errorText: {
+    marginTop: 16,
+    fontSize: 18,
+    color: '#FFF',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  backButton: {
+    backgroundColor: '#FF3A5E',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  backButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   eventImage: {
     width: '100%',
-    height: 200,
-    resizeMode: 'cover',
+    height: 250,
+  },
+  placeholderImage: {
+    width: '100%',
+    height: 250,
+    backgroundColor: '#2A2A2A',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   header: {
+    padding: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: '#333',
   },
   titleContainer: {
     flex: 1,
-    marginRight: 16,
   },
-  title: {
+  eventTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#2C3E50',
+    color: '#FFF',
     marginBottom: 8,
   },
-  categoryContainer: {
-    backgroundColor: '#4A90E2',
+  categoryTag: {
+    backgroundColor: '#FF3A5E',
     paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingVertical: 4,
     borderRadius: 16,
     alignSelf: 'flex-start',
   },
-  category: {
+  categoryText: {
     color: '#FFF',
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
-  actions: {
+  actionsContainer: {
     flexDirection: 'row',
   },
   actionButton: {
     padding: 8,
     marginLeft: 8,
   },
-  infoContainer: {
+  infoSection: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: '#333',
   },
   infoItem: {
     flexDirection: 'row',
@@ -279,42 +393,30 @@ const styles = StyleSheet.create({
   infoText: {
     marginLeft: 12,
     fontSize: 16,
-    color: '#2C3E50',
+    color: '#CCC',
   },
-  locationText: {
-    color: '#4A90E2',
-    textDecorationLine: 'underline',
-  },
-  artistText: {
-    color: '#4A90E2',
-    textDecorationLine: 'underline',
-  },
-  freeText: {
-    color: '#2ECC71',
-    fontWeight: '500',
-  },
-  descriptionContainer: {
+  descriptionSection: {
     padding: 16,
   },
-  descriptionTitle: {
+  sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2C3E50',
-    marginBottom: 8,
+    color: '#FFF',
+    marginBottom: 12,
   },
-  description: {
+  descriptionText: {
     fontSize: 16,
-    color: '#7F8C8D',
     lineHeight: 24,
+    color: '#CCC',
   },
-  reserveButton: {
+  registerButton: {
+    backgroundColor: '#FF3A5E',
     margin: 16,
-    backgroundColor: '#4A90E2',
-    paddingVertical: 16,
-    borderRadius: 12,
+    padding: 16,
+    borderRadius: 8,
     alignItems: 'center',
   },
-  reserveButtonText: {
+  registerButtonText: {
     color: '#FFF',
     fontSize: 16,
     fontWeight: 'bold',
