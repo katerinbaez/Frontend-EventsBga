@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import NotificationCenter from './NotificationCenter';
 import { View, Text, TouchableOpacity, ScrollView, Modal, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,8 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import RoleRequestForm from './RoleRequestForm';
 import { StyleSheet } from 'react-native';
 import axios from 'axios';
-
-const BACKEND_URL = "http://192.168.1.7:5000";
+import { BACKEND_URL } from '../constants/config';
 
 const DashboardUser = () => {
   const { user, handleLogout } = useAuth();
@@ -80,10 +79,88 @@ const DashboardUser = () => {
   const fetchNotifications = async () => {
     try {
       const response = await axios.get(`${BACKEND_URL}/api/notifications/${user.id}`);
-      setNotifications(prev => [...prev, ...response.data]);
+      console.log('Respuesta de notificaciones:', response.data);
+      
+      // Verificamos la estructura de la respuesta y adaptamos según sea necesario
+      if (response.data && response.data.success && Array.isArray(response.data.notifications)) {
+        setNotifications(response.data.notifications);
+        console.log('Notificaciones cargadas:', response.data.notifications.length);
+      } else if (response.data && Array.isArray(response.data)) {
+        // Si la respuesta es directamente un array
+        setNotifications(response.data);
+        console.log('Notificaciones cargadas (array directo):', response.data.length);
+      } else {
+        console.log('Formato de respuesta no reconocido:', response.data);
+        setNotifications([]);
+      }
     } catch (error) {
       console.error('Error al obtener notificaciones:', error);
+      setNotifications([]);
     }
+  };
+
+  // Función para eliminar perfil de artista
+  const deleteArtistProfile = async () => {
+    Alert.alert(
+      'Eliminar Perfil de Artista',
+      '¿Estás seguro que deseas eliminar tu perfil de artista? Esta acción no se puede deshacer.',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel'
+        },
+        {
+          text: 'Eliminar',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const response = await axios.delete(`${BACKEND_URL}/api/artists/profile/${user.id}`);
+              if (response.data && response.data.success) {
+                Alert.alert('Éxito', 'Tu perfil de artista ha sido eliminado correctamente');
+                setHasArtistProfile(false);
+              } else {
+                Alert.alert('Error', 'No se pudo eliminar el perfil de artista');
+              }
+            } catch (error) {
+              console.error('Error al eliminar perfil de artista:', error);
+              Alert.alert('Error', 'Ocurrió un error al intentar eliminar el perfil');
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  // Función para eliminar perfil de gestor cultural
+  const deleteManagerProfile = async () => {
+    Alert.alert(
+      'Eliminar Perfil de Espacio Cultural',
+      '¿Estás seguro que deseas eliminar tu perfil de espacio cultural? Esta acción no se puede deshacer.',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel'
+        },
+        {
+          text: 'Eliminar',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const response = await axios.delete(`${BACKEND_URL}/api/managers/profile/${user.id}`);
+              if (response.data && response.data.success) {
+                Alert.alert('Éxito', 'Tu perfil de espacio cultural ha sido eliminado correctamente');
+                setHasManagerProfile(false);
+              } else {
+                Alert.alert('Error', 'No se pudo eliminar el perfil de espacio cultural');
+              }
+            } catch (error) {
+              console.error('Error al eliminar perfil de espacio cultural:', error);
+              Alert.alert('Error', 'Ocurrió un error al intentar eliminar el perfil');
+            }
+          }
+        }
+      ]
+    );
   };
 
   const handleRoleRequest = async (formData) => {
@@ -211,23 +288,41 @@ const DashboardUser = () => {
         {/* Botones de acceso rápido a perfiles (solo se muestran si existen) */}
         <View style={styles.profileButtonsContainer}>
           {hasArtistProfile && (
-            <TouchableOpacity 
-              onPress={goToArtistDashboard}
-              style={styles.profileButton}
-            >
-              <Ionicons name="person-circle-outline" size={24} color="#fff" />
-              <Text style={styles.profileButtonText}>Ir a Mi Perfil de Artista</Text>
-            </TouchableOpacity>
+            <View style={styles.profileSection}>
+              <TouchableOpacity 
+                onPress={goToArtistDashboard}
+                style={styles.profileButton}
+              >
+                <Ionicons name="person-circle-outline" size={24} color="#fff" />
+                <Text style={styles.profileButtonText}>Ir a Mi Perfil de Artista</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                onPress={deleteArtistProfile}
+                style={styles.deleteButton}
+              >
+                <Ionicons name="trash-outline" size={22} color="#fff" />
+              </TouchableOpacity>
+            </View>
           )}
           
           {hasManagerProfile && (
-            <TouchableOpacity 
-              onPress={goToManagerDashboard}
-              style={[styles.profileButton, styles.managerButton]}
-            >
-              <Ionicons name="business-outline" size={24} color="#fff" />
-              <Text style={styles.profileButtonText}>Ir a Mi Espacio Cultural</Text>
-            </TouchableOpacity>
+            <View style={styles.profileSection}>
+              <TouchableOpacity 
+                onPress={goToManagerDashboard}
+                style={[styles.profileButton, styles.managerButton]}
+              >
+                <Ionicons name="business-outline" size={24} color="#fff" />
+                <Text style={styles.profileButtonText}>Ir a Mi Espacio Cultural</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                onPress={deleteManagerProfile}
+                style={[styles.deleteButton, styles.deleteManagerButton]}
+              >
+                <Ionicons name="trash-outline" size={22} color="#fff" />
+              </TouchableOpacity>
+            </View>
           )}
         </View>
 
@@ -252,7 +347,12 @@ const DashboardUser = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Notificaciones</Text>
+            <View style={styles.titleContainer}>
+              <Text style={styles.modalTitle}>Centro de Notificaciones</Text>
+              <View style={styles.notificationBadge}>
+                <Text style={styles.notificationCount}>{notifications ? notifications.length : 0}</Text>
+              </View>
+            </View>
             <TouchableOpacity 
               onPress={() => setShowNotifications(false)}
               style={styles.closeButton}
@@ -283,10 +383,37 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#333',
   },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#ffffff',
+    marginRight: 10,
+  },
+  notificationBadge: {
+    backgroundColor: '#FF3A5E',
+    borderRadius: 15,
+    minWidth: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    marginLeft: 10,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 5,
+  },
+  notificationCount: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   closeButton: {
     padding: 8,
@@ -373,24 +500,44 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   profileButtonsContainer: {
+    marginTop: 16,
+    marginBottom: 24,
     paddingHorizontal: 20,
-    paddingBottom: 10,
   },
-  profileButton: {
+  profileSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#007AFF',
-    marginVertical: 8,
-    padding: 15,
-    borderRadius: 10,
+    marginBottom: 12,
+  },
+  profileButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#4A90E2',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderTopLeftRadius: 8,
+    borderBottomLeftRadius: 8,
   },
   managerButton: {
-    backgroundColor: '#00b894',
+    backgroundColor: '#FF3A5E',
+  },
+  deleteButton: {
+    backgroundColor: '#E74C3C',
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    borderTopRightRadius: 8,
+    borderBottomRightRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  deleteManagerButton: {
+    backgroundColor: '#C0392B',
   },
   profileButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600',
     marginLeft: 10,
   },
   dismissButton: {

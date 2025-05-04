@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, ActivityIndicator, Alert, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import { BACKEND_URL } from '../constants/config';
+import RequestsModal from './RequestsModal';
+import EventAttendeesModal from './EventAttendeesModal';
 
 const DashboardManager = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [managerData, setManagerData] = useState(null);
   const { user, handleLogout } = useAuth();
   const navigation = useNavigation();
+  const [requestsModalVisible, setRequestsModalVisible] = useState(false);
+  const [attendeesModalVisible, setAttendeesModalVisible] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   useEffect(() => {
     checkManagerProfile();
@@ -84,22 +89,53 @@ const DashboardManager = () => {
 
         <TouchableOpacity 
           style={styles.optionCard}
-          onPress={() => navigation.navigate('EventRequests')}
+          onPress={() => setRequestsModalVisible(true)}
         >
-          <Ionicons name="list" size={40} color="#4A90E2" />
+          <Ionicons name="list" size={40} color="#FF3A5E" />
           <Text style={styles.optionTitle}>Solicitudes</Text>
           <Text style={styles.optionDescription}>Revisar solicitudes de eventos</Text>
         </TouchableOpacity>
 
         <TouchableOpacity 
           style={styles.optionCard}
-          onPress={() => navigation.navigate('SpaceDetails')}
+          onPress={() => navigation.navigate('EventProgramming', { 
+            managerId: user?.id,
+            spaceId: managerData?.id || user?.id, 
+            spaceName: managerData?.nombreEspacio || user?.name || 'Mi Espacio Cultural'
+          })}
         >
-          <Ionicons name="information-circle" size={40} color="#4A90E2" />
-          <Text style={styles.optionTitle}>Detalles</Text>
-          <Text style={styles.optionDescription}>Capacidad y características</Text>
+          <Ionicons name="calendar" size={40} color="#FF3A5E" />
+          <Text style={styles.optionTitle}>Programar eventos</Text>
+          <Text style={styles.optionDescription}>Programar eventos para el espacio</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={styles.optionCard}
+          onPress={() => navigation.navigate('EventAttendance', { 
+            managerId: user?.id,
+            setSelectedEvent: setSelectedEvent,
+            setAttendeesModalVisible: setAttendeesModalVisible
+          })}
+        >
+          <Ionicons name="people" size={40} color="#4A90E2" />
+          <Text style={styles.optionTitle}>Artistas Confirmados</Text>
+          <Text style={styles.optionDescription}>Ver asistentes a eventos</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Modal para gestionar solicitudes de eventos */}
+      <RequestsModal 
+        visible={requestsModalVisible}
+        onClose={() => setRequestsModalVisible(false)}
+      />
+
+      {/* Modal para ver artistas confirmados */}
+      <EventAttendeesModal
+        visible={attendeesModalVisible}
+        onClose={() => setAttendeesModalVisible(false)}
+        eventId={selectedEvent?.id}
+        eventTitle={selectedEvent?.titulo}
+      />
     </ScrollView>
   );
 };
