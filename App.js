@@ -16,6 +16,7 @@ import DashboardAdmin from './components/DashboardAdmin';
 import ArtistProfile from './components/ArtistProfile';
 import ArtistPortfolio from './components/ArtistPortfolio';
 import CulturalSpace from './components/CulturalSpace';
+import SpaceProfile from './components/SpaceProfile';
 import EventCalendar from './components/EventCalendar';
 import EventSearch from './components/EventSearch';
 import EventDetail from './components/EventDetail';
@@ -25,9 +26,12 @@ import SpaceSchedule from './components/SpaceSchedule';
 import EventRequests from './components/EventRequests';
 import RoleRequestForm from './components/RoleRequestForm';
 import ViewRoleRequests from './components/ViewRoleRequest';
+import EventProgramming from './components/EventProgramming';
 import RoleRequestList from './components/RoleRequestList';
 import AdminMetrics from './components/AdminMetrics';
 import ManagerRegistration from './components/ManagerRegistration';
+import UserManagement from './components/UserManagement';
+import EventAttendance from './components/EventAttendance';
 
 const Stack = createNativeStackNavigator();
 
@@ -116,11 +120,8 @@ const Navigation = () => {
                 name="ArtistPortfolio" 
                 component={ArtistPortfolio}
                 options={{ 
-                    title: 'Mi Portafolio',
-                    headerStyle: {
-                        backgroundColor: '#FF3A5E',
-                    },
-                    headerTintColor: '#fff',
+                    headerShown: false  // Ocultar el header del Stack Navigator para evitar duplicación
+
                 }}
             />
             <Stack.Screen 
@@ -141,7 +142,8 @@ const Navigation = () => {
             <Stack.Screen 
                 name="Search" 
                 component={EventSearch}
-                options={{ title: 'Buscar Eventos' }}
+                options={{  
+                     headerShown: false   }}
             />
             <Stack.Screen 
                 name="Notifications" 
@@ -171,8 +173,26 @@ const Navigation = () => {
             <Stack.Screen 
                 name="SpaceSchedule" 
                 component={SpaceSchedule}
+                options={{
+                    title: 'Horario',
+                    headerStyle: {
+                        backgroundColor: '#000',
+                    },
+                    headerTintColor: '#fff',
+                }}
+            />
+            <Stack.Screen 
+                name="EventProgramming" 
+                component={EventProgramming}
+                options={{
+                    headerShown: false
+                }}
+            />
+            <Stack.Screen 
+                name="SpaceProfile" 
+                component={SpaceProfile}
                 options={{ 
-                    headerShown: false  // Ocultar el header del Stack Navigator para evitar duplicación
+                    headerShown: false
                 }}
             />
             <Stack.Screen 
@@ -185,6 +205,18 @@ const Navigation = () => {
                     },
                     headerTintColor: '#fff',
                     headerShown: false,
+                }}
+            />
+            <Stack.Screen 
+                name="UserManagement" 
+                component={UserManagement}
+                options={{ title: 'Gestión de Usuarios' }}
+            />
+            <Stack.Screen 
+                name="EventAttendance" 
+                component={EventAttendance}
+                options={{ 
+                    headerShown: false
                 }}
             />
         </Stack.Navigator>
