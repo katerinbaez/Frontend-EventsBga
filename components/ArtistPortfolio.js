@@ -9,7 +9,9 @@ import {
   Modal, 
   TextInput,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
+  StatusBar,
+  Platform
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -313,23 +315,8 @@ const ArtistPortfolio = ({ navigation, route }) => {
   return (
     <View style={{flex: 1, backgroundColor: DARK_BG}}>
       {showHeader && (
-        <View 
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingVertical: 16,
-            paddingHorizontal: 20,
-            backgroundColor: '#FF3A5E', // Color rojo sólido directo
-            elevation: 8,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.3,
-            shadowRadius: 4,
-            borderBottomWidth: 1,
-            borderBottomColor: 'rgba(255, 255, 255, 0.2)',
-          }}
-        >
+        <View style={styles.header}>
+
           <TouchableOpacity 
             style={styles.backButton}
             onPress={() => navigation.goBack()}
@@ -579,11 +566,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    elevation: 4,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 251, 251, 0.2)',
+    paddingHorizontal: 15,
+    paddingVertical: 15,
+    backgroundColor: '#FF3A5E',
+    marginTop: 45,         // Margen superior aumentado para respetar la barra de estado
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+    marginHorizontal: 5,   // Margen horizontal para que no ocupe todo el ancho
+    elevation: 4,          // Sombra para Android
+    shadowColor: '#000',   // Sombra para iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   backButton: {
     padding: 8,

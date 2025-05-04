@@ -228,7 +228,6 @@ const CulturalSpace = ({ navigation, route }) => {
           instalaciones: space.instalaciones,
           imagenes: space.images,
           disponibilidad: space.disponibilidad, // Incluir la disponibilidad en la actualización
-          horarios: space.disponibilidad, // Guardar también en la columna horarios de Managers
           contacto: {
             email: space.contacto?.email || '',
             telefono: space.contacto?.telefono || ''
@@ -303,25 +302,6 @@ const CulturalSpace = ({ navigation, route }) => {
       } else {
         // Crear nuevo espacio
         response = await axios.post(`${BACKEND_URL}/api/cultural-spaces`, space);
-        
-        // También actualizar el campo horarios en la tabla Managers si hay un managerId
-        if (space.managerId) {
-          try {
-            // Verificar si existe un perfil de gestor para este managerId
-            const managerResponse = await axios.get(`${BACKEND_URL}/api/managers/profile/${space.managerId}`);
-            
-            if (managerResponse.data.success && managerResponse.data.manager) {
-              // Actualizar solo el campo horarios en el perfil del gestor
-              await axios.put(`${BACKEND_URL}/api/managers/profile/${space.managerId}`, {
-                horarios: space.disponibilidad
-              });
-              console.log('Campo horarios actualizado en la tabla Managers');
-            }
-          } catch (managerError) {
-            console.error('Error al actualizar horarios en el perfil del gestor:', managerError);
-            // No interrumpir el flujo principal si falla esta parte
-          }
-        }
       }
 
       if (response.data.success) {

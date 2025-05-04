@@ -6,9 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import styles from '../styles/RoleRequestForm.styles';
-
-// URL del backend
-const BACKEND_URL = "http://192.168.1.7:5000";
+import { BACKEND_URL } from '../constants/config';
 
 const RoleRequestForm = () => {
   const navigation = useNavigation();

@@ -7,7 +7,7 @@ import CulturalSpaceCard from './CulturalSpaceCard';
 import AdminAccess from './AdminAccess';
 import * as WebBrowser from 'expo-web-browser';
 import axios from 'axios';
-import { BACKEND_URL } from '../constants/config';
+import { BACKEND_URL, AUTH0_DOMAIN, AUTH0_CLIENT_ID, REDIRECT_URI } from '../constants/config';
 
 const sampleArtists = [
     {
@@ -43,9 +43,7 @@ const sampleSpaces = [
     }
 ];
 
-const AUTH0_DOMAIN = "eventsbga.us.auth0.com";
-const AUTH0_CLIENT_ID = "91dOXcXA8e1UToIQq8ArVy4jtuN4Yssn";
-const REDIRECT_URI = 'exp://192.168.1.7:8081';
+
 
 axios.defaults.headers.common['Origin'] = REDIRECT_URI;
 axios.defaults.headers.common['Content-Type'] = 'application/json';

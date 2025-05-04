@@ -4,8 +4,7 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
-
-const BACKEND_URL = "http://192.168.1.7:5000";
+import { BACKEND_URL } from '../constants/config';
 
 const ViewRoleRequests = () => {
   const [requests, setRequests] = useState([]);
