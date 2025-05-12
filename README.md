@@ -102,18 +102,26 @@ Con una interfaz profesional que utiliza colores vibrantes y contrastantes, dest
 
 ```
 EventsBga/
-├── app/                  # Directorio principal de la aplicación
-├── assets/               # Imágenes, fuentes y recursos estáticos
-├── components/           # Componentes reutilizables
-│   ├── ArtistProfile.js  # Perfil de artistas
-│   ├── CulturalSpace.js  # Visualización de espacios culturales
-│   ├── EventCalendar.js  # Calendario de eventos
-│   └── ...               # Otros componentes
-├── constants/            # Constantes y configuración
-├── context/              # Contextos de React (Auth, etc.)
-├── hooks/                # Hooks personalizados
-├── styles/               # Estilos globales
-└── ...
+├── assets/                 # Recursos estáticos (imágenes, fuentes, animaciones)
+├── components/             # Componentes React Native
+│   ├── features/           # Componentes organizados por características
+│   │   ├── admin/          # Componentes de administración
+│   │   ├── artists/        # Componentes relacionados con artistas
+│   │   ├── auth/           # Componentes de autenticación
+│   │   ├── calendar/       # Componentes de calendario
+│   │   ├── dashboard/      # Componentes de paneles principales
+│   │   ├── events/         # Componentes de gestión de eventos
+│   │   ├── favorites/      # Componentes de favoritos
+│   │   ├── geolocation/    # Componentes de geolocalización
+│   │   ├── notifications/  # Componentes de notificaciones
+│   │   ├── requests/       # Componentes de solicitudes
+│   │   └── spaces/         # Componentes de espacios culturales
+│   ├── ui/                 # Componentes de UI reutilizables
+├── constants/              # Constantes y configuración
+├── context/                # Contextos de React (Auth, etc.)
+├── hooks/                  # Hooks personalizados
+├── styles/                 # Estilos globales
+└── app/                    # Estructura de navegación (Expo Router)
 ```
 
 ## 👥 Roles de Usuario
