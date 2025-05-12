@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import { StyleSheet, SafeAreaView } from 'react-native';
 import App from '../../App';
 
-export default function HomeScreen() {
+function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <App />
@@ -15,3 +15,5 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+export default HomeScreen;

@@ -5,17 +5,28 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
+    "splash": {
+  "backgroundColor": "#000000"
+},
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "config": {
+        "googleMapsApiKey": "AIzaSyCMU89H8fISyKNOMSt2bSy0wtWdfFjs4Ag"
+      }
     },
     "android": {
       "package": "com.eventsbga.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyCMU89H8fISyKNOMSt2bSy0wtWdfFjs4Ag"
+        }
       }
     },
     "web": {
@@ -28,10 +39,8 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "image": null,
+          "backgroundColor": "#1A0011"
         }
       ],
       "expo-secure-store"

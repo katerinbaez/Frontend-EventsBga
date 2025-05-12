@@ -1,50 +1,188 @@
-# Welcome to your Expo app 👋
+# 🎭 EventsBga - Plataforma Cultural de Bucaramanga
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+<div align="center">
+  <img src="./assets/images/icon.png" alt="EventsBga Logo" width="200"/>
+  <br/>
+  <p><i>Conectando artistas, espacios culturales y público en Bucaramanga</i></p>
+</div>
 
-## Get started
+## 📋 Índice
 
-1. Install dependencies
+- [🌟 Descripción](#-descripción)
+- [✨ Características](#-características)
+- [🚀 Instalación](#-instalación)
+- [🛠️ Tecnologías](#️-tecnologías)
+- [📱 Capturas de Pantalla](#-capturas-de-pantalla)
+- [📊 Estructura del Proyecto](#-estructura-del-proyecto)
+- [👥 Roles de Usuario](#-roles-de-usuario)
+- [🔄 Flujo de Trabajo](#-flujo-de-trabajo)
+- [🌐 Geolocalización](#-geolocalización)
+- [📅 Gestión de Eventos](#-gestión-de-eventos)
+- [🤝 Contribución](#-contribución)
+- [📞 Contacto](#-contacto)
 
+## 🌟 Descripción
+
+EventsBga es una plataforma integral diseñada para conectar la escena cultural de Bucaramanga, facilitando la interacción entre artistas, espacios culturales y el público. La aplicación permite la gestión de perfiles artísticos, espacios culturales, programación de eventos, y visualización del calendario cultural de la ciudad.
+
+Con una interfaz profesional que utiliza colores vibrantes y contrastantes, destacando el color de acento rojo (#FF3A5E), EventsBga ofrece una experiencia de usuario intuitiva y atractiva para todos los participantes del ecosistema cultural.
+
+## ✨ Características
+
+- 🎨 **Perfiles de Artistas**: Registro y gestión de perfiles artísticos con información detallada
+- 🏛️ **Espacios Culturales**: Visualización y administración de espacios culturales con detalles de ubicación, capacidad y horarios
+- 📅 **Calendario de Eventos**: Visualización de eventos culturales con filtrado por categorías y fechas
+- 🔍 **Búsqueda Avanzada**: Localización de eventos, artistas y espacios mediante filtros personalizados
+- 📱 **Experiencia Responsive**: Diseño adaptado para dispositivos móviles y tablets
+- 🌍 **Geolocalización**: Búsqueda de espacios culturales cercanos mediante OpenStreetMap
+- 🔐 **Sistema de Roles**: Gestión de permisos para usuarios, artistas, gestores culturales y administradores
+- 📊 **Panel Administrativo**: Métricas y gestión de usuarios para administradores
+- 🗓️ **Gestión de Horarios**: Bloqueo y desbloqueo de franjas horarias para espacios culturales
+- 💾 **Persistencia de Datos**: Almacenamiento seguro de información en la nube
+
+## 🚀 Instalación
+
+1. **Clonar el repositorio**
+   ```bash
+   git clone https://github.com/tuusuario/EventsBga.git
+   cd EventsBga
+   ```
+
+2. **Instalar dependencias**
    ```bash
    npm install
    ```
 
-2. Start the app
+3. **Configurar variables de entorno**
+   - Crea un archivo `.env` basado en `.env.example`
+   - Configura las credenciales de Auth0 y la URL del backend
 
+4. **Iniciar la aplicación**
    ```bash
-    npx expo start
+   npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+5. **Opciones de ejecución**
+   - Presiona `a` para abrir en emulador Android
+   - Presiona `i` para abrir en simulador iOS
+   - Escanea el código QR con la app Expo Go en tu dispositivo
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 🛠️ Tecnologías
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- **Frontend**:
+  - [React Native](https://reactnative.dev/) - Framework principal
+  - [Expo](https://expo.dev/) - Plataforma de desarrollo
+  - [React Navigation](https://reactnavigation.org/) - Navegación entre pantallas
+  - [Axios](https://axios-http.com/) - Cliente HTTP para API
+  - [React Native Calendars](https://github.com/wix/react-native-calendars) - Componentes de calendario
 
-## Get a fresh project
+- **Geolocalización**:
+  - [Expo Location](https://docs.expo.dev/versions/latest/sdk/location/) - Acceso a ubicación
+  - [OpenStreetMap/Nominatim](https://nominatim.org/) - Servicios de mapas y geocodificación
 
-When you're ready, run:
+- **Autenticación**:
+  - [Auth0](https://auth0.com/) - Sistema de autenticación y autorización
+  - [Expo Auth Session](https://docs.expo.dev/versions/latest/sdk/auth-session/) - Flujos de autenticación
 
-```bash
-npm run reset-project
+- **Almacenamiento**:
+  - [Async Storage](https://react-native-async-storage.github.io/async-storage/) - Almacenamiento local
+  - [Expo Secure Store](https://docs.expo.dev/versions/latest/sdk/securestore/) - Almacenamiento seguro
+
+## 📱 Capturas de Pantalla
+
+<div align="center">
+  <p>Pantallas principales de la aplicación EventsBga</p>
+  <br/>
+  <p>
+    <i>Pantalla de inicio | Calendario de eventos | Perfil de artista | Espacio cultural</i>
+  </p>
+</div>
+
+## 📊 Estructura del Proyecto
+
+```
+EventsBga/
+├── app/                  # Directorio principal de la aplicación
+├── assets/               # Imágenes, fuentes y recursos estáticos
+├── components/           # Componentes reutilizables
+│   ├── ArtistProfile.js  # Perfil de artistas
+│   ├── CulturalSpace.js  # Visualización de espacios culturales
+│   ├── EventCalendar.js  # Calendario de eventos
+│   └── ...               # Otros componentes
+├── constants/            # Constantes y configuración
+├── context/              # Contextos de React (Auth, etc.)
+├── hooks/                # Hooks personalizados
+├── styles/               # Estilos globales
+└── ...
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 👥 Roles de Usuario
 
-## Learn more
+EventsBga implementa un sistema de roles basado en solicitudes aprobadas:
 
-To learn more about developing your project with Expo, look at the following resources:
+- **Usuario**: Acceso básico para visualizar eventos y perfiles
+- **Artista**: Gestión de perfil artístico y solicitud de eventos
+- **Gestor Cultural**: Administración de espacios y aprobación de solicitudes
+- **Administrador**: Control total del sistema y métricas
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Los roles se determinan según las solicitudes aprobadas en la tabla RoleRequests, donde:
+- "Artista" en RoleRequests → "artist" en el frontend
+- "GestorEventos" en RoleRequests → "manager" en el frontend
 
-## Join the community
+## 🔄 Flujo de Trabajo
 
-Join our community of developers creating universal apps.
+1. **Registro y Autenticación**:
+   - Los usuarios se registran mediante Auth0
+   - Pueden solicitar roles de Artista o Gestor Cultural
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+2. **Creación de Perfiles**:
+   - Los artistas completan su perfil con información artística
+   - Los gestores culturales registran sus espacios con detalles y horarios
+
+3. **Gestión de Eventos**:
+   - Los artistas solicitan espacios para eventos
+   - Los gestores aprueban solicitudes y gestionan disponibilidad
+   - Los eventos aprobados aparecen en el calendario público
+
+4. **Experiencia del Usuario**:
+   - Búsqueda de eventos por categoría, fecha o ubicación
+   - Visualización de perfiles de artistas y espacios culturales
+   - Seguimiento de artistas y espacios favoritos
+
+## 🌐 Geolocalización
+
+La aplicación implementa geolocalización utilizando OpenStreetMap (Nominatim) como alternativa a Google Maps API:
+
+- Obtención de ubicación actual del usuario con alta precisión
+- Geocodificación inversa para convertir coordenadas en direcciones
+- Búsqueda de lugares cercanos con sistema de debouncing (300ms)
+- Priorización de resultados en Bucaramanga y Colombia
+- Visualización de distancia exacta a cada lugar
+
+## 📅 Gestión de Eventos
+
+El sistema de gestión de eventos incluye:
+
+- **Calendario Visual**: Visualización de eventos por día/mes
+- **Bloqueo de Horarios**: Sistema para reservar franjas horarias en espacios
+- **Aprobación de Solicitudes**: Flujo de trabajo para gestionar peticiones
+- **Estados de Eventos**: Seguimiento desde solicitud hasta finalización
+- **Métricas de Asistencia**: Conteo real de asistentes a eventos culturales
+
+## 🤝 Contribución
+
+¡Las contribuciones son bienvenidas! Si deseas contribuir al proyecto:
+
+1. Haz un fork del repositorio
+2. Crea una rama para tu característica (`git checkout -b feature/nueva-caracteristica`)
+3. Realiza tus cambios y haz commit (`git commit -m 'Añadir nueva característica'`)
+4. Sube tus cambios (`git push origin feature/nueva-caracteristica`)
+5. Abre un Pull Request
+
+## 📞 Contacto
+
+Para más información sobre EventsBga, contacta al equipo de desarrollo:
+
+- **Correo**: [contacto@eventsbga.com](mailto:contacto@eventsbga.com)
+- **Sitio Web**: [www.eventsbga.com](https://www.eventsbga.com)
+- **GitHub**: [github.com/eventsbga](https://github.com/eventsbga)

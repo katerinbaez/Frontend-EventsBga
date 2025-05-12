@@ -1,7 +1,42 @@
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
+  // Estilos para la sección de calendario
+  calendarContainer: {
+    flex: 1,
+    backgroundColor: '#000000',
+    paddingBottom: 20,
+  },
+  calendarHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333333',
+    marginBottom: 10,
+  },
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 8,
+  },
+  backButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    marginLeft: 5,
+  },
+  calendarTitle: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginLeft: 20,
+  },
   container: {
+    flex: 1,
+    backgroundColor: '#000000',
+  },
+  scrollContainer: {
     flex: 1,
     backgroundColor: '#000000',
   },
@@ -73,10 +108,41 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
   },
   optionDescription: {
-    fontSize: 12,
-    color: '#cccccc',
-    marginTop: 5,
+    fontSize: 14,
+    color: '#AAAAAA',
     textAlign: 'center',
-    opacity: 0.8,
+    marginTop: 5,
+  },
+  // Estilos para el mensaje de bienvenida
+  welcomeMessageContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1E1E1E',
+    borderRadius: 12,
+    padding: 15,
+    marginHorizontal: 15,
+    marginBottom: 20,
+    borderLeftWidth: 3,
+    borderLeftColor: '#FFD700',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  welcomeMessageTextContainer: {
+    flex: 1,
+    marginLeft: 10,
+  },
+  welcomeMessageTitle: {
+    color: '#FFD700',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  welcomeMessage: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    lineHeight: 20,
   },
 });

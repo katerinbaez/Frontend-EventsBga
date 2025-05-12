@@ -1,37 +1,39 @@
 import 'react-native-gesture-handler';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { StatusBar } from 'react-native';
+import * as SplashScreenNative from 'expo-splash-screen';
+import SplashScreen from './components/ui/SplashScreen';
 
 // Componentes
-import HomeScreen from './components/HomeScreen';
-import LoginAuth from './components/LoginAuth';
-import DashboardUser from './components/DashboardUser';
-import DashboardArtist from './components/DashboardArtist';
-import DashboardManager from './components/DashboardManager';
-import ArtistRegistration from './components/ArtistRegistration';
-import DashboardAdmin from './components/DashboardAdmin';
-import ArtistProfile from './components/ArtistProfile';
-import ArtistPortfolio from './components/ArtistPortfolio';
-import CulturalSpace from './components/CulturalSpace';
-import SpaceProfile from './components/SpaceProfile';
-import EventCalendar from './components/EventCalendar';
-import EventSearch from './components/EventSearch';
-import EventDetail from './components/EventDetail';
-import NotificationCenter from './components/NotificationCenter';
-import FavoritesList from './components/FavoritesList';
-import SpaceSchedule from './components/SpaceSchedule';
-import EventRequests from './components/EventRequests';
-import RoleRequestForm from './components/RoleRequestForm';
-import ViewRoleRequests from './components/ViewRoleRequest';
-import EventProgramming from './components/EventProgramming';
-import RoleRequestList from './components/RoleRequestList';
-import AdminMetrics from './components/AdminMetrics';
-import ManagerRegistration from './components/ManagerRegistration';
-import UserManagement from './components/UserManagement';
-import EventAttendance from './components/EventAttendance';
+import HomeScreen from './components/features/dashboard/HomeScreen';
+import LoginAuth from './components/features/auth/LoginAuth';
+import DashboardUser from './components/features/dashboard/DashboardUser';
+import DashboardArtist from './components/features/dashboard/DashboardArtist';
+import DashboardManager from './components/features/dashboard/DashboardManager';
+import ArtistRegistration from './components/features/artists/ArtistRegistration';
+import DashboardAdmin from './components/features/dashboard/DashboardAdmin';
+import ArtistProfile from './components/features/artists/ArtistProfile';
+import ArtistPortfolio from './components/features/artists/ArtistPortfolio';
+import CulturalSpace from './components/features/spaces/CulturalSpace';
+import SpaceProfile from './components/features/spaces/SpaceProfile';
+import EventCalendar from './components/features/calendar/EventCalendar';
+import EventSearch from './components/features/events/EventSearch';
+import EventDetail from './components/features/events/EventDetail';
+import NotificationCenter from './components/features/notifications/NotificationCenter';
+import FavoritesScreen from './components/features/favorites/FavoritesScreen';
+import SpaceSchedule from './components/features/spaces/SpaceSchedule';
+import EventRequests from './components/features/requests/EventRequests';
+import RoleRequestForm from './components/features/requests/RoleRequestForm';
+import ViewRoleRequests from './components/features/requests/ViewRoleRequest';
+import EventProgramming from './components/features/events/EventProgramming';
+import RoleRequestList from './components/features/requests/RoleRequestList';
+import AdminMetrics from './components/features/admin/AdminMetrics';
+import ManagerRegistration from './components/features/spaces/ManagerRegistration';
+import UserManagement from './components/features/admin/UserManagement';
+import EventAttendance from './components/features/events/EventAttendance';
 
 const Stack = createNativeStackNavigator();
 
@@ -152,7 +154,7 @@ const Navigation = () => {
             />
             <Stack.Screen 
                 name="Favorites" 
-                component={FavoritesList}
+                component={FavoritesScreen}
                 options={{ title: 'Mis Favoritos' }}
             />
             <Stack.Screen 
@@ -223,12 +225,34 @@ const Navigation = () => {
     );
 };
 
+// Configuración para el splash screen nativo
+// Prevenir que se oculte automáticamente
+SplashScreenNative.preventAutoHideAsync().catch(console.warn);
+
 const App = () => {
+    const [isLoading, setIsLoading] = useState(true);
+
+    const handleSplashFinish = async () => {
+        try {
+            // Ocultar el splash screen nativo
+            await SplashScreenNative.hideAsync();
+            // Cambiar el estado para mostrar la navegación
+            setIsLoading(false);
+        } catch (error) {
+            console.warn('Error al ocultar el splash screen:', error);
+            setIsLoading(false);
+        }
+    };
+
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <AuthProvider>
                 <StatusBar barStyle="light-content" />
-                <Navigation />
+                {isLoading ? (
+                    <SplashScreen onFinish={handleSplashFinish} />
+                ) : (
+                    <Navigation />
+                )}
             </AuthProvider>
         </GestureHandlerRootView>
     );
