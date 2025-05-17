@@ -106,22 +106,82 @@ EventsBga/
 ├── components/             # Componentes React Native
 │   ├── features/           # Componentes organizados por características
 │   │   ├── admin/          # Componentes de administración
+│   │   │   ├── metrics/    # Métricas y estadísticas
+│   │   │   └── users/      # Gestión de usuarios
 │   │   ├── artists/        # Componentes relacionados con artistas
+│   │   │   ├── forms/      # Formularios para artistas
+│   │   │   ├── modals/     # Ventanas modales
+│   │   │   ├── sections/   # Secciones de perfil
+│   │   │   ├── services/   # Servicios de datos
+│   │   │   ├── ui/         # Componentes de UI
+│   │   │   └── views/      # Vistas principales
 │   │   ├── auth/           # Componentes de autenticación
+│   │   │   ├── admin/      # Autenticación de administradores
+│   │   │   └── login/      # Pantallas de inicio de sesión
 │   │   ├── calendar/       # Componentes de calendario
+│   │   │   └── views/      # Vistas principales del calendario
 │   │   ├── dashboard/      # Componentes de paneles principales
+│   │   │   ├── HomeScreen/ # Pantalla de inicio
+│   │   │   ├── admin/      # Panel de administrador
+│   │   │   │   ├── elements/  # Elementos de UI
+│   │   │   │   └── views/     # Vistas principales
+│   │   │   ├── artist/     # Panel de artista
+│   │   │   │   ├── elements/  # Elementos de UI
+│   │   │   │   ├── services/  # Servicios de datos
+│   │   │   │   └── views/     # Vistas principales
+│   │   │   ├── manager/    # Panel de gestor cultural
+│   │   │   │   ├── elements/  # Elementos de UI
+│   │   │   │   ├── services/  # Servicios de datos
+│   │   │   │   └── views/     # Vistas principales
+│   │   │   └── user/       # Panel de usuario
+│   │   │       ├── elements/  # Elementos de UI
+│   │   │       ├── services/  # Servicios de datos
+│   │   │       └── views/     # Vistas principales
 │   │   ├── events/         # Componentes de gestión de eventos
+│   │   │   ├── hooks/      # Hooks personalizados
+│   │   │   ├── sections/   # Secciones de eventos
+│   │   │   ├── services/   # Servicios de datos
+│   │   │   ├── ui/         # Componentes de UI
+│   │   │   ├── utils/      # Utilidades
+│   │   │   └── views/      # Vistas principales
 │   │   ├── favorites/      # Componentes de favoritos
+│   │   │   ├── hooks/      # Hooks personalizados
+│   │   │   ├── services/   # Servicios de datos
+│   │   │   ├── ui/         # Componentes de UI
+│   │   │   └── views/      # Vistas principales
 │   │   ├── geolocation/    # Componentes de geolocalización
+│   │   │   ├── hooks/      # Hooks personalizados
+│   │   │   ├── services/   # Servicios de datos
+│   │   │   ├── ui/         # Componentes de UI
+│   │   │   └── views/      # Vistas principales
 │   │   ├── notifications/  # Componentes de notificaciones
+│   │   │   ├── hooks/      # Hooks personalizados
+│   │   │   ├── services/   # Servicios de datos
+│   │   │   ├── ui/         # Componentes de UI
+│   │   │   ├── utils/      # Utilidades
+│   │   │   └── Views/      # Vistas principales
 │   │   ├── requests/       # Componentes de solicitudes
+│   │   │   ├── hooks/      # Hooks personalizados
+│   │   │   ├── services/   # Servicios de datos
+│   │   │   ├── ui/         # Componentes de UI
+│   │   │   ├── utils/      # Utilidades
+│   │   │   └── views/      # Vistas principales
 │   │   └── spaces/         # Componentes de espacios culturales
+│   │       ├── forms/      # Formularios para espacios
+│   │       ├── hooks/      # Hooks personalizados
+│   │       ├── services/   # Servicios para manejo de datos
+│   │       ├── ui/         # Componentes de UI específicos
+│   │       ├── utils/      # Utilidades (geolocalización, etc.)
+│   │       └── views/      # Vistas principales
 │   ├── ui/                 # Componentes de UI reutilizables
 ├── constants/              # Constantes y configuración
 ├── context/                # Contextos de React (Auth, etc.)
 ├── hooks/                  # Hooks personalizados
+├── polyfills/              # Polyfills para compatibilidad
+├── scripts/                # Scripts de utilidad
 ├── styles/                 # Estilos globales
 └── app/                    # Estructura de navegación (Expo Router)
+    ├── (tabs)/             # Navegación por pestañas
 ```
 
 ## 👥 Roles de Usuario

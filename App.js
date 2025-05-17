@@ -8,32 +8,30 @@ import * as SplashScreenNative from 'expo-splash-screen';
 import SplashScreen from './components/ui/SplashScreen';
 
 // Componentes
-import HomeScreen from './components/features/dashboard/HomeScreen';
-import LoginAuth from './components/features/auth/LoginAuth';
-import DashboardUser from './components/features/dashboard/DashboardUser';
-import DashboardArtist from './components/features/dashboard/DashboardArtist';
-import DashboardManager from './components/features/dashboard/DashboardManager';
-import ArtistRegistration from './components/features/artists/ArtistRegistration';
-import DashboardAdmin from './components/features/dashboard/DashboardAdmin';
-import ArtistProfile from './components/features/artists/ArtistProfile';
-import ArtistPortfolio from './components/features/artists/ArtistPortfolio';
-import CulturalSpace from './components/features/spaces/CulturalSpace';
-import SpaceProfile from './components/features/spaces/SpaceProfile';
-import EventCalendar from './components/features/calendar/EventCalendar';
-import EventSearch from './components/features/events/EventSearch';
-import EventDetail from './components/features/events/EventDetail';
-import NotificationCenter from './components/features/notifications/NotificationCenter';
-import FavoritesScreen from './components/features/favorites/FavoritesScreen';
-import SpaceSchedule from './components/features/spaces/SpaceSchedule';
-import EventRequests from './components/features/requests/EventRequests';
-import RoleRequestForm from './components/features/requests/RoleRequestForm';
-import ViewRoleRequests from './components/features/requests/ViewRoleRequest';
-import EventProgramming from './components/features/events/EventProgramming';
-import RoleRequestList from './components/features/requests/RoleRequestList';
-import AdminMetrics from './components/features/admin/AdminMetrics';
-import ManagerRegistration from './components/features/spaces/ManagerRegistration';
-import UserManagement from './components/features/admin/UserManagement';
-import EventAttendance from './components/features/events/EventAttendance';
+import HomeScreen from './components/features/dashboard/HomeScreen/HomeScreen';
+import LoginAuth from './components/features/auth/login/LoginAuth';
+import DashboardUser from './components/features/dashboard/user/views/DashboardUser';
+import DashboardArtist from './components/features/dashboard/artist/views/DashboardArtist';
+import DashboardManager from './components/features/dashboard/manager/views/DashboardManager';
+import ArtistRegistration from './components/features/artists/forms/ArtistRegistration';
+import DashboardAdmin from './components/features/dashboard/admin/views/DashboardAdmin';
+import ArtistProfile from './components/features/artists/sections/ArtistProfile';
+import ArtistPortfolio from './components/features/artists/views/ArtistPortfolio';
+import CulturalSpace from './components/features/spaces/views/CulturalSpace';
+import EventCalendar from './components/features/calendar/views/EventCalendar';
+import EventSearch from './components/features/events/views/EventSearch';
+import EventDetail from './components/features/events/views/EventDetail';
+import NotificationCenter from './components/features/notifications/Views/NotificationCenter';
+import FavoritesScreen from './components/features/favorites/views/FavoritesScreen';
+import SpaceSchedule from './components/features/spaces/views/SpaceSchedule';
+import RoleRequestForm from './components/features/requests/views/RoleRequestForm';
+import ViewRoleRequests from './components/features/requests/views/ViewRoleRequests';
+import EventProgramming from './components/features/events/views/EventProgramming';
+import AdminMetrics from './components/features/admin/metrics/AdminMetrics';
+import ManagerRegistration from './components/features/spaces/forms/ManagerRegistration';
+import UserManagement from './components/features/admin/users/UserManagement';
+import EventAttendance from './components/features/events/views/EventAttendance';
+import ManageEvents from './components/features/events/views/ManageEvents';
 
 const Stack = createNativeStackNavigator();
 
@@ -84,13 +82,7 @@ const Navigation = () => {
             <Stack.Screen 
                 name="ArtistRegistration" 
                 component={ArtistRegistration}
-                options={{
-                    title: 'Registro de Artista',
-                    headerStyle: {
-                        backgroundColor: '#000',
-                    },
-                    headerTintColor: '#fff',
-                }}
+                options={{ headerShown: false } }
             />
             <Stack.Screen 
                 name="DashboardManager" 
@@ -129,7 +121,7 @@ const Navigation = () => {
             <Stack.Screen 
                 name="CulturalSpace" 
                 component={CulturalSpace}
-                options={{ title: 'Espacio Cultural' }}
+                options={{ headerShown: false  }}
             />
             <Stack.Screen 
                 name="EventDetails" 
@@ -177,10 +169,8 @@ const Navigation = () => {
                 component={SpaceSchedule}
                 options={{
                     title: 'Horario',
-                    headerStyle: {
-                        backgroundColor: '#000',
-                    },
-                    headerTintColor: '#fff',
+                    headerShown: false
+
                 }}
             />
             <Stack.Screen 
@@ -190,25 +180,7 @@ const Navigation = () => {
                     headerShown: false
                 }}
             />
-            <Stack.Screen 
-                name="SpaceProfile" 
-                component={SpaceProfile}
-                options={{ 
-                    headerShown: false
-                }}
-            />
-            <Stack.Screen 
-                name="EventRequests" 
-                component={EventRequests}
-                options={{ 
-                    title: 'Solicitudes de Eventos',
-                    headerStyle: {
-                        backgroundColor: '#000',
-                    },
-                    headerTintColor: '#fff',
-                    headerShown: false,
-                }}
-            />
+            
             <Stack.Screen 
                 name="UserManagement" 
                 component={UserManagement}
@@ -217,6 +189,13 @@ const Navigation = () => {
             <Stack.Screen 
                 name="EventAttendance" 
                 component={EventAttendance}
+                options={{ 
+                    headerShown: false
+                }}
+            />
+            <Stack.Screen 
+                name="ManageEvents" 
+                component={ManageEvents}
                 options={{ 
                     headerShown: false
                 }}

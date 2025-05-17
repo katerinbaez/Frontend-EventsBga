@@ -1,7 +1,8 @@
 import { StyleSheet, View, Text, SafeAreaView, Platform, StatusBar } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import EventCalendar from '../../components/features/calendar/EventCalendar';
+// @ts-nocheck
+import EventCalendar from '../../components/features/calendar/views/EventCalendar';
 
 export default function CalendarScreen() {
   const insets = useSafeAreaInsets();
