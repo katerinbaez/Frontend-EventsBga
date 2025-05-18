@@ -5,9 +5,9 @@ import { styles } from '../../../../styles/CulturalSpacesModalStyles';
 import SpaceImages from './SpaceImages';
 import SpaceInfo from './SpaceInfo';
 import SpaceFacilities from './SpaceFacilities';
-import SpaceSchedule from '../views/SpaceSchedule';
 import SpaceContact from './SpaceContact';
 import SpaceSocial from './SpaceSocial';
+
 
 const SpaceDetailsModal = ({ space, loading, onClose, initialSelectedSpaceId }) => {
   if (loading) {
@@ -55,7 +55,6 @@ const SpaceDetailsModal = ({ space, loading, onClose, initialSelectedSpaceId }) 
         <SpaceImages images={space.images} />
         <SpaceInfo space={space} />
         <SpaceFacilities facilities={space.instalaciones} />
-        <SpaceSchedule schedule={space.horario} />
         <SpaceContact contacto={space.contacto} />
         <SpaceSocial redesSociales={space.redesSociales} />
         

@@ -237,33 +237,60 @@ export const shareEvent = async (event) => {
  */
 export const toggleFavorite = async (event, isFavorite) => {
   try {
-    if (!event || !event.id) return isFavorite;
+    if (!event) {
+      console.error('toggleFavorite: Evento no proporcionado');
+      Alert.alert('Error', 'No se pudo actualizar favoritos: Evento no válido');
+      return isFavorite;
+    }
+    
+    console.log(`toggleFavorite: ${isFavorite ? 'Eliminando de' : 'Agregando a'} favoritos el evento:`, event.id);
     
     // Obtener favoritos actuales
     const favoritesJson = await AsyncStorage.getItem('favoriteEvents');
-    let favorites = favoritesJson ? JSON.parse(favoritesJson) : [];
+    let favorites = [];
+    
+    if (favoritesJson) {
+      try {
+        favorites = JSON.parse(favoritesJson);
+        console.log(`toggleFavorite: Favoritos actuales: ${favorites.length}`);
+      } catch (parseError) {
+        console.error('toggleFavorite: Error al analizar favoritos:', parseError);
+        favorites = [];
+      }
+    }
+    
+    // Asegurarse de que favorites sea un array
+    if (!Array.isArray(favorites)) {
+      console.error('toggleFavorite: favorites no es un array, reiniciando');
+      favorites = [];
+    }
     
     if (isFavorite) {
       // Eliminar de favoritos
-      favorites = favorites.filter(fav => fav.id !== event.id);
-      await AsyncStorage.setItem('favoriteEvents', JSON.stringify(favorites));
+      const newFavorites = favorites.filter(fav => String(fav.id) !== String(event.id));
+      console.log(`toggleFavorite: Eliminado. Nuevos favoritos: ${newFavorites.length}`);
+      await AsyncStorage.setItem('favoriteEvents', JSON.stringify(newFavorites));
       return false;
     } else {
       // Agregar a favoritos
-      favorites.push({
+      const eventToSave = {
         id: event.id,
-        titulo: event.titulo || event.nombre,
-        descripcion: event.descripcion,
-        fechaProgramada: event.fechaProgramada || event.fechaInicio,
-        categoria: event.categoria,
-        ubicacion: event.ubicacion || event.lugar
-      });
+        titulo: event.titulo || event.nombre || 'Evento sin título',
+        descripcion: event.descripcion || '',
+        fechaProgramada: event.fechaProgramada || event.fechaInicio || new Date().toISOString(),
+        categoria: event.categoria || { nombre: 'General' },
+        ubicacion: event.ubicacion || event.lugar || 'Sin ubicación'
+      };
+      
+      console.log('toggleFavorite: Guardando evento:', eventToSave);
+      favorites.push(eventToSave);
       await AsyncStorage.setItem('favoriteEvents', JSON.stringify(favorites));
+      console.log(`toggleFavorite: Agregado. Total favoritos: ${favorites.length}`);
       return true;
     }
   } catch (error) {
-    console.error('Error al gestionar favoritos:', error);
-    Alert.alert('Error', 'No se pudo actualizar favoritos');
+    console.error('toggleFavorite: Error general al gestionar favoritos:', error);
+    Alert.alert('Error', 'No se pudo actualizar favoritos. Intenta de nuevo más tarde.');
     return isFavorite;
   }
 };
@@ -357,24 +384,86 @@ export const cancelAttendance = async (eventId, user) => {
  * @returns {Promise<boolean>} - true si el usuario está asistiendo
  */
 export const checkAttendance = async (eventId, user) => {
+  // Evitar que cualquier error se propague
   try {
-    if (!eventId || !user) return false;
-    
-    const userId = user.sub || user.id;
-    
-    // Usar la misma URL que se usa para confirmar asistencia pero con método GET
-    const response = await axios.get(`${BACKEND_URL}/api/event-attendances/confirmed-users/${eventId}`);
-    
-    if (response.data && response.data.success && response.data.attendances) {
-      // Verificar si el usuario está en la lista de asistentes
-      return response.data.attendances.some(attendance => 
-        String(attendance.userId) === String(userId)
-      );
+    // Validaciones básicas
+    if (!eventId || !user) {
+      console.log('checkAttendance: No hay eventId o user');
+      return false;
     }
     
-    return false;
+    const userId = user.sub || user.id;
+    console.log(`checkAttendance: Verificando asistencia para evento ${eventId} y usuario ${userId}`);
+    
+    // Intentar usar AsyncStorage primero como alternativa más segura
+    try {
+      const attendancesJson = await AsyncStorage.getItem('eventAttendances');
+      if (attendancesJson) {
+        const attendances = JSON.parse(attendancesJson);
+        const isAttending = attendances.some(att => 
+          String(att.eventId) === String(eventId) && 
+          String(att.userId) === String(userId)
+        );
+        console.log(`checkAttendance (local): Usuario asistiendo: ${isAttending}`);
+        return isAttending;
+      }
+    } catch (storageError) {
+      console.log('No se pudo verificar asistencia local:', storageError);
+      // Continuar con el intento de API
+    }
+    
+    // Intentar con la API, pero con un timeout para evitar bloqueos
+    try {
+      // Crear una promesa con timeout para evitar esperas largas
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Timeout al verificar asistencia')), 3000);
+      });
+      
+      // Crear la promesa de la petición API
+      const apiPromise = axios.get(`${BACKEND_URL}/api/event-attendances/confirmed-users/${eventId}`);
+      
+      // Usar Promise.race para tomar la que se resuelva primero
+      const response = await Promise.race([apiPromise, timeoutPromise]);
+      
+      if (response.data && response.data.success && response.data.attendances) {
+        console.log(`checkAttendance: Asistentes encontrados: ${response.data.attendances.length}`);
+        
+        // Verificar si el usuario está en la lista de asistentes
+        const isAttending = response.data.attendances.some(attendance => 
+          String(attendance.userId) === String(userId)
+        );
+        
+        // Guardar en AsyncStorage para futuras referencias
+        try {
+          const attendancesJson = await AsyncStorage.getItem('eventAttendances');
+          let attendances = attendancesJson ? JSON.parse(attendancesJson) : [];
+          
+          // Si está asistiendo y no está en la lista local, agregarlo
+          if (isAttending && !attendances.some(att => 
+            String(att.eventId) === String(eventId) && 
+            String(att.userId) === String(userId)
+          )) {
+            attendances.push({ eventId, userId, date: new Date().toISOString() });
+            await AsyncStorage.setItem('eventAttendances', JSON.stringify(attendances));
+          }
+        } catch (saveError) {
+          console.log('Error al guardar asistencia local:', saveError);
+        }
+        
+        console.log(`checkAttendance: Usuario asistiendo: ${isAttending}`);
+        return isAttending;
+      }
+      
+      console.log('checkAttendance: No hay datos de asistencia en la respuesta');
+      return false;
+    } catch (requestError) {
+      // Capturar cualquier error de la API y simplemente devolver false
+      console.error('Error al verificar asistencia con API:', requestError.message);
+      return false;
+    }
   } catch (error) {
-    console.error('Error al verificar asistencia:', error);
+    // Capturar cualquier error inesperado
+    console.error('Error general al verificar asistencia:', error);
     return false;
   }
 };

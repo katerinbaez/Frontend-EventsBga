@@ -4,7 +4,8 @@ import {
   TouchableOpacity, 
   StatusBar,
   SafeAreaView,
-  Platform
+  Platform,
+  Text
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../../../context/AuthContext';
@@ -116,6 +117,20 @@ const EventSearch = ({ navigation }) => {
   return (
     <View style={containerStyle}>
       <StatusBar barStyle="light-content" backgroundColor="#1A1A1A" />
+      
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={styles.headerContent}>
+          <TouchableOpacity 
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Explorar Eventos</Text>
+          <View style={styles.headerRight} />
+        </View>
+      </View>
       
       {/* Barra de búsqueda */}
       <SearchBar 

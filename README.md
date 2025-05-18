@@ -247,10 +247,3 @@ El sistema de gestión de eventos incluye:
 4. Sube tus cambios (`git push origin feature/nueva-caracteristica`)
 5. Abre un Pull Request
 
-## 📞 Contacto
-
-Para más información sobre EventsBga, contacta al equipo de desarrollo:
-
-- **Correo**: [contacto@eventsbga.com](mailto:contacto@eventsbga.com)
-- **Sitio Web**: [www.eventsbga.com](https://www.eventsbga.com)
-- **GitHub**: [github.com/eventsbga](https://github.com/eventsbga)

@@ -55,7 +55,10 @@ const EventDetail = ({ route, navigation }) => {
   useEffect(() => {
     if (event && event.id) {
       checkFavoriteStatus();
-      if (isAuthenticated) {
+      
+      // Solo verificar asistencia si el evento no ha expirado y el usuario está autenticado
+      const expired = isEventExpired(event);
+      if (isAuthenticated && !expired) {
         checkUserAttendance();
       }
     }
@@ -105,10 +108,19 @@ const EventDetail = ({ route, navigation }) => {
     try {
       if (!isAuthenticated || !user) return;
       
-      const attendingStatus = await checkAttendance(eventId, user);
-      setIsAttending(attendingStatus);
+      // Envolver en un try-catch adicional para evitar que errores 500 interrumpan la experiencia
+      try {
+        const attendingStatus = await checkAttendance(eventId, user);
+        setIsAttending(attendingStatus);
+      } catch (attendanceError) {
+        // Simplemente registrar el error pero no mostrar nada al usuario
+        console.error('Error interno al verificar asistencia:', attendanceError);
+        // Asumir que no está asistiendo en caso de error
+        setIsAttending(false);
+      }
     } catch (error) {
-      console.error('Error al verificar asistencia:', error);
+      console.error('Error general al verificar asistencia:', error);
+      // No mostrar ningún error al usuario
     }
   };
   
@@ -143,6 +155,15 @@ const EventDetail = ({ route, navigation }) => {
    */
   const handleRegisterAttendance = async () => {
     try {
+      // Verificar si el evento ha expirado
+      if (event && isEventExpired(event)) {
+        Alert.alert(
+          'Evento finalizado',
+          'No es posible registrar asistencia a un evento que ya ha finalizado.'
+        );
+        return;
+      }
+      
       if (!isAuthenticated) {
         Alert.alert(
           'Inicio de sesión requerido',
@@ -158,18 +179,24 @@ const EventDetail = ({ route, navigation }) => {
         return;
       }
       
-      const result = await registerAttendance(eventId, user);
-      
-      if (result.success) {
-        setIsAttending(true);
-        Alert.alert('Éxito', result.message);
+      try {
+        const result = await registerAttendance(eventId, user);
+        
+        if (result.success) {
+          setIsAttending(true);
+          Alert.alert('Éxito', result.message);
+        }
+      } catch (attendanceError) {
+        console.error('Error al registrar asistencia:', attendanceError);
+        // Mostrar un mensaje de error más amigable
+        Alert.alert(
+          'Error',
+          'No se pudo registrar tu asistencia. Por favor, intenta más tarde.'
+        );
       }
     } catch (error) {
-      console.error('Error al registrar asistencia:', error);
-      Alert.alert(
-        'Error',
-        error.response?.data?.message || error.message || 'Ocurrió un error al registrar tu asistencia'
-      );
+      console.error('Error general al registrar asistencia:', error);
+      // No mostrar alerta para errores generales
     }
   };
   
@@ -236,8 +263,9 @@ const EventDetail = ({ route, navigation }) => {
         <AttendanceButton 
           isExpired={expired}
           isAttending={isAttending}
-          onRegister={handleRegisterAttendance}
-          onCancel={handleCancelAttendance}
+          onRegister={expired ? null : handleRegisterAttendance}
+          onCancel={expired ? null : handleCancelAttendance}
+          showDetailsOnly={expired}
         />
       </ScrollView>
     </View>

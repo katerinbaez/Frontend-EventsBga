@@ -50,7 +50,6 @@ const EventCardSearch = ({
       <TouchableOpacity
         style={styles.eventCardContent}
         onPress={handleEventPress}
-        disabled={expired}
       >
         <Text style={styles.eventTitle}>
           {event.titulo || 'Evento sin título'}
