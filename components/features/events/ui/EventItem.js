@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../../../../styles/AvaiableEventsModalStyles';
+import { formatTime } from '../utils/dateUtilsSearch';
 
 const EventItem = ({ 
   event, 
@@ -32,12 +33,20 @@ const EventItem = ({
           )}
         </View>
         
-        <Text style={[
-          styles.eventDate,
-          isExpired ? styles.expiredText : {}
-        ]}>
-          {formatDate(event.fechaProgramada)}
-        </Text>
+        <View style={styles.dateTimeContainer}>
+          <Text style={[
+            styles.eventDate,
+            isExpired ? styles.expiredText : {}
+          ]}>
+            {formatDate(event.fechaProgramada || event.fechaInicio || event.fecha)}
+          </Text>
+          <Text style={[
+            styles.eventTime,
+            isExpired ? styles.expiredText : {}
+          ]}>
+            {isExpired ? 'Terminado' : formatTime(event.fechaProgramada || event.fechaInicio || event.fecha)}
+          </Text>
+        </View>
         
         <Text style={[
           styles.eventDescription,

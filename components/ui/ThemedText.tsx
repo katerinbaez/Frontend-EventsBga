@@ -1,4 +1,6 @@
-import { Text, type TextProps, StyleSheet } from 'react-native';
+import { Text, type TextProps } from 'react-native';
+import ResponsiveStyleSheet from '../../utils/ResponsiveStyleSheet';
+import { moderateScale, verticalScale } from '../../utils/ResponsiveUtils';
 
 import { useThemeColor } from '@/hooks/useThemeColor';
 
@@ -17,15 +19,44 @@ export function ThemedText({
 }: ThemedTextProps) {
   const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
 
+  // Seleccionar el estilo correcto basado en el tipo
+  let typeStyle: any = {};
+  if (type === 'title') {
+    typeStyle = {
+      fontSize: moderateScale(32),
+      fontWeight: 'bold',
+      lineHeight: verticalScale(32),
+    };
+  } else if (type === 'defaultSemiBold') {
+    typeStyle = {
+      fontSize: moderateScale(16),
+      lineHeight: verticalScale(24),
+      fontWeight: '600',
+    };
+  } else if (type === 'subtitle') {
+    typeStyle = {
+      fontSize: moderateScale(20),
+      fontWeight: 'bold',
+      lineHeight: verticalScale(24),
+    };
+  } else if (type === 'link') {
+    typeStyle = {
+      lineHeight: verticalScale(30),
+      fontSize: moderateScale(16),
+      color: '#FF3A5E', // Color de acento rojo preferido por el usuario
+    };
+  } else {
+    typeStyle = {
+      fontSize: moderateScale(16),
+      lineHeight: verticalScale(24),
+    };
+  }
+
   return (
     <Text
       style={[
         { color },
-        type === 'default' ? styles.default : undefined,
-        type === 'title' ? styles.title : undefined,
-        type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
-        type === 'subtitle' ? styles.subtitle : undefined,
-        type === 'link' ? styles.link : undefined,
+        typeStyle,
         style,
       ]}
       {...rest}
@@ -33,28 +64,5 @@ export function ThemedText({
   );
 }
 
-const styles = StyleSheet.create({
-  default: {
-    fontSize: 16,
-    lineHeight: 24,
-  },
-  defaultSemiBold: {
-    fontSize: 16,
-    lineHeight: 24,
-    fontWeight: '600',
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    lineHeight: 32,
-  },
-  subtitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  link: {
-    lineHeight: 30,
-    fontSize: 16,
-    color: '#0a7ea4',
-  },
-});
+// Los estilos se han movido directamente al componente como estilos inline
+// para evitar problemas de TypeScript y mejorar la responsividad

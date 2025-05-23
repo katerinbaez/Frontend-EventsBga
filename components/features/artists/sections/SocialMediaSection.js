@@ -13,7 +13,7 @@ const SocialMediaSection = ({ socialMedia = {} }) => {
         Object.entries(socialMedia).map(([network, url]) => (
           url && url.trim() !== '' && (
             <TouchableOpacity key={network} style={styles.socialLink}>
-              <Ionicons name={`logo-${network}`} size={24} color={ACCENT_COLOR} />
+              <Ionicons name={`logo-${network}`} size={24} color="#FFFFFF" />
               <Text style={styles.socialText}>{url}</Text>
             </TouchableOpacity>
           )

@@ -11,7 +11,7 @@ const FormButtons = ({ onSubmit, onCancel, isSubmitting }) => {
         disabled={isSubmitting}
       >
         <Text style={styles.buttonText}>
-          {isSubmitting ? 'Enviando...' : 'Enviar Solicitud'}
+          {isSubmitting ? 'Enviando...' : 'Enviar'}
         </Text>
       </TouchableOpacity>
 

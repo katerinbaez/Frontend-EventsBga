@@ -144,8 +144,8 @@ const UserManagement = () => {
     return (
       <View style={styles.card}>
         <View style={styles.userInfo}>
-          <Text style={styles.userName}>{item.name}</Text>
-          <Text style={styles.userEmail}>{item.email}</Text>
+          <Text style={styles.userName} numberOfLines={1} ellipsizeMode="tail">{item.name || 'Usuario'}</Text>
+          <Text style={styles.userEmail} numberOfLines={1} ellipsizeMode="tail">{item.email}</Text>
           <Text style={[styles.userRole, { backgroundColor: roleBgColor }]}>{roleDisplay}</Text>
         </View>
         <View style={styles.userActions}>
@@ -211,7 +211,7 @@ const UserManagement = () => {
               <Text style={styles.loadingText}>Cargando...</Text>
             </View>
           ) : (
-            <Ionicons name="refresh" size={24} color="#FF3A5E" />
+            <Ionicons name="refresh" size={24} color="#FFFFFF" />
           )}
         </TouchableOpacity>
       </View>

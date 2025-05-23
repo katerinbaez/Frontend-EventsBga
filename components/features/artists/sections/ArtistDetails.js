@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, Linking, ActivityIndicator } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Image, Linking, ActivityIndicator, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from '../../../../styles/ArtistProfilesModalStyles';
 
@@ -215,16 +215,96 @@ const TrabajoItem = ({ trabajo, index, artistId, expandedTrabajoId, setExpandedT
             </View>
           )}
           
-          {/* Mostrar la imagen si existe (considerando diferentes formatos de nombre) */}
-          {(trabajo.imageUrl || trabajo.ImageUrl || trabajo.imagenUrl || trabajo.imagen) && (
-            <View style={styles.portfolioImageContainer}>
-              <Image 
-                source={{ uri: trabajo.imageUrl || trabajo.ImageUrl || trabajo.imagenUrl || trabajo.imagen }} 
-                style={styles.portfolioImage}
-                resizeMode="cover"
-              />
-            </View>
-          )}
+          {/* Carrusel de imágenes */}
+          {(() => {
+            // Obtener todas las imágenes del trabajo
+            const images = [];
+            
+            // Verificar si hay una imagen principal
+            const mainImage = trabajo.imageUrl || trabajo.ImageUrl || trabajo.imagenUrl || trabajo.imagen;
+            if (mainImage) images.push(mainImage);
+            
+            // Verificar si hay un array de imágenes
+            if (trabajo.images && Array.isArray(trabajo.images) && trabajo.images.length > 0) {
+              // Añadir todas las imágenes del array que no sean la principal
+              trabajo.images.forEach(img => {
+                if (img && img !== mainImage) images.push(img);
+              });
+            }
+            
+            // Si no hay imágenes, no mostrar nada
+            if (images.length === 0) return null;
+            
+            // Si solo hay una imagen, mostrarla sin carrusel
+            if (images.length === 1) {
+              return (
+                <View style={styles.portfolioImageContainer}>
+                  <Image 
+                    source={{ uri: images[0] }} 
+                    style={styles.portfolioImage}
+                    resizeMode="cover"
+                  />
+                </View>
+              );
+            }
+            
+            // Referencia para el ScrollView
+            const scrollViewRef = React.useRef(null);
+            const [currentImageIndex, setCurrentImageIndex] = useState(0);
+            
+            // Función para manejar el cambio de imagen
+            const handleScroll = (event) => {
+              const contentOffsetX = event.nativeEvent.contentOffset.x;
+              const width = event.nativeEvent.layoutMeasurement.width;
+              const newIndex = Math.round(contentOffsetX / width);
+              
+              if (newIndex !== currentImageIndex) {
+                setCurrentImageIndex(newIndex);
+              }
+            };
+            
+            // Calcular el ancho exacto para cada imagen (ancho de la pantalla menos el padding del modal)
+            const screenWidth = Dimensions.get('window').width;
+            // Obtener el ancho del contenedor padre (normalmente es el ancho de la pantalla menos el padding del modal)
+            // Usamos un valor fijo para asegurar que las imágenes se alineen correctamente con el deslizamiento
+            const imageWidth = screenWidth - 40; // Ajusta este valor según sea necesario
+            
+            return (
+              <View style={styles.carouselContainer}>
+                <ScrollView
+                  ref={scrollViewRef}
+                  horizontal
+                  pagingEnabled
+                  showsHorizontalScrollIndicator={false}
+                  onMomentumScrollEnd={handleScroll}
+                  snapToInterval={imageWidth} // Hace que el scroll se detenga exactamente en cada imagen
+                  decelerationRate="fast" // Hace que el deslizamiento sea más rápido y preciso
+                  contentContainerStyle={{ flexGrow: 0 }}
+                >
+                  {images.map((imageUri, index) => (
+                    <View key={index} style={[styles.portfolioImageContainer, { width: imageWidth }]}>
+                      {imageUri ? (
+                        <Image 
+                          source={{ uri: imageUri }} 
+                          style={styles.portfolioImage}
+                          resizeMode="cover"
+                          onError={(e) => console.error('Error cargando imagen:', e.nativeEvent.error)}
+                        />
+                      ) : (
+                        <View style={[styles.portfolioImage, { justifyContent: 'center', alignItems: 'center' }]}>
+                          <Ionicons name="image-outline" size={50} color="#666" />
+                          <Text style={{ color: '#666', marginTop: 10 }}>No se pudo cargar la imagen</Text>
+                        </View>
+                      )}
+                    </View>
+                  ))}
+                </ScrollView>
+                <Text style={styles.imageCounter}>
+                  {currentImageIndex + 1}/{images.length}
+                </Text>
+              </View>
+            );
+          })()}
           
           {/* Mostrar campos seleccionados del trabajo */}
           {Object.entries(trabajo).map(([key, value]) => {

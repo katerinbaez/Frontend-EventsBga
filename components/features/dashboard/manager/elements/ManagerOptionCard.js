@@ -26,7 +26,7 @@ const ManagerOptionCard = ({ title, description, iconName, iconColor, onPress, r
       style={styles.optionCard}
       onPress={handlePress}
     >
-      <Ionicons name={iconName} size={40} color={iconColor || '#00EA01'} />
+      <Ionicons name={iconName} size={40} color="#FFFFFF" />
       <Text style={styles.optionTitle}>{title}</Text>
       <Text style={styles.optionDescription}>{description}</Text>
     </TouchableOpacity>

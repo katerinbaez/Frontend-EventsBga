@@ -1,4 +1,4 @@
-// Función para verificar si un evento ha terminado (hora exacta vencida, incluso en la fecha actual)
+// Función para verificar si un evento ha terminado (exactamente 1 hora después de la hora de inicio)
 export const isEventExpired = (event) => {
     const now = new Date(); // Hora actual
     console.log(`Verificando evento: ${event.titulo || 'Sin título'}, ID: ${event.id}`);
@@ -10,91 +10,46 @@ export const isEventExpired = (event) => {
     const currentTotalMinutes = currentHours * 60 + currentMinutes;
     console.log(`Hora actual en minutos desde medianoche: ${currentTotalMinutes}`);
     
-    // Si el evento tiene fecha de fin específica
-    if (event.fechaFin) {
-      const fechaFinDate = new Date(event.fechaFin);
-      console.log(`Fecha fin del evento: ${fechaFinDate.toLocaleString()}`);
+    // Obtener la fecha del evento (puede estar en diferentes propiedades)
+    const eventDate = event.fechaInicio || event.fechaProgramada || event.fecha;
+    
+    if (eventDate) {
+      const eventDateTime = new Date(eventDate);
+      console.log(`Fecha y hora del evento: ${eventDateTime.toLocaleString()}`);
       
       // Si la fecha es anterior a hoy, el evento ya terminó
-      if (fechaFinDate.setHours(0,0,0,0) < now.setHours(0,0,0,0)) {
+      const nowDateOnly = new Date(now);
+      const eventDateOnly = new Date(eventDateTime);
+      nowDateOnly.setHours(0, 0, 0, 0);
+      eventDateOnly.setHours(0, 0, 0, 0);
+      
+      if (eventDateOnly < nowDateOnly) {
         console.log('Evento terminado: fecha anterior a hoy');
         return true;
       }
       
-      // Si la fecha es hoy, verificar si la hora ya pasó
-      if (fechaFinDate.setHours(0,0,0,0) === now.setHours(0,0,0,0)) {
-        const finHours = fechaFinDate.getHours();
-        const finMinutes = fechaFinDate.getMinutes();
-        const finTotalMinutes = finHours * 60 + finMinutes;
+      // Si la fecha es hoy, verificar si ha pasado exactamente 1 hora desde el inicio
+      if (eventDateOnly.getTime() === nowDateOnly.getTime()) {
+        const eventHours = eventDateTime.getHours();
+        const eventMinutes = eventDateTime.getMinutes();
+        const eventTotalMinutes = eventHours * 60 + eventMinutes;
         
-        console.log(`Hora fin en minutos: ${finTotalMinutes}, Hora actual en minutos: ${currentTotalMinutes}`);
-        return currentTotalMinutes >= finTotalMinutes;
-      }
-      
-      return false; // La fecha es futura
-    }
-    
-    // Si el evento tiene fecha y hora de inicio
-    if (event.fechaInicio) {
-      const fechaInicioDate = new Date(event.fechaInicio);
-      console.log(`Fecha inicio del evento: ${fechaInicioDate.toLocaleString()}`);
-      
-      // Calcular la hora de fin (1 hora después si no hay duración especificada)
-      const duracionMinutos = event.duracion || 60; // 1 hora por defecto
-      
-      // Si la fecha es anterior a hoy, el evento ya terminó
-      if (fechaInicioDate.setHours(0,0,0,0) < now.setHours(0,0,0,0)) {
-        console.log('Evento terminado: fecha de inicio anterior a hoy');
-        return true;
-      }
-      
-      // Si la fecha es hoy, verificar si la hora de fin ya pasó
-      if (fechaInicioDate.setHours(0,0,0,0) === now.setHours(0,0,0,0)) {
-        const inicioHours = fechaInicioDate.getHours();
-        const inicioMinutes = fechaInicioDate.getMinutes();
-        const inicioTotalMinutes = inicioHours * 60 + inicioMinutes;
-        const finTotalMinutes = inicioTotalMinutes + duracionMinutos;
+        // Calcular la hora de fin (exactamente 1 hora después del inicio)
+        const finTotalMinutes = eventTotalMinutes + 60; // 1 hora = 60 minutos
         
-        console.log(`Hora inicio en minutos: ${inicioTotalMinutes}`);
-        console.log(`Duración en minutos: ${duracionMinutos}`);
+        console.log(`Hora inicio en minutos: ${eventTotalMinutes}`);
         console.log(`Hora fin en minutos: ${finTotalMinutes}`);
         console.log(`Hora actual en minutos: ${currentTotalMinutes}`);
         
+        // El evento ha terminado si la hora actual es mayor o igual a la hora de inicio + 1 hora
         return currentTotalMinutes >= finTotalMinutes;
       }
       
-      return false; // La fecha es futura
+      // Si la fecha es futura, el evento no ha terminado
+      return false;
     }
     
-    // Si hay fecha programada (para solicitudes de eventos)
-    if (event.fechaProgramada) {
-      const fechaProgramadaDate = new Date(event.fechaProgramada);
-      console.log(`Fecha programada del evento: ${fechaProgramadaDate.toLocaleString()}`);
-      
-      // Si la fecha es anterior a hoy, el evento ya terminó
-      if (fechaProgramadaDate.setHours(0,0,0,0) < now.setHours(0,0,0,0)) {
-        console.log('Evento terminado: fecha programada anterior a hoy');
-        return true;
-      }
-      
-      // Si la fecha es hoy, verificar si la hora de fin (1 hora después) ya pasó
-      if (fechaProgramadaDate.setHours(0,0,0,0) === now.setHours(0,0,0,0)) {
-        const programadaHours = fechaProgramadaDate.getHours();
-        const programadaMinutes = fechaProgramadaDate.getMinutes();
-        const programadaTotalMinutes = programadaHours * 60 + programadaMinutes;
-        const finTotalMinutes = programadaTotalMinutes + 60; // 1 hora por defecto
-        
-        console.log(`Hora programada en minutos: ${programadaTotalMinutes}`);
-        console.log(`Hora fin en minutos: ${finTotalMinutes}`);
-        console.log(`Hora actual en minutos: ${currentTotalMinutes}`);
-        
-        return currentTotalMinutes >= finTotalMinutes;
-      }
-      
-      return false; // La fecha es futura
-    }
-    
-    // Si no hay información suficiente sobre la hora de finalización, asumimos que no ha terminado
+    // Si no hay información suficiente sobre la hora de inicio, asumimos que no ha terminado
     console.log('No hay información suficiente de fecha/hora. Asumiendo que no ha terminado.');
     return false;
   };

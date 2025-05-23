@@ -104,7 +104,9 @@ export const loadAvailability = async (managerId, selectedDate) => {
             }
           }
         } catch (generalError) {
-          console.error('Error al cargar disponibilidad general:', generalError);
+          // Silenciar el error de disponibilidad general para evitar que se muestre en pantalla
+          console.warn('No se pudo cargar la disponibilidad general');
+          // No añadir configuración por defecto, simplemente continuar sin mostrar nada
         }
       }
     }

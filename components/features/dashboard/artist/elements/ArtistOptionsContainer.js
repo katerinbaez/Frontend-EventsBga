@@ -10,7 +10,7 @@ const ArtistOptionsContainer = ({ navigation, onOpenSpaceSearch, onOpenEventsMod
         title="Mi Perfil"
         description="Editar perfil artístico"
         iconName="person"
-        iconColor="#4A90E2"
+        iconColor="#FFFFFF"
         requiresNavigation={true}
         navigationTarget="ArtistProfile"
         navigation={navigation}
@@ -20,7 +20,7 @@ const ArtistOptionsContainer = ({ navigation, onOpenSpaceSearch, onOpenEventsMod
         title="Calendario"
         description="Ver eventos programados"
         iconName="calendar"
-        iconColor="#4A90E2"
+        iconColor="#FFFFFF"
         requiresNavigation={true}
         navigationTarget="Calendar"
         navigation={navigation}
@@ -30,7 +30,7 @@ const ArtistOptionsContainer = ({ navigation, onOpenSpaceSearch, onOpenEventsMod
         title="Espacios"
         description="Buscar espacios disponibles"
         iconName="business"
-        iconColor="#FF3A5E"
+        iconColor="#FFFFFF"
         onPress={onOpenSpaceSearch}
       />
 
@@ -38,7 +38,7 @@ const ArtistOptionsContainer = ({ navigation, onOpenSpaceSearch, onOpenEventsMod
         title="Eventos Disponibles"
         description="Ver eventos para registrarse"
         iconName="calendar-outline"
-        iconColor="#FF3A5E"
+        iconColor="#FFFFFF"
         onPress={onOpenEventsModal}
       />
 
@@ -46,7 +46,7 @@ const ArtistOptionsContainer = ({ navigation, onOpenSpaceSearch, onOpenEventsMod
         title="Mis Solicitudes"
         description="Ver estado de solicitudes"
         iconName="document-text-outline"
-        iconColor="#FF3A5E"
+        iconColor="#FFFFFF"
         onPress={onOpenRequestsHistory}
       />
 
@@ -54,7 +54,7 @@ const ArtistOptionsContainer = ({ navigation, onOpenSpaceSearch, onOpenEventsMod
         title="Portafolio"
         description="Mostrar mi trabajo"
         iconName="images"
-        iconColor="#4A90E2"
+        iconColor="#FFFFFF"
         requiresNavigation={true}
         navigationTarget="ArtistPortfolio"
         navigation={navigation}

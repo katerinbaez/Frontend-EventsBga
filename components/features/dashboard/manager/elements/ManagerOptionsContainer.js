@@ -80,7 +80,7 @@ const ManagerOptionsContainer = ({ navigation, user, managerData, onOpenRequests
       {/* Cuadro de ancho completo para la última opción */}
       <View style={{ width: '100%', marginBottom: 20 }}>
         <View style={[styles.optionCard, { width: '100%' }]}>
-          <Ionicons name="people" size={32} color="#4A90E2" />
+          <Ionicons name="people" size={32} color="#FFFFFF" />
           <Text style={styles.optionTitle}>Asistentes Confirmados</Text>
           <Text style={styles.optionDescription}>Ver asistentes a eventos</Text>
           <TouchableOpacity 

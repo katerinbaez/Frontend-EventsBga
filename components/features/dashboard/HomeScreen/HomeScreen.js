@@ -11,7 +11,7 @@ import { BACKEND_URL, AUTH0_DOMAIN, AUTH0_CLIENT_ID, REDIRECT_URI } from '../../
 
 // Datos de muestra para la sección de conexión cultural
 const culturalData = {
-  title: "El Arte y la Cultura en Bucaramanga",
+  title: "Bucaramanga",
   subtitle: "Donde los artistas y espacios culturales se encuentran",
   description: "Descubre cómo los artistas locales y los espacios culturales trabajan juntos para crear una escena artística vibrante en nuestra ciudad.",
   backgroundImage: "https://images.unsplash.com/photo-1608501078713-8e445a709b39?q=80&w=2070",
@@ -117,7 +117,7 @@ const HomeScreen = ({ navigation }) => {
                     <View style={styles.buttonContainer}>
                         <AdminAccess />
                         <TouchableOpacity 
-                            style={[styles.headerButton, { minWidth: 120 }]}
+                            style={[styles.headerButton, styles.loginButton]}
                             onPress={handleLoginPress}
                             disabled={loading}
                         >
@@ -138,18 +138,25 @@ const HomeScreen = ({ navigation }) => {
                 <ImageBackground 
                     source={{ uri: culturalData.backgroundImage }}
                     style={styles.culturalHeroBackground}
-                    imageStyle={{ opacity: 0.6 }}
+                    imageStyle={styles.culturalHeroBackgroundImage}
+                    resizeMode="cover"
                 >
                     <View style={styles.culturalHeroContent}>
-                        <Text style={styles.culturalHeroTitle}>{culturalData.title}</Text>
-                        <Text style={styles.culturalHeroSubtitle}>{culturalData.subtitle}</Text>
-                        <Text style={styles.culturalHeroDescription}>{culturalData.description}</Text>
+                        <View>
+                            <Text style={styles.culturalHeroTitle}>{culturalData.title}</Text>
+                            <Text style={styles.culturalHeroSubtitle}>{culturalData.subtitle}</Text>
+                            <Text style={styles.culturalHeroDescription}>{culturalData.description}</Text>
+                        </View>
                         
                         <View style={styles.statsContainer}>
                             {culturalData.stats.map((stat, index) => (
                                 <View key={index} style={styles.statItem}>
                                     <View style={[styles.statIconContainer, { backgroundColor: stat.color }]}>
-                                        <Ionicons name={stat.icon} size={24} color="#FFFFFF" />
+                                        <Ionicons 
+                                            name={stat.icon} 
+                                            size={styles.iconLarge.fontSize} 
+                                            color="#FFFFFF" 
+                                        />
                                     </View>
                                     <Text style={styles.statCount}>{stat.count}</Text>
                                     <Text style={styles.statLabel}>{stat.label}</Text>
@@ -171,7 +178,7 @@ const HomeScreen = ({ navigation }) => {
                         />
                         <View style={styles.featuredOverlay}>
                             <View style={styles.featuredIconContainer}>
-                                <FontAwesome5 name="paint-brush" size={20} color="#FFFFFF" />
+                                <FontAwesome5 name="paint-brush" size={styles.iconMedium.fontSize} color="#FFFFFF" />
                             </View>
                             <Text style={styles.featuredTitle}>Artista</Text>
                             <Text style={styles.featuredSubtitle}>Expresión Cultural</Text>
@@ -181,7 +188,7 @@ const HomeScreen = ({ navigation }) => {
                     <View style={styles.connectionContainer}>
                         <View style={styles.connectionLine} />
                         <View style={styles.connectionCircle}>
-                            <Ionicons name="link" size={24} color="#FFFFFF" />
+                            <Ionicons name="link" size={styles.iconLarge.fontSize} color="#FFFFFF" />
                         </View>
                         <View style={styles.connectionLine} />
                     </View>
@@ -193,7 +200,7 @@ const HomeScreen = ({ navigation }) => {
                         />
                         <View style={styles.featuredOverlay}>
                             <View style={[styles.featuredIconContainer, { backgroundColor: '#3A9BFF' }]}>
-                                <Ionicons name="location" size={20} color="#FFFFFF" />
+                                <Ionicons name="location" size={styles.iconMedium.fontSize} color="#FFFFFF" />
                             </View>
                             <Text style={styles.featuredTitle}>Espacio Cultural</Text>
                             <Text style={styles.featuredSubtitle}>Escenario Artístico</Text>
@@ -204,7 +211,7 @@ const HomeScreen = ({ navigation }) => {
                 
                 <View style={styles.exploreButton}>
                     <Text style={styles.exploreButtonText}>Conexión Artística</Text>
-                    <Ionicons name="heart" size={20} color="#FFFFFF" />
+                    <Ionicons name="heart" size={styles.iconMedium.fontSize} color="#FFFFFF" />
                 </View>
             </View>
 
@@ -233,7 +240,7 @@ const HomeScreen = ({ navigation }) => {
                         ) : (
                             <>
                                 <Text style={styles.loginBannerButtonText}>Iniciar Sesión</Text>
-                                <Ionicons name="log-in-outline" size={18} color="#FFFFFF" />
+                                <Ionicons name="log-in-outline" size={styles.iconSmall.fontSize} color="#FFFFFF" />
                             </>
                         )}
                     </TouchableOpacity>

@@ -166,7 +166,54 @@ const ArtistProfilesModal = ({ visible = true, onClose, initialSelectedArtistId 
                 };
               }
             }
-            return trabajo;
+            
+            // Procesar las imágenes del trabajo
+            const processedTrabajo = {...trabajo};
+            
+            // Asegurarse de que la imagen principal tenga una URL absoluta
+            if (processedTrabajo.imageUrl && !processedTrabajo.imageUrl.startsWith('http')) {
+              processedTrabajo.imageUrl = `${BACKEND_URL}${processedTrabajo.imageUrl}`;
+            }
+            
+            // Asegurarse de que el campo images exista y sea un array
+            if (!processedTrabajo.images) {
+              processedTrabajo.images = [];
+              
+              // Si hay una imagen principal, añadirla al array de imágenes
+              if (processedTrabajo.imageUrl) {
+                processedTrabajo.images.push(processedTrabajo.imageUrl);
+              }
+              // Si hay una imagen en otro formato de nombre, añadirla también
+              if (processedTrabajo.ImageUrl && !processedTrabajo.images.includes(processedTrabajo.ImageUrl)) {
+                processedTrabajo.images.push(processedTrabajo.ImageUrl);
+              }
+              if (processedTrabajo.imagenUrl && !processedTrabajo.images.includes(processedTrabajo.imagenUrl)) {
+                processedTrabajo.images.push(processedTrabajo.imagenUrl);
+              }
+              if (processedTrabajo.imagen && !processedTrabajo.images.includes(processedTrabajo.imagen)) {
+                processedTrabajo.images.push(processedTrabajo.imagen);
+              }
+            } else if (typeof processedTrabajo.images === 'string') {
+              // Si images es un string, intentar parsearlo como JSON
+              try {
+                processedTrabajo.images = JSON.parse(processedTrabajo.images);
+              } catch (e) {
+                console.error(`Error al parsear images de trabajo ${index}:`, e);
+                processedTrabajo.images = [processedTrabajo.images]; // Usar el string como única imagen
+              }
+            }
+            
+            // Asegurarse de que todas las imágenes tengan URLs absolutas
+            if (Array.isArray(processedTrabajo.images)) {
+              processedTrabajo.images = processedTrabajo.images.map(img => {
+                if (typeof img === 'string' && !img.startsWith('http')) {
+                  return `${BACKEND_URL}${img}`;
+                }
+                return img;
+              });
+            }
+            
+            return processedTrabajo;
           });
         }
         

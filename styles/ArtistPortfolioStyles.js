@@ -1,4 +1,6 @@
 import { StyleSheet, StatusBar, Platform } from 'react-native';
+import ResponsiveStyleSheet from '../utils/ResponsiveStyleSheet';
+import { moderateScale, verticalScale, horizontalScale } from '../utils/ResponsiveUtils';
 
 // Colores de acento del tema
 const ACCENT_COLOR = '#FF3A5E';
@@ -10,7 +12,7 @@ const LIGHT_TEXT = '#FFFFFF';
 // Exportar los colores para que puedan ser importados por los componentes
 export { ACCENT_COLOR, DARK_BG, LIGHT_TEXT };
 
-export const styles = StyleSheet.create({
+export const styles = ResponsiveStyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: DARK_BG,
@@ -21,58 +23,58 @@ export const styles = StyleSheet.create({
   },
 
   header: {
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight + 10 : 15,
-    paddingHorizontal: 20,
-    paddingBottom: 15,
-    backgroundColor: ACCENT_COLOR,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight + verticalScale(10) : verticalScale(15),
+    paddingHorizontal: horizontalScale(20),
+    paddingBottom: verticalScale(15),
+    backgroundColor: ACCENT_COLOR, // Color de acento rojo preferido por el usuario
     borderColor: '#ffffff',
-    borderWidth:1,
+    borderWidth: 1,
     borderBottomLeftRadius: 1,
     borderBottomRightRadius: 1,
     marginHorizontal: 0,
-    marginBottom: 20,
+    marginBottom: verticalScale(20),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: moderateScale(24),
     fontWeight: 'bold',
     color: LIGHT_TEXT,
   },
   backButton: {
-    padding: 10,
+    padding: moderateScale(10),
     backgroundColor: 'rgba(0, 0, 0, 0.2)',
-    borderRadius: 50,
-    width: 44,
-    height: 44,
+    borderRadius: moderateScale(50),
+    width: moderateScale(44),
+    height: moderateScale(44),
     alignItems: 'center',
     justifyContent: 'center',
   },
   contentContainer: {
-    padding: 15,
+    padding: moderateScale(15),
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: moderateScale(20),
     fontWeight: 'bold',
     color: LIGHT_TEXT,
-    marginBottom: 15,
+    marginBottom: verticalScale(15),
   },
   portfolioGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    padding: 10,
+    padding: moderateScale(10),
   },
   portfolioItem: {
     width: '48%',
     marginHorizontal: '1%',
-    marginVertical: 10,
-    borderRadius: 12,
+    marginVertical: verticalScale(10),
+    borderRadius: moderateScale(12),
     overflow: 'hidden',
     backgroundColor: CARD_BG,
     elevation: 3,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: verticalScale(2) },
     shadowOpacity: 0.3,
     shadowRadius: 4,
     borderWidth: 3,
@@ -81,7 +83,7 @@ export const styles = StyleSheet.create({
   },
   itemImage: {
     width: '100%',
-    height: 150,
+    height: verticalScale(150),
   },
   itemInfo: {
     padding: 12,

@@ -39,6 +39,7 @@ const CategorySelector = ({
         <TextInput
           style={styles.input}
           placeholder="Especifica la categoría"
+          placeholderTextColor="#FFF"
           value={customCategory}
           onChangeText={onCustomCategoryChange}
         />

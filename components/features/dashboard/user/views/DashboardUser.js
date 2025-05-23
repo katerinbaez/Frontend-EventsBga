@@ -334,7 +334,7 @@ const DashboardUser = () => {
               </View>
             </View>
             <TouchableOpacity onPress={() => setShowNotifications(false)} style={styles.closeButton}>
-              <Ionicons name="close" size={24} color="#FF3A5E" />
+              <Ionicons name="close" size={24} color="#FFFFFF" />
             </TouchableOpacity>
           </View>
 

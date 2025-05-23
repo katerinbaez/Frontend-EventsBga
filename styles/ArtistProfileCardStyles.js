@@ -1,7 +1,8 @@
-import { StyleSheet } from 'react-native';
+import ResponsiveStyleSheet from '../utils/ResponsiveStyleSheet';
+import { moderateScale, verticalScale, horizontalScale } from '../utils/ResponsiveUtils';
 
 // Colores
-export const ACCENT_COLOR = '#4A90E2';
+export const ACCENT_COLOR = '#FF3A5E'; // Color de acento rojo preferido por el usuario
 export const BACKGROUND_COLOR = '#1A1A1A';
 export const TEXT_COLOR = '#FFF';
 export const SECONDARY_TEXT_COLOR = '#AAA';
@@ -9,40 +10,40 @@ export const TAG_BACKGROUND = '#333';
 export const TAG_TEXT_COLOR = '#CCC';
 export const ERROR_COLOR = '#FF6B6B';
 
-export const styles = StyleSheet.create({
+export const styles = ResponsiveStyleSheet.create({
   loadingContainer: {
-    height: 84,
+    height: verticalScale(84),
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: BACKGROUND_COLOR,
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 10,
+    borderRadius: moderateScale(10),
+    padding: moderateScale(12),
+    marginBottom: verticalScale(10),
   },
   favoriteItem: {
     flexDirection: 'row',
     backgroundColor: BACKGROUND_COLOR,
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 10,
+    borderRadius: moderateScale(10),
+    padding: moderateScale(12),
+    marginBottom: verticalScale(10),
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: verticalScale(2) },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
   },
   itemImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    marginRight: 12,
+    width: moderateScale(60),
+    height: moderateScale(60),
+    borderRadius: moderateScale(30),
+    marginRight: horizontalScale(12),
   },
   iconContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    marginRight: 12,
+    width: moderateScale(60),
+    height: moderateScale(60),
+    borderRadius: moderateScale(30),
+    marginRight: horizontalScale(12),
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: ACCENT_COLOR,
@@ -52,15 +53,15 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   itemTitle: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     fontWeight: 'bold',
     color: TEXT_COLOR,
-    marginBottom: 4,
+    marginBottom: verticalScale(4),
   },
   itemDescription: {
-    fontSize: 14,
+    fontSize: moderateScale(14),
     color: SECONDARY_TEXT_COLOR,
-    marginBottom: 6,
+    marginBottom: verticalScale(6),
   },
   tagsContainer: {
     flexDirection: 'row',
@@ -68,24 +69,24 @@ export const styles = StyleSheet.create({
   },
   tag: {
     backgroundColor: TAG_BACKGROUND,
-    borderRadius: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    marginRight: 5,
-    marginBottom: 5,
+    borderRadius: moderateScale(12),
+    paddingHorizontal: horizontalScale(8),
+    paddingVertical: verticalScale(2),
+    marginRight: horizontalScale(5),
+    marginBottom: verticalScale(5),
   },
   tagText: {
     color: TAG_TEXT_COLOR,
-    fontSize: 10,
+    fontSize: moderateScale(10),
   },
   moreTag: {
     color: '#999',
-    fontSize: 10,
+    fontSize: moderateScale(10),
     alignSelf: 'center',
-    marginLeft: 5,
+    marginLeft: horizontalScale(5),
   },
   removeButton: {
-    padding: 8,
+    padding: moderateScale(8),
   },
 });
 

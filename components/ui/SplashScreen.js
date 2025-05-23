@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Text, Dimensions, Animated, Image } from 'react-native';
+import { View, Text, Dimensions, Animated, Image } from 'react-native';
+import ResponsiveStyleSheet from '../../utils/ResponsiveStyleSheet';
+import { moderateScale, verticalScale, horizontalScale } from '../../utils/ResponsiveUtils';
 import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -138,7 +140,7 @@ const SplashScreen = ({ onFinish }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = ResponsiveStyleSheet.create({
   container: {
     flex: 1,
     width,
@@ -150,94 +152,94 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: width * 0.85,
-    maxWidth: 400,
+    maxWidth: moderateScale(400),
   },
   blurContainer: {
-    borderRadius: 20,
+    borderRadius: moderateScale(20),
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: 'rgba(255, 58, 94, 0.3)',
     shadowColor: '#FF3A5E',
-    shadowOffset: { width: 0, height: 8 },
+    shadowOffset: { width: 0, height: verticalScale(8) },
     shadowOpacity: 0.3,
-    shadowRadius: 12,
+    shadowRadius: moderateScale(12),
     elevation: 10,
   },
   innerContainer: {
-    padding: 30,
+    padding: moderateScale(30),
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
   iconContainer: {
-    width: 200,
-    height: 200,
+    width: moderateScale(200),
+    height: moderateScale(200),
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: verticalScale(10),
     position: 'relative',
   },
   iconWrapper: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
+    width: moderateScale(140),
+    height: moderateScale(140),
+    borderRadius: moderateScale(70),
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#FF3A5E',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: verticalScale(4) },
     shadowOpacity: 0.5,
-    shadowRadius: 8,
+    shadowRadius: moderateScale(8),
     elevation: 10,
   },
   iconBackground: {
     width: '100%',
     height: '100%',
-    borderRadius: 70,
+    borderRadius: moderateScale(70),
     justifyContent: 'center',
     alignItems: 'center',
   },
   iconOverlay: {
     position: 'absolute',
-    bottom: 20,
-    right: 30,
+    bottom: verticalScale(20),
+    right: horizontalScale(30),
     backgroundColor: '#3A7AFF',
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: moderateScale(60),
+    height: moderateScale(60),
+    borderRadius: moderateScale(30),
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 3,
     borderColor: '#FFFFFF',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: verticalScale(2) },
     shadowOpacity: 0.3,
-    shadowRadius: 4,
+    shadowRadius: moderateScale(4),
     elevation: 5,
   },
   overlayIcon: {
-    marginLeft: 2,
+    marginLeft: horizontalScale(2),
   },
   divider: {
-    height: 2,
+    height: verticalScale(2),
     width: '80%',
     backgroundColor: '#FF3A5E',
-    marginTop: 15,
-    marginBottom: 15,
+    marginTop: verticalScale(15),
+    marginBottom: verticalScale(15),
     opacity: 0.7,
   },
   title: {
-    fontSize: 36,
+    fontSize: moderateScale(35),
     fontWeight: 'bold',
     color: '#FFFFFF',
-    textShadowColor: 'rgba(255, 58, 94, 0.7)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 10,
+    textShadowColor: 'rgba(255, 255, 255, 0.8)',
+    textShadowOffset: { width: 0, height: verticalScale(2) },
+    textShadowRadius: moderateScale(10),
     letterSpacing: 1.5,
   },
   subtitle: {
-    fontSize: 16,
-    color: '#FF3A5E',
-    marginTop: 8,
+    fontSize: moderateScale(16),
+    color: '#FFFFFF',
+    marginTop: verticalScale(8),
     fontWeight: '500',
     letterSpacing: 0.5,
     textAlign: 'center',
@@ -245,13 +247,13 @@ const styles = StyleSheet.create({
   loadingIndicator: {
     width: '100%',
     alignItems: 'center',
-    marginTop: 25,
+    marginTop: verticalScale(25),
   },
   loadingBar: {
     width: '100%',
-    height: 4,
+    height: verticalScale(4),
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 2,
+    borderRadius: moderateScale(2),
     overflow: 'hidden',
   },
   loadingProgress: {
@@ -260,8 +262,8 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     color: 'rgba(255, 255, 255, 0.7)',
-    fontSize: 12,
-    marginTop: 8,
+    fontSize: moderateScale(12),
+    marginTop: verticalScale(8),
     fontStyle: 'italic',
   },
 });

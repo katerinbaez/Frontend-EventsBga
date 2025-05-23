@@ -74,107 +74,32 @@ export const loadEventDetails = async (eventId, eventType) => {
 };
 
 /**
- * Verifica si un evento ha expirado (hora exacta vencida, incluso en la fecha actual)
+ * Verifica si un evento ha expirado (1 hora después de la hora de inicio)
  * @param {Object} event - Evento a verificar
  * @returns {boolean} - true si el evento ha expirado
  */
 export const isEventExpired = (event) => {
   if (!event) return false;
   
-  const now = new Date(); // Hora actual
+  const currentDate = new Date();
   
-  // Extraer la hora y minutos actuales
-  const currentHours = now.getHours();
-  const currentMinutes = now.getMinutes();
-  const currentTotalMinutes = currentHours * 60 + currentMinutes;
+  // Obtener la fecha del evento (puede estar en diferentes propiedades)
+  const eventDate = event.fechaInicio || event.fechaProgramada || event.fecha;
   
-  // Si el evento tiene fecha de fin específica
+  if (eventDate) {
+    const eventDateTime = new Date(eventDate);
+    
+    // Calcular la hora de fin (1 hora después del inicio)
+    const endDateTime = new Date(eventDateTime);
+    endDateTime.setHours(endDateTime.getHours() + 1);
+    
+    // El evento ha expirado si la hora actual es mayor que la hora de inicio + 1 hora
+    return currentDate > endDateTime;
+  }
+  
+  // Si hay fecha de finalización específica, la usamos
   if (event.fechaFin) {
-    const fechaFinDate = new Date(event.fechaFin);
-    
-    // Si la fecha es anterior a hoy, el evento ya terminó
-    if (new Date(fechaFinDate.setHours(0,0,0,0)) < new Date(now.setHours(0,0,0,0))) {
-      return true;
-    }
-    
-    // Reiniciar las fechas porque setHours modifica el objeto original
-    now.setHours(currentHours, currentMinutes);
-    fechaFinDate.setHours(0,0,0,0);
-    
-    // Si la fecha es hoy, verificar si la hora ya pasó
-    const fechaFinSoloFecha = new Date(fechaFinDate).setHours(0,0,0,0);
-    const nowSoloFecha = new Date(now).setHours(0,0,0,0);
-    
-    if (fechaFinSoloFecha === nowSoloFecha) {
-      const finHours = new Date(event.fechaFin).getHours();
-      const finMinutes = new Date(event.fechaFin).getMinutes();
-      const finTotalMinutes = finHours * 60 + finMinutes;
-      
-      return currentTotalMinutes >= finTotalMinutes;
-    }
-    
-    return false; // La fecha es futura
-  }
-  
-  // Si el evento tiene fecha de inicio
-  if (event.fechaInicio) {
-    const fechaInicioDate = new Date(event.fechaInicio);
-    
-    // Calcular la hora de fin (1 hora después si no hay duración especificada)
-    const duracionMinutos = event.duracion || 60; // 1 hora por defecto
-    
-    // Si la fecha es anterior a hoy, el evento ya terminó
-    if (new Date(fechaInicioDate.setHours(0,0,0,0)) < new Date(now.setHours(0,0,0,0))) {
-      return true;
-    }
-    
-    // Reiniciar las fechas porque setHours modifica el objeto original
-    now.setHours(currentHours, currentMinutes);
-    fechaInicioDate.setHours(0,0,0,0);
-    
-    // Si la fecha es hoy, verificar si la hora de fin ya pasó
-    const fechaInicioSoloFecha = new Date(fechaInicioDate).setHours(0,0,0,0);
-    const nowSoloFecha = new Date(now).setHours(0,0,0,0);
-    
-    if (fechaInicioSoloFecha === nowSoloFecha) {
-      const inicioHours = new Date(event.fechaInicio).getHours();
-      const inicioMinutes = new Date(event.fechaInicio).getMinutes();
-      const inicioTotalMinutes = inicioHours * 60 + inicioMinutes;
-      const finTotalMinutes = inicioTotalMinutes + duracionMinutos;
-      
-      return currentTotalMinutes >= finTotalMinutes;
-    }
-    
-    return false; // La fecha es futura
-  }
-  
-  // Si hay fecha programada (para solicitudes de eventos)
-  if (event.fechaProgramada) {
-    const fechaProgramadaDate = new Date(event.fechaProgramada);
-    
-    // Si la fecha es anterior a hoy, el evento ya terminó
-    if (new Date(fechaProgramadaDate.setHours(0,0,0,0)) < new Date(now.setHours(0,0,0,0))) {
-      return true;
-    }
-    
-    // Reiniciar las fechas porque setHours modifica el objeto original
-    now.setHours(currentHours, currentMinutes);
-    fechaProgramadaDate.setHours(0,0,0,0);
-    
-    // Si la fecha es hoy, verificar si la hora de fin (1 hora después) ya pasó
-    const fechaProgramadaSoloFecha = new Date(fechaProgramadaDate).setHours(0,0,0,0);
-    const nowSoloFecha = new Date(now).setHours(0,0,0,0);
-    
-    if (fechaProgramadaSoloFecha === nowSoloFecha) {
-      const programadaHours = new Date(event.fechaProgramada).getHours();
-      const programadaMinutes = new Date(event.fechaProgramada).getMinutes();
-      const programadaTotalMinutes = programadaHours * 60 + programadaMinutes;
-      const finTotalMinutes = programadaTotalMinutes + 60; // 1 hora por defecto
-      
-      return currentTotalMinutes >= finTotalMinutes;
-    }
-    
-    return false; // La fecha es futura
+    return new Date(event.fechaFin) < currentDate;
   }
   
   // Si no hay ninguna fecha, asumimos que no ha expirado

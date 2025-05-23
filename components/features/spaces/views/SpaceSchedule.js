@@ -1322,8 +1322,10 @@ const SpaceSchedule = ({ onClose }) => {
           return;
         } else {
           console.log('Error en la respuesta:', response.data);
-          if (attempt === retries && showNotifications) {
-            Alert.alert('Error', 'No se pudo cargar la disponibilidad desde el servidor');
+          // No mostrar alerta de error al usuario
+          if (attempt === retries) {
+            // Inicializar con disponibilidad por defecto
+            initializeDefaultAvailability();
           }
         }
       } catch (error) {
@@ -1341,21 +1343,12 @@ const SpaceSchedule = ({ onClose }) => {
         if (attempt === retries) {
           console.log('Detalles del error:', error.response ? error.response.data : 'No hay detalles adicionales');
           
-          if (showNotifications) {
-            Alert.alert(
-              'Error de conexión', 
-              'No se pudo conectar con el servidor. Verifica tu conexión a internet y que el servidor esté en funcionamiento.',
-              [
-                { text: 'OK' },
-                { 
-                  text: 'Reintentar', 
-                  onPress: () => loadAvailabilityWithRetry(3) 
-                }
-              ]
-            );
-          } else if (showNotifications) {
-            Alert.alert('Error', 'No se pudo cargar la disponibilidad. Usando configuración guardada localmente.');
-          }
+          // No mostrar alertas de error al usuario
+          // En su lugar, inicializar con disponibilidad por defecto
+          initializeDefaultAvailability();
+          
+          // Registrar el error en la consola para depuración
+          console.log('Error al cargar disponibilidad, usando configuración por defecto');
         } else {
           // Esperar antes del siguiente intento (tiempo exponencial)
           const waitTime = Math.pow(2, attempt) * 1000;
@@ -1958,7 +1951,7 @@ const SpaceSchedule = ({ onClose }) => {
                   )}
                   
                   <Text style={styles.modalLabel}>Selecciona una franja horaria:</Text>
-                  <ScrollView style={{ maxHeight: 300 }}>
+                  <ScrollView contentContainerStyle={styles.modalScrollViewContent} style={styles.modalScrollView}>
                     {timeSlots.map(slot => {
                       // Asegurarnos de que los IDs sean números para comparación consistente
                       const dayId = selectedDay ? parseInt(selectedDay.id, 10) : null;
@@ -2021,17 +2014,7 @@ const SpaceSchedule = ({ onClose }) => {
                     })}
                   </ScrollView>
                   
-                  {modalMode === 'block' && !useSpecificDate && (
-                    <View style={styles.switchContainer}>
-                      <Text style={styles.switchLabel}>¿Repetir semanalmente?</Text>
-                      <Switch
-                        value={isRecurring}
-                        onValueChange={setIsRecurring}
-                        trackColor={{ false: '#ccc', true: '#4A90E2' }}
-                        thumbColor={isRecurring ? '#FFFFFF' : '#f4f3f4'}
-                      />
-                    </View>
-                  )}
+
                 </View>
               )}
               
@@ -2133,38 +2116,51 @@ const SpaceSchedule = ({ onClose }) => {
                   <Text style={styles.availabilityText}>
                     Configure los horarios disponibles para {configSpecificDate ? 'esta fecha' : 'este día'}:
                   </Text>
-                  <ScrollView style={{ maxHeight: 350 }}>
-                    {timeSlots.map(slot => (
-                      <TouchableOpacity
-                        key={`avail-${slot.id}`}
-                        style={[
-                          styles.availabilityItem,
-                          availabilitySettings[selectedDay?.id]?.includes(slot.id) ? 
-                            styles.availableItem : styles.unavailableItem
-                        ]}
-                        onPress={() => updateAvailability(
-                          selectedDay, 
-                          slot, 
-                          !availabilitySettings[selectedDay?.id]?.includes(slot.id)
-                        )}
-                      >
-                        <Text style={styles.availabilityItemText}>
-                          {`${slot.hour}:00 ${slot.period}`}
-                        </Text>
-                        <Ionicons 
-                          name={availabilitySettings[selectedDay?.id]?.includes(slot.id) ? 
-                            "checkmark-circle" : "close-circle"} 
-                          size={24} 
-                          color={availabilitySettings[selectedDay?.id]?.includes(slot.id) ? 
-                            "#4CAF50" : "#FF5252"} 
-                        />
-                      </TouchableOpacity>
-                    ))}
-                    <View style={{ height: 80 }} />
-                  </ScrollView>
+                  <View style={styles.timeSlotContainer}>
+                    <ScrollView>
+                      {timeSlots.map(slot => (
+                        <TouchableOpacity
+                          key={`avail-${slot.id}`}
+                          style={[
+                            styles.availabilityItem,
+                            availabilitySettings[selectedDay?.id]?.includes(slot.id) ? 
+                              styles.availableItem : styles.unavailableItem
+                          ]}
+                          onPress={() => updateAvailability(
+                            selectedDay, 
+                            slot, 
+                            !availabilitySettings[selectedDay?.id]?.includes(slot.id)
+                          )}
+                        >
+                          <Text style={styles.availabilityItemText}>
+                            {`${slot.hour}:00 ${slot.period}`}
+                          </Text>
+                          <Ionicons 
+                            name={availabilitySettings[selectedDay?.id]?.includes(slot.id) ? 
+                              "checkmark-circle" : "close-circle"} 
+                            size={24} 
+                            color={availabilitySettings[selectedDay?.id]?.includes(slot.id) ? 
+                              "#4CAF50" : "#FF5252"} 
+                          />
+                        </TouchableOpacity>
+                      ))}
+                    </ScrollView>
+                  </View>
                 </View>
               )}
             </View>
+            
+            {modalMode === 'block' && !useSpecificDate && (
+              <View style={[styles.switchContainer, {marginBottom: 0, marginTop: 0}]}>
+                <Text style={styles.switchLabel}>¿Repetir semanalmente?</Text>
+                <Switch
+                  value={isRecurring}
+                  onValueChange={setIsRecurring}
+                  trackColor={{ false: '#ccc', true: '#4A90E2' }}
+                  thumbColor={isRecurring ? '#FFFFFF' : '#f4f3f4'}
+                />
+              </View>
+            )}
             
             <View style={styles.modalFooter}>
               {modalMode === 'block' && (
@@ -2172,7 +2168,7 @@ const SpaceSchedule = ({ onClose }) => {
                   style={[styles.modalButton, styles.blockButton]}
                   onPress={handleBlockSlot}
                 >
-                  <Text style={styles.modalButtonText}>Bloquear Horario</Text>
+                  <Text style={styles.modalButtonText}>Bloquear</Text>
                 </TouchableOpacity>
               )}
               
@@ -2191,7 +2187,7 @@ const SpaceSchedule = ({ onClose }) => {
                   onPress={handleUpdateAvailability}
                 >
                   <Text style={styles.modalButtonText}>
-                    {configSpecificDate ? 'Guardar para fecha específica' : 'Guardar configuración'}
+                    {configSpecificDate ? 'Guardar para fecha específica' : 'Guardar '}
                   </Text>
                 </TouchableOpacity>
               )}

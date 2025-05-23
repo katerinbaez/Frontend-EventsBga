@@ -1,7 +1,9 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
+import ResponsiveStyleSheet from '../utils/ResponsiveStyleSheet';
+import { moderateScale, verticalScale, horizontalScale } from '../utils/ResponsiveUtils';
 
 
-export const styles = StyleSheet.create({
+export const styles = ResponsiveStyleSheet.create({
     modalContainer: {
       flex: 1,
       justifyContent: 'center',
@@ -12,8 +14,8 @@ export const styles = StyleSheet.create({
       width: '90%',
       maxHeight: '80%',
       backgroundColor: '#1E1E1E',
-      borderRadius: 10,
-      padding: 20,
+      borderRadius: moderateScale(10),
+      padding: moderateScale(20),
       borderWidth: 1,
       borderColor: '#333',
     },
@@ -21,28 +23,28 @@ export const styles = StyleSheet.create({
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: 20,
+      marginBottom: verticalScale(20),
     },
     title: {
-      fontSize: 22,
+      fontSize: moderateScale(22),
       fontWeight: 'bold',
       color: '#FFF',
     },
     closeButton: {
-      padding: 5,
+      padding: moderateScale(5),
     },
     loader: {
-      marginVertical: 20,
+      marginVertical: verticalScale(20),
     },
     eventsList: {
-      paddingBottom: 20,
+      paddingBottom: verticalScale(20),
     },
     eventItem: {
       backgroundColor: '#2A2A2A',
-      borderRadius: 8,
-      padding: 15,
-      marginBottom: 15,
-      borderLeftWidth: 4,
+      borderRadius: moderateScale(8),
+      padding: moderateScale(15),
+      marginBottom: verticalScale(15),
+      borderLeftWidth: moderateScale(4),
       borderLeftColor: '#FF3A5E',
     },
     expiredEventItem: {
@@ -50,43 +52,54 @@ export const styles = StyleSheet.create({
       opacity: 0.8,
     },
     eventInfo: {
-      marginBottom: 10,
+      marginBottom: verticalScale(10),
     },
     titleContainer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: 5,
+      marginBottom: verticalScale(5),
     },
     eventTitle: {
-      fontSize: 18,
+      fontSize: moderateScale(18),
       fontWeight: 'bold',
       color: '#FFF',
-      marginBottom: 5,
+      marginBottom: verticalScale(5),
     },
     expiredBadge: {
       backgroundColor: '#A0A0A0',
-      paddingHorizontal: 8,
-      paddingVertical: 2,
-      borderRadius: 4,
+      paddingHorizontal: horizontalScale(8),
+      paddingVertical: verticalScale(2),
+      borderRadius: moderateScale(4),
     },
     expiredBadgeText: {
       color: '#333',
-      fontSize: 10,
+      fontSize: moderateScale(10),
       fontWeight: 'bold',
     },
+    dateTimeContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: verticalScale(8),
+    },
     eventDate: {
-      fontSize: 14,
+      fontSize: moderateScale(14),
       color: '#FF3A5E',
-      marginBottom: 8,
+      flex: 1,
+    },
+    eventTime: {
+      fontSize: moderateScale(14),
+      color: '#FFF',
+      fontWeight: 'bold',
     },
     eventDescription: {
-      fontSize: 14,
+      fontSize: moderateScale(14),
       color: '#CCC',
-      marginBottom: 8,
+      marginBottom: verticalScale(8),
     },
     eventCategory: {
-      fontSize: 12,
+      fontSize: moderateScale(12),
       color: '#999',
     },
     expiredText: {
@@ -97,9 +110,9 @@ export const styles = StyleSheet.create({
       justifyContent: 'flex-end',
     },
     button: {
-      paddingVertical: 8,
-      paddingHorizontal: 15,
-      borderRadius: 5,
+      paddingVertical: verticalScale(8),
+      paddingHorizontal: horizontalScale(15),
+      borderRadius: moderateScale(5),
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -112,30 +125,30 @@ export const styles = StyleSheet.create({
     buttonText: {
       color: '#FFF',
       fontWeight: 'bold',
-      fontSize: 14,
+      fontSize: moderateScale(14),
     },
     expiredNotice: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: '#333',
-      paddingVertical: 8,
-      paddingHorizontal: 12,
-      borderRadius: 5,
+      paddingVertical: verticalScale(8),
+      paddingHorizontal: horizontalScale(12),
+      borderRadius: moderateScale(5),
     },
     expiredNoticeText: {
       color: '#A0A0A0',
-      marginLeft: 5,
-      fontSize: 14,
+      marginLeft: horizontalScale(5),
+      fontSize: moderateScale(14),
     },
     emptyContainer: {
       alignItems: 'center',
       justifyContent: 'center',
-      padding: 30,
+      padding: moderateScale(30),
     },
     emptyText: {
       color: '#999',
-      fontSize: 16,
+      fontSize: moderateScale(16),
       textAlign: 'center',
     },
   });

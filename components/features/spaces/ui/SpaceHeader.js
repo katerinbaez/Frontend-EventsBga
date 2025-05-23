@@ -21,7 +21,7 @@ const SpaceHeader = ({ title, isEditing, onToggleEdit, onSave, onGoBack }) => {
         <Ionicons 
           name={isEditing ? "save-outline" : "create-outline"} 
           size={24} 
-          color={isEditing ? "#FFF" : "#FFFFFF"} 
+          color={isEditing ? "#FFF" : "#000000"} 
         />
       </TouchableOpacity>
     </View>

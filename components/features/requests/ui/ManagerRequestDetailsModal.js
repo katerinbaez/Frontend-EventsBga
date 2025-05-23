@@ -132,13 +132,13 @@ const ManagerRequestDetailsModal = ({
               <View style={{marginBottom: 8}}>
                 <Text style={styles.detailLabel}>Email:</Text>
                 <TouchableOpacity onPress={() => sendEmail(normalizedRequest.artistEmail)}>
-                  <Text style={[styles.detailValue, {marginTop: 4}]}>{normalizedRequest.artistEmail}</Text>
+                  <Text style={[styles.detailValueLink, {marginTop: 4}]}>{normalizedRequest.artistEmail}</Text>
                 </TouchableOpacity>
               </View>
               <View style={styles.detailRow}>
                 <Text style={styles.detailLabel}>Teléfono:</Text>
                 <TouchableOpacity onPress={() => callPhone(artistContact.telefono)}>
-                  <Text style={styles.detailValue}>{artistContact.telefono}</Text>
+                  <Text style={styles.detailValueLink}>{artistContact.telefono}</Text>
                 </TouchableOpacity>
               </View>
               <View style={styles.detailRow}>

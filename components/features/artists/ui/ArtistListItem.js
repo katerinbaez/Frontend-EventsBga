@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from '../../../../styles/ArtistProfilesModalStyles';
+import { BACKEND_URL } from '../../../../constants/config';
 
 /**
  * Componente para mostrar un artista en la lista
@@ -13,8 +14,22 @@ const ArtistListItem = ({
   onPress, 
   onToggleFavorite 
 }) => {
-  // Usar directamente la URL de la foto de perfil
-  const imageUrl = item.fotoPerfil || null;
+  // Estado para controlar si hay error al cargar la imagen
+  const [imageError, setImageError] = useState(false);
+  
+  // Función para obtener la URL correcta de la imagen
+  const getImageUrl = () => {
+    if (!item.fotoPerfil) return null;
+    
+    // Si ya es una URL completa o una ruta de archivo local, usarla directamente
+    if (item.fotoPerfil.startsWith('http') || item.fotoPerfil.startsWith('file://')) {
+      return item.fotoPerfil;
+    }
+    
+    // Si es una ruta relativa, convertirla a absoluta
+    const prefix = item.fotoPerfil.startsWith('/') ? '' : '/';
+    return `${BACKEND_URL}${prefix}${item.fotoPerfil}`;
+  };
   
   return (
     <TouchableOpacity 
@@ -22,11 +37,12 @@ const ArtistListItem = ({
       onPress={onPress}
     >
       <View style={styles.artistImageContainer}>
-        {imageUrl ? (
+        {item.fotoPerfil && !imageError ? (
           <Image
-            source={{ uri: imageUrl }}
+            source={{ uri: getImageUrl() }}
             style={styles.artistImage}
             resizeMode="cover"
+            onError={() => setImageError(true)}
           />
         ) : (
           <View style={styles.artistImagePlaceholder}>

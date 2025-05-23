@@ -170,6 +170,7 @@ const useEvents = (categories, externalSelectedCategory) => {
     setStartDate(null);
     setEndDate(null);
     setLocation('');
+    setSelectedCategory('');
     setFiltersApplied(false);
     searchEvents();
   }, [searchEvents]);

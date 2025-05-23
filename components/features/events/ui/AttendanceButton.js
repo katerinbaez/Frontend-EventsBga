@@ -6,8 +6,9 @@ import { styles } from '../../../../styles/EventDetailStyles';
 /**
  * Componente que muestra el botón de asistencia a un evento
  */
-const AttendanceButton = ({ isExpired, isAttending, onRegister, onCancel }) => {
-  if (isExpired) {
+const AttendanceButton = ({ isExpired, isAttending, onRegister, onCancel, showDetailsOnly }) => {
+  // Si el evento ha expirado o solo se deben mostrar detalles, mostrar mensaje de evento finalizado
+  if (isExpired || showDetailsOnly) {
     return (
       <View style={styles.expiredEventNotice}>
         <Ionicons name="time-outline" size={20} color="#A0A0A0" />
@@ -18,6 +19,7 @@ const AttendanceButton = ({ isExpired, isAttending, onRegister, onCancel }) => {
     );
   }
   
+  // Si el evento no ha expirado, mostrar botón de asistencia
   return (
     <TouchableOpacity
       style={[
@@ -25,6 +27,7 @@ const AttendanceButton = ({ isExpired, isAttending, onRegister, onCancel }) => {
         isAttending ? styles.attendingButton : {}
       ]}
       onPress={isAttending ? onCancel : onRegister}
+      disabled={isExpired} // Deshabilitar el botón si el evento ha expirado
     >
       <Text style={styles.registerButtonText}>
         {isAttending ? 'Cancelar Asistencia' : 'Confirmar Asistencia'}

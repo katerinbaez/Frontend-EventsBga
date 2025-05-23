@@ -4,6 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../../../../context/AuthContext';
 import CulturalSpaceService from '../services/CulturalSpaceService';
 import ManagerProfileService from '../services/ManagerProfileService';
+import CloudinaryService from '../services/CloudinaryService';
 
 const useCulturalSpace = (navigation, route) => {
   const { user } = useAuth();
@@ -201,25 +202,54 @@ const useCulturalSpace = (navigation, route) => {
   const handleSave = async () => {
     try {
       setLoading(true);
+      
+      // Procesar todas las imágenes para subirlas a Cloudinary
+      let cloudinaryImages = [];
+      try {
+        // Verificar si hay imágenes locales que necesitan ser subidas
+        const hasLocalImages = space.images.some(uri => !CloudinaryService.isCloudinaryUrl(uri));
+        
+        if (hasLocalImages) {
+          console.warn('Subiendo imágenes locales a Cloudinary antes de guardar...');
+          cloudinaryImages = await CloudinaryService.uploadMultipleImages(space.images);
+        } else {
+          cloudinaryImages = space.images;
+        }
+      } catch (imageError) {
+        console.warn('Error al subir imágenes a Cloudinary:', imageError);
+        // Continuar con las imágenes originales si falla la subida
+        cloudinaryImages = space.images;
+      }
+      
+      // Actualizar el espacio con las URLs de Cloudinary
+      const updatedSpace = {
+        ...space,
+        images: cloudinaryImages
+      };
+      
       let response;
+      
+      // Verificar el tamaño de las imágenes procesadas
+      const totalSize = updatedSpace.images.reduce((size, img) => size + (img?.length || 0), 0);
+      console.warn(`Tamaño total de imágenes: ${(totalSize / (1024 * 1024)).toFixed(2)} MB`);
       
       if (route.params?.spaceId) {
         // Actualizar espacio existente
-        response = await CulturalSpaceService.updateSpace(route.params.spaceId, space);
+        response = await CulturalSpaceService.updateSpace(route.params.spaceId, updatedSpace);
       } else if (route.params?.userId) {
         // Actualizar perfil del gestor con los datos del espacio
         const managerProfileData = {
-          nombreEspacio: space.nombre,
-          direccion: space.direccion,
-          capacidad: space.capacidad,
-          descripcion: space.descripcion,
-          instalaciones: space.instalaciones,
-          imagenes: space.images,
-          disponibilidad: space.disponibilidad, // Incluir la disponibilidad en la actualización
-          horarios: space.disponibilidad, // Guardar también en la columna horarios de Managers
+          nombreEspacio: updatedSpace.nombre,
+          direccion: updatedSpace.direccion,
+          capacidad: updatedSpace.capacidad,
+          descripcion: updatedSpace.descripcion,
+          instalaciones: updatedSpace.instalaciones,
+          imagenes: updatedSpace.images, // Usar las URLs de Cloudinary
+          disponibilidad: updatedSpace.disponibilidad, // Incluir la disponibilidad en la actualización
+          horarios: updatedSpace.disponibilidad, // Guardar también en la columna horarios de Managers
           contacto: {
-            email: space.contacto?.email || '',
-            telefono: space.contacto?.telefono || ''
+            email: updatedSpace.contacto?.email || '',
+            telefono: updatedSpace.contacto?.telefono || ''
           } // Asegurar que los datos de contacto tengan la estructura correcta
         };
         
@@ -234,29 +264,28 @@ const useCulturalSpace = (navigation, route) => {
           setLoading(false);
           return;
         }
-        
-        // También guardar en la tabla CulturalSpaces
+                // También guardar en la tabla CulturalSpaces
         try {
           // Crear directamente un nuevo espacio cultural con el managerId correcto
           const spaceData = {
-            nombre: space.nombre,
-            direccion: space.direccion,
-            capacidad: space.capacidad,
-            descripcion: space.descripcion,
-            instalaciones: space.instalaciones,
-            disponibilidad: space.disponibilidad,
-            images: space.images,
+            nombre: updatedSpace.nombre,
+            direccion: updatedSpace.direccion,
+            capacidad: updatedSpace.capacidad,
+            descripcion: updatedSpace.descripcion,
+            instalaciones: updatedSpace.instalaciones,
+            disponibilidad: updatedSpace.disponibilidad,
+            images: updatedSpace.images, // Usar las URLs de Cloudinary
             managerId: route.params.userId, // Asegurar que el managerId se envíe correctamente
             // Asegurar que los datos de contacto tengan la estructura correcta
             contacto: {
-              email: space.contacto?.email || '',
-              telefono: space.contacto?.telefono || ''
+              email: updatedSpace.contacto?.email || '',
+              telefono: updatedSpace.contacto?.telefono || ''
             },
             // Asegurar que las redes sociales tengan la estructura correcta
             redesSociales: {
-              facebook: space.redesSociales?.facebook || '',
-              instagram: space.redesSociales?.instagram || '',
-              twitter: space.redesSociales?.twitter || ''
+              facebook: updatedSpace.redesSociales?.facebook || '',
+              instagram: updatedSpace.redesSociales?.instagram || '',
+              twitter: updatedSpace.redesSociales?.twitter || ''
             }
           };
           
@@ -284,7 +313,7 @@ const useCulturalSpace = (navigation, route) => {
       } else {
         // Crear nuevo espacio (caso poco común)
         try {
-          response = await CulturalSpaceService.createSpace(space);
+          response = await CulturalSpaceService.createSpace(updatedSpace);
         } catch (createError) {
           console.error('Error al crear nuevo espacio:', createError);
           Alert.alert('Error', `No se pudo crear el espacio cultural: ${createError.message || 'Error de conexión'}`);
@@ -322,6 +351,13 @@ const useCulturalSpace = (navigation, route) => {
 
   const handlePickImage = async () => {
     try {
+      // Solicitar permisos si es necesario
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permiso denegado', 'Se necesita acceso a la galería para seleccionar imágenes');
+        return;
+      }
+
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
@@ -331,14 +367,38 @@ const useCulturalSpace = (navigation, route) => {
       
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const selectedImage = result.assets[0];
-        setSpace(prevState => ({
-          ...prevState,
-          images: [...prevState.images, selectedImage.uri]
-        }));
+        
+        // Mostrar indicador de carga
+        setLoading(true);
+        
+        try {
+          // Subir la imagen a Cloudinary
+          const cloudinaryUrl = await CloudinaryService.uploadImage(selectedImage.uri);
+          
+          // Actualizar el estado con la URL de Cloudinary
+          setSpace(prevState => ({
+            ...prevState,
+            images: [...prevState.images, cloudinaryUrl]
+          }));
+          
+          console.warn('Imagen subida exitosamente a Cloudinary');
+        } catch (uploadError) {
+          console.warn('Error al subir imagen a Cloudinary:', uploadError);
+          Alert.alert('Error', 'No se pudo subir la imagen a la nube. Se guardará localmente por ahora.');
+          
+          // Si falla la subida, guardar la URI local como respaldo
+          setSpace(prevState => ({
+            ...prevState,
+            images: [...prevState.images, selectedImage.uri]
+          }));
+        } finally {
+          setLoading(false);
+        }
       }
     } catch (error) {
-      console.error('Error al seleccionar imagen:', error);
+      console.warn('Error al seleccionar imagen:', error);
       Alert.alert('Error', 'No se pudo seleccionar la imagen');
+      setLoading(false);
     }
   };
 

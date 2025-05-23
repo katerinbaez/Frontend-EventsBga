@@ -47,6 +47,7 @@ const Navigation = () => {
                 headerTintColor: '#ffffff',
                 headerTitleStyle: {
                     fontWeight: 'bold',
+                    fontSize: 15, // Tamaño de letra más pequeño
                 },
             }}
             initialRouteName="Home"

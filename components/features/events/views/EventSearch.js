@@ -105,6 +105,8 @@ const EventSearch = ({ navigation }) => {
   // Manejar la limpieza de filtros
   const handleClearFilters = () => {
     clearFilters();
+    // Limpiar también la categoría seleccionada
+    setSelectedCategory('');
     setShowFilters(false);
   };
   

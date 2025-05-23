@@ -1,7 +1,9 @@
-import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, Modal, TextInput, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Modal, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView, Image, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+// Importación absoluta para evitar problemas de rutas relativas
+import CloudinaryService from '../../../features/spaces/services/CloudinaryService';
 import { styles } from '../../../../styles/ArtistPortfolioStyles';
 
 // Colores de acento del tema importados desde el archivo de estilos
@@ -14,6 +16,8 @@ const AddProjectModal = ({
   setNewItem, 
   onAddItem 
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const handlePickImage = async () => {
     try {
       const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -36,11 +40,33 @@ const AddProjectModal = ({
         // Obtener las URIs de las imágenes seleccionadas
         const selectedImages = result.assets.map(asset => asset.uri);
         
-        // Actualizar el estado con las nuevas imágenes
-        setNewItem({
-          ...newItem,
-          images: [...newItem.images, ...selectedImages].slice(0, 5) // Limitar a 5 imágenes
-        });
+        // Mostrar indicador de carga
+        setIsLoading(true);
+        
+        try {
+          // Subir imágenes a Cloudinary
+          console.warn('Subiendo imágenes a Cloudinary...');
+          const cloudinaryUrls = await CloudinaryService.uploadMultipleImages(selectedImages);
+          console.warn('Imágenes subidas a Cloudinary:', cloudinaryUrls);
+          
+          // Actualizar el estado con las URLs de Cloudinary
+          setNewItem({
+            ...newItem,
+            images: [...newItem.images, ...cloudinaryUrls].slice(0, 5) // Limitar a 5 imágenes
+          });
+          
+          Alert.alert('Éxito', 'Imágenes subidas correctamente');
+        } catch (cloudinaryError) {
+          console.error('Error subiendo a Cloudinary:', cloudinaryError);
+          // Si falla, usar las URIs locales
+          setNewItem({
+            ...newItem,
+            images: [...newItem.images, ...selectedImages].slice(0, 5) // Limitar a 5 imágenes
+          });
+          Alert.alert('Advertencia', 'No se pudieron subir las imágenes a la nube. Se usarán las imágenes locales temporalmente.');
+        } finally {
+          setIsLoading(false);
+        }
       }
     } catch (error) {
       console.error('Error al seleccionar imágenes:', error);
@@ -61,6 +87,12 @@ const AddProjectModal = ({
       transparent={true}
       onRequestClose={onClose}
     >
+      {isLoading && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color="#FF3A5E" />
+          <Text style={styles.loadingText}>Subiendo imágenes...</Text>
+        </View>
+      )}
       <View style={styles.modalContainer}>
         <View style={styles.modalHeader}>
           <Text style={styles.modalTitle}>Añadir nuevo proyecto</Text>

@@ -1,4 +1,5 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
+import { moderateScale, verticalScale, horizontalScale } from '../utils/ResponsiveUtils';
 
 export const styles = StyleSheet.create({
   container: {
@@ -97,44 +98,45 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(208, 9, 9, 0.9)',
-    padding: 20
+    padding: moderateScale(20)
   },
   modalContent: {
     backgroundColor: '#1a1a1a',
-    padding: 20,
-    borderRadius: 10,
+    padding: moderateScale(20),
+    borderRadius: moderateScale(10),
     width: '100%',
     maxHeight: '90%'
   },
   modalHeader: {
-    fontSize: 20,
+    fontSize: moderateScale(20),
     fontWeight: 'bold',
     color: '#FFFFFF',
-    marginBottom: 15,
+    marginBottom: verticalScale(15),
     textAlign: 'center'
   },
   modalSubHeader: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     fontWeight: 'bold',
     color: '#FFFFFF',
-    marginTop: 10,
-    marginBottom: 5
+    marginTop: verticalScale(10),
+    marginBottom: verticalScale(5)
   },
   modalName: {
-    fontSize: 18,
+    fontSize: moderateScale(18),
     fontWeight: 'bold',
     color: '#FFFFFF',
-    marginBottom: 10
+    marginBottom: verticalScale(10)
   },
   modalText: {
     color: '#FFFFFF',
-    marginBottom: 8,
-    fontSize: 16
+    marginBottom: verticalScale(8),
+    fontSize: moderateScale(12)
   },
   link: {
-    color: '#2196F3',
+    color: '#4287f5',
     textDecorationLine: 'underline',
-    marginVertical: 5
+    marginVertical: verticalScale(5),
+    fontSize: moderateScale(12)
   },
   approveButton: {
     backgroundColor: '#4CAF50'
@@ -144,6 +146,6 @@ export const styles = StyleSheet.create({
   },
   closeButton: {
     backgroundColor: '#757575',
-    marginTop: 10
+    marginTop: verticalScale(10)
   },
 });

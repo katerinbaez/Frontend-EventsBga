@@ -2,11 +2,12 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../../../../../styles/DashboardAdminStyles';
+import { moderateScale } from '../../../../../utils/ResponsiveUtils';
 
 const AdminWelcomeMessage = ({ userName }) => {
   return (
     <View style={styles.welcomeMessageContainer}>
-      <Ionicons name="star-outline" size={24} color="#FFD700" />
+      <Ionicons name="star-outline" size={moderateScale(24)} color="#FFD700" />
       <View style={styles.welcomeMessageTextContainer}>
         <Text style={styles.welcomeMessageTitle}>
           ¡Bienvenido, {userName || 'Administrador'}!

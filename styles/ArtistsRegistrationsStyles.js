@@ -1,12 +1,14 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
+import ResponsiveStyleSheet from '../utils/ResponsiveStyleSheet';
+import { moderateScale, verticalScale, horizontalScale } from '../utils/ResponsiveUtils';
 
-const styles = StyleSheet.create({
+const styles = ResponsiveStyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: '#000000',
     },
     statusBarSpace: {
-      height: 40, // Espacio adicional para compensar la barra de estado
+      height: verticalScale(40), // Espacio adicional para compensar la barra de estado
       backgroundColor: '#000000',
     },
     scrollContainer: {
@@ -14,56 +16,56 @@ const styles = StyleSheet.create({
       backgroundColor: '#000000',
     },
     header: {
-      padding: 20,
-      paddingTop: 30, // Aumentar el padding superior para dar más espacio al título
+      padding: moderateScale(20),
+      paddingTop: verticalScale(30), // Aumentar el padding superior para dar más espacio al título
       borderBottomWidth: 1,
       borderBottomColor: '#333',
     },
     title: {
-      fontSize: 32, // Aumentar el tamaño de la fuente
+      fontSize: moderateScale(32), // Aumentar el tamaño de la fuente
       fontWeight: 'bold',
       color: '#FFFFFF',
-      marginBottom: 15, // Aumentar el margen inferior
-      marginTop: 10, // Agregar margen superior
+      marginBottom: verticalScale(15), // Aumentar el margen inferior
+      marginTop: verticalScale(10), // Agregar margen superior
     },
     subtitle: {
-      fontSize: 16,
+      fontSize: moderateScale(16),
       color: '#888',
-      lineHeight: 22,
+      lineHeight: verticalScale(22),
     },
     form: {
-      padding: 20,
+      padding: moderateScale(20),
     },
     inputContainer: {
-      marginBottom: 20,
+      marginBottom: verticalScale(20),
     },
     label: {
-      fontSize: 16,
+      fontSize: moderateScale(16),
       color: '#FFFFFF',
-      marginBottom: 8,
+      marginBottom: verticalScale(8),
     },
     input: {
       backgroundColor: '#1A1A1A',
-      borderRadius: 8,
-      padding: 12,
+      borderRadius: moderateScale(8),
+      padding: moderateScale(12),
       color: '#FFFFFF',
       borderWidth: 1,
       borderColor: '#333',
     },
     textArea: {
-      height: 100,
+      height: verticalScale(100),
       textAlignVertical: 'top',
     },
     button: {
-      backgroundColor: '#007AFF',
-      padding: 15,
-      borderRadius: 8,
+      backgroundColor: '#FF3A5E', // Color de acento rojo preferido por el usuario
+      padding: moderateScale(15),
+      borderRadius: moderateScale(8),
       alignItems: 'center',
-      marginTop: 20,
+      marginTop: verticalScale(20),
     },
     buttonText: {
       color: '#FFFFFF',
-      fontSize: 16,
+      fontSize: moderateScale(16),
       fontWeight: 'bold',
     },
   });

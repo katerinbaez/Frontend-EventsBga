@@ -132,7 +132,7 @@ const AdminMetrics = () => {
       {/* Resumen General */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Resumen General</Text>
-        <View style={styles.statsGrid}>
+        <View style={styles.generalStatsGrid}>
           <View style={styles.statCard}>
             <Text style={styles.statNumber}>{metrics.general.totalUsers || 0}</Text>
             <Text style={styles.statLabel}>Usuarios Registrados</Text>
@@ -156,19 +156,19 @@ const AdminMetrics = () => {
       {/* Métricas Detalladas */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Métricas Detalladas</Text>
-        <View style={styles.statsGrid}>
+        <View style={styles.detailedStatsGrid}>
           <View style={[styles.statCard, styles.detailedCard]}>
-            <Ionicons name="business" size={32} color="#FF3A5E" />
+            <Ionicons name="business" size={32} color="#FFFFFF" />
             <Text style={styles.statNumber}>{metrics.general.culturalSpaces !== undefined ? metrics.general.culturalSpaces : 0}</Text>
             <Text style={styles.statLabel}>Espacios Culturales</Text>
           </View>
           <View style={[styles.statCard, styles.detailedCard]}>
-            <Ionicons name="person-circle" size={32} color="#FF3A5E" />
+            <Ionicons name="person-circle" size={32} color="#FFFFFF" />
             <Text style={styles.statNumber}>{metrics.general.artists !== undefined ? metrics.general.artists : 0}</Text>
             <Text style={styles.statLabel}>Artistas</Text>
           </View>
           <View style={[styles.statCard, styles.detailedCard]}>
-            <Ionicons name="briefcase" size={32} color="#FF3A5E" />
+            <Ionicons name="briefcase" size={32} color="#FFFFFF" />
             <Text style={styles.statNumber}>{metrics.general.managers !== undefined ? metrics.general.managers : 0}</Text>
             <Text style={styles.statLabel}>Gestores Culturales</Text>
           </View>
@@ -224,13 +224,13 @@ const AdminMetrics = () => {
           <Text style={styles.sectionTitle}>Eventos por Categoría</Text>
           <PieChart
             data={metrics.categoryMetrics.distribution}
-            width={screenWidth - 32}
-            height={220}
+            width={screenWidth - 80}
+            height={180}
             chartConfig={chartConfig}
             accessor="value"
             backgroundColor="transparent"
             paddingLeft="15"
-            style={styles.chart}
+            style={[styles.chart, styles.pieChart]}
           />
         </View>
       )}
@@ -240,37 +240,73 @@ const AdminMetrics = () => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Espacios más Activos</Text>
           <View style={styles.chartWrapper}>
-            <BarChart
-              data={metrics.spaceMetrics.topSpaces}
-              width={screenWidth - 100} // Reducir significativamente el ancho para evitar que se salga de la tarjeta
-              height={260}
-              chartConfig={{
-                backgroundColor: '#ffffff',
-                backgroundGradientFrom: '#ffffff',
-                backgroundGradientTo: '#ffffff',
-                decimalPlaces: 0,
-                color: chartConfig.color,
-                labelColor: chartConfig.labelColor,
-                barPercentage: 0.4,
-                propsForLabels: {
-                  fontSize: 12,
-                  fontWeight: 'bold',
-                  textAlign: 'center'
-                }
-              }}
-              style={styles.chart}
-              verticalLabelRotation={0}
-              horizontalLabelRotation={0}
-              showValuesOnTopOfBars={true}
-              fromZero={true}
-              withHorizontalLabels={true}
-              yAxisLabel=""
-              yAxisSuffix=""
-              showBarTops={true}
-            />
-            <View style={styles.axisLabelContainer}>
-              <Text style={styles.axisLabel}>Espacios</Text>
+            {/* Crear barras personalizadas con colores diferentes */}
+            <View style={styles.customBarChart}>
+              {metrics.spaceMetrics.topSpaces.datasets[0].data.map((value, index) => {
+                // Definir la paleta de colores (igual que en la leyenda)
+                const colorPalette = [
+                  '#FF3A5E', // Rojo principal
+                  '#007AFF', // Azul
+                  '#4CD964', // Verde
+                  '#FF9500', // Naranja
+                  '#5856D6', // Púrpura
+                  '#FF2D55', // Rosa
+                  '#5AC8FA', // Azul claro
+                  '#FFCC00', // Amarillo
+                  '#34C759', // Verde claro
+                  '#AF52DE'  // Violeta
+                ];
+                
+                // Obtener el color correspondiente
+                const barColor = colorPalette[index % colorPalette.length];
+                
+                // Calcular la altura de la barra en proporción al valor máximo
+                const maxValue = Math.max(...metrics.spaceMetrics.topSpaces.datasets[0].data);
+                const barHeight = (value / maxValue) * 150; // 150px es la altura máxima de la barra
+                
+                return (
+                  <View key={`bar-${index}`} style={styles.customBarContainer}>
+                    <Text style={styles.barValue}>{value}</Text>
+                    <View 
+                      style={[styles.customBar, { 
+                        height: barHeight, 
+                        backgroundColor: barColor 
+                      }]}
+                    />
+                  </View>
+                );
+              })}
             </View>
+            
+            {/* Leyenda personalizada con nombres y colores */}
+            <View style={styles.customLegendContainer}>
+              {metrics.spaceMetrics.topSpaces.labels.map((label, index) => {
+                // Definir la paleta de colores
+                const colorPalette = [
+                  '#FF3A5E', // Rojo principal
+                  '#007AFF', // Azul
+                  '#4CD964', // Verde
+                  '#FF9500', // Naranja
+                  '#5856D6', // Púrpura
+                  '#FF2D55', // Rosa
+                  '#5AC8FA', // Azul claro
+                  '#FFCC00', // Amarillo
+                  '#34C759', // Verde claro
+                  '#AF52DE'  // Violeta
+                ];
+                const barColor = colorPalette[index % colorPalette.length];
+                
+                return (
+                  <View key={`legend-${index}`} style={styles.legendItem}>
+                    <View style={[styles.legendColorBox, { backgroundColor: barColor }]} />
+                    <Text style={styles.legendText} numberOfLines={2} ellipsizeMode="tail">
+                      {label}
+                    </Text>
+                  </View>
+                );
+              })}
+            </View>
+            
             <Text style={styles.chartDescription}>Número de eventos realizados en cada espacio cultural</Text>
           </View>
         </View>
@@ -281,22 +317,22 @@ const AdminMetrics = () => {
         <Text style={styles.sectionTitle}>Métricas de Usuarios</Text>
         <View style={styles.userMetrics}>
           <View style={[styles.metricRow, styles.metricRowHighlight]}>
-            <Ionicons name="people" size={24} color="#FF3A5E" style={styles.metricIcon} />
+            <Ionicons name="people" size={24} color="#FFFFFF" style={styles.metricIcon} />
             <Text style={styles.metricLabel}>Usuarios totales:</Text>
             <Text style={styles.metricValue}>{metrics.general.totalUsers || 0}</Text>
           </View>
           <View style={styles.metricRow}>
-            <Ionicons name="person-add" size={24} color="#FF3A5E" style={styles.metricIcon} />
+            <Ionicons name="person-add" size={24} color="#FFFFFF" style={styles.metricIcon} />
             <Text style={styles.metricLabel}>Artistas registrados:</Text>
             <Text style={styles.metricValue}>{metrics.general.artists || 0}</Text>
           </View>
           <View style={styles.metricRow}>
-            <Ionicons name="briefcase" size={24} color="#FF3A5E" style={styles.metricIcon} />
+            <Ionicons name="briefcase" size={24} color="#FFFFFF" style={styles.metricIcon} />
             <Text style={styles.metricLabel}>Gestores culturales:</Text>
             <Text style={styles.metricValue}>{metrics.general.managers || 0}</Text>
           </View>
           <View style={[styles.metricRow, styles.metricRowHighlight]}>
-            <Ionicons name="business" size={24} color="#FF3A5E" style={styles.metricIcon} />
+            <Ionicons name="business" size={24} color="#FFFFFF" style={styles.metricIcon} />
             <Text style={styles.metricLabel}>Espacios culturales:</Text>
             <Text style={styles.metricValue}>{metrics.general.culturalSpaces || 0}</Text>
           </View>
@@ -308,19 +344,19 @@ const AdminMetrics = () => {
         <Text style={styles.sectionTitle}>Impacto Cultural</Text>
         <View style={styles.impactMetrics}>
           <View style={styles.impactCard}>
-            <Ionicons name="brush" size={32} color="#FF3A5E" style={styles.impactIcon} />
+            <Ionicons name="brush" size={32} color="#FFFFFF" style={styles.impactIcon} />
             <Text style={styles.impactTitle}>Diversidad Cultural</Text>
             <Text style={styles.impactNumber}>{metrics.general.culturalDiversityIndex || 0}%</Text>
             <Text style={styles.impactDescription}>Índice de diversidad en eventos</Text>
           </View>
           <View style={[styles.impactCard, styles.highlightImpactCard]}>
-            <Ionicons name="people" size={32} color="#FF3A5E" style={styles.impactIcon} />
+            <Ionicons name="people" size={32} color="#FFFFFF" style={styles.impactIcon} />
             <Text style={styles.impactTitle}>Alcance Comunitario</Text>
             <Text style={styles.impactNumber}>{metrics.general.communityReach || 0}</Text>
             <Text style={styles.impactDescription}>Asistentes registrados a eventos culturales</Text>
           </View>
           <View style={styles.impactCard}>
-            <Ionicons name="star" size={32} color="#FF3A5E" style={styles.impactIcon} />
+            <Ionicons name="star" size={32} color="#FFFFFF" style={styles.impactIcon} />
             <Text style={styles.impactTitle}>Satisfacción</Text>
             <Text style={styles.impactNumber}>{metrics.general.satisfactionRate || 0}%</Text>
             <Text style={styles.impactDescription}>Índice de satisfacción</Text>

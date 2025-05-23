@@ -94,30 +94,64 @@ const SpaceSearch = ({ onClose }) => {
       // Activar el modo de pantalla completa para el mapa solo si el usuario lo solicitó explícitamente
       setFullScreenMap(true);
       
-      const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Balanced,
-      });
+      // Verificar si los servicios de ubicación están habilitados
+      const providerStatus = await Location.getProviderStatusAsync();
+      if (!providerStatus.locationServicesEnabled) {
+        console.warn('Los servicios de ubicación están desactivados');
+        // No mostrar alerta, solo registrar en consola
+        return;
+      }
       
-      const { latitude, longitude } = location.coords;
-      setUserLocation({ latitude, longitude });
-      
-      // Actualizar la región del mapa
-      setMapRegion({
-        latitude,
-        longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      });
-      
-      // Buscar espacios cercanos
-      findNearbySpaces(latitude, longitude);
+      try {
+        const location = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Balanced,
+          timeout: 15000 // Timeout de 15 segundos
+        });
+        
+        const { latitude, longitude } = location.coords;
+        setUserLocation({ latitude, longitude });
+        
+        // Actualizar la región del mapa
+        setMapRegion({
+          latitude,
+          longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        });
+        
+        // Buscar espacios cercanos
+        findNearbySpaces(latitude, longitude);
+      } catch (locationError) {
+        // Intentar con menor precisión si falla el primer intento
+        try {
+          const location = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.Low,
+            timeout: 10000 // Menor timeout para el segundo intento
+          });
+          
+          const { latitude, longitude } = location.coords;
+          setUserLocation({ latitude, longitude });
+          
+          // Actualizar la región del mapa
+          setMapRegion({
+            latitude,
+            longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          });
+          
+          // Buscar espacios cercanos
+          findNearbySpaces(latitude, longitude);
+        } catch (secondError) {
+          // Solo registrar en consola, no mostrar alerta
+          console.warn('Error al obtener la ubicación con precisión baja:', secondError);
+          // Si hay error, desactivar el modo de pantalla completa
+          setFullScreenMap(false);
+        }
+      }
     } catch (error) {
-      console.error('Error al obtener la ubicación:', error);
-      Alert.alert(
-        'Error de ubicación',
-        'No se pudo obtener tu ubicación actual.',
-        [{ text: 'OK' }]
-      );
+      // Solo registrar en consola, no mostrar alerta
+      console.warn('Error al solicitar permisos de ubicación:', error);
       // Si hay error, desactivar el modo de pantalla completa
       setFullScreenMap(false);
     }
@@ -571,13 +605,17 @@ const SpaceSearch = ({ onClose }) => {
         // Vista normal con lista y mapa
         <>
           <View style={styles.header}>
-            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <Ionicons name="close-outline" size={24} color="#FF3A5E" />
-            </TouchableOpacity>
-            <Text style={styles.title}>Buscar Espacios Culturales</Text>
-            <TouchableOpacity onPress={getUserLocation} style={styles.locationButton}>
-              <Ionicons name="locate-outline" size={24} color="#FF3A5E" />
-            </TouchableOpacity>
+            <View style={{position: 'absolute', left: 15, top: 20, zIndex: 10, backgroundColor: 'transparent'}}>
+              <TouchableOpacity onPress={onClose} style={{padding: 5, backgroundColor: 'transparent'}}>
+                <Ionicons name="close-outline" size={30} color="#FF3A5E" />
+              </TouchableOpacity>
+            </View>
+            <Text style={[styles.title, {width: '100%', textAlign: 'center', fontSize: 15,}]}>Buscar Espacios Culturales</Text>
+            <View style={{position: 'absolute', right: 15, top: 15, zIndex: 10, backgroundColor: 'transparent'}}>
+              <TouchableOpacity onPress={getUserLocation} style={{padding: 5, backgroundColor: 'transparent'}}>
+                <Ionicons name="locate-outline" size={28} color="#FF3A5E" />
+              </TouchableOpacity>
+            </View>
           </View>
 
           {/* Botón grande para acceder al mapa */}
@@ -750,21 +788,21 @@ const SpaceSearch = ({ onClose }) => {
 
                 {/* Información de contacto */}
                 <View style={styles.infoRow}>
-                  <Ionicons name="mail-outline" size={20} color="#FF3A5E" />
+                  <Ionicons name="mail-outline" size={20} color="#FFFFFF" />
                   <Text style={styles.infoText}>
                     {selectedSpace.contacto?.email || selectedSpace.email || 'No disponible'}
                   </Text>
                 </View>
 
                 <View style={styles.infoRow}>
-                  <Ionicons name="call-outline" size={20} color="#FF3A5E" />
+                  <Ionicons name="call-outline" size={20} color="#FFFFFF" />
                   <Text style={styles.infoText}>
                     {selectedSpace.contacto?.telefono || selectedSpace.telefono || 'No disponible'}
                   </Text>
                 </View>
 
                 <View style={styles.infoRow}>
-                  <Ionicons name="people-outline" size={20} color="#FF3A5E" />
+                  <Ionicons name="people-outline" size={20} color="#FFFFFF" />
                   <Text style={styles.infoText}>
                     Capacidad: {selectedSpace.capacidad || 'No especificada'}
                   </Text>
@@ -785,7 +823,7 @@ const SpaceSearch = ({ onClose }) => {
                           }}
                         >
                           <Text style={styles.tagText}>
-                            <Ionicons name="logo-facebook" size={14} color="#FF3A5E" /> Facebook
+                            <Ionicons name="logo-facebook" size={14} color="#FFFFFF" /> Facebook
                           </Text>
                         </TouchableOpacity>
                       )}
@@ -799,7 +837,7 @@ const SpaceSearch = ({ onClose }) => {
                           }}
                         >
                           <Text style={styles.tagText}>
-                            <Ionicons name="logo-instagram" size={14} color="#FF3A5E" /> Instagram
+                            <Ionicons name="logo-instagram" size={14} color="#FFFFFF" /> Instagram
                           </Text>
                         </TouchableOpacity>
                       )}
@@ -813,7 +851,7 @@ const SpaceSearch = ({ onClose }) => {
                           }}
                         >
                           <Text style={styles.tagText}>
-                            <Ionicons name="logo-twitter" size={14} color="#FF3A5E" /> Twitter
+                            <Ionicons name="logo-twitter" size={14} color="#FFFFFF" /> Twitter
                           </Text>
                         </TouchableOpacity>
                       )}

@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../../../context/AuthContext';
 import { COLORS, COMMON_STYLES, SIZES } from '../../../../styles/theme';
+import { moderateScale, verticalScale, horizontalScale } from '../../../../utils/ResponsiveUtils';
 
 // Componente CustomInput integrado
 const CustomInput = ({
@@ -207,23 +208,27 @@ const AdminAccess = () => {
             <Text style={styles.welcomeText}>¡Bienvenido!</Text>
             <Text style={styles.instructionText}>Por favor, ingrese el código de administrador</Text>
             
-            <CustomInput
-              icon="lock-closed"
-              placeholder="Ingrese el código"
-              value={code}
-              onChangeText={setCode}
-              secureTextEntry
-              editable={!isVerifying}
-              returnKeyType="done"
-              onSubmitEditing={handleVerifyCode}
-              autoFocus={true}
-              style={{
-                backgroundColor: '#2c2c2c',
-                borderColor: COLORS.primary,
-                borderWidth: 1,
-                marginBottom: 16
-              }}
-            />
+            <View style={styles.input}>
+              <Ionicons name="lock-closed" size={20} color="#FFFFFF" style={{marginRight: 10}} />
+              <TextInput
+                placeholder="Ingrese el código"
+                value={code}
+                onChangeText={setCode}
+                secureTextEntry
+                editable={!isVerifying}
+                returnKeyType="done"
+                onSubmitEditing={handleVerifyCode}
+                autoFocus={true}
+                placeholderTextColor="#999999"
+                style={{
+                  color: '#FFFFFF',
+                  fontSize: 15,  // Aumentado el tamaño de la fuente para que los puntos sean más grandes
+                  flex: 1,
+                  textAlign: 'center',
+                  letterSpacing: 5  // Añadido espacio entre los puntos para mejor visibilidad
+                }}
+              />
+            </View>
 
             {error ? (
               <Animated.View 
@@ -242,10 +247,8 @@ const AdminAccess = () => {
             )}
 
             <View style={styles.buttonContainer}>
-              <CustomButton
-                title="Cancelar"
-                type="secondary"
-                icon="close-circle"
+              <TouchableOpacity
+                style={styles.adminActionButton}
                 onPress={() => {
                   if (!isVerifying) {
                     Vibration.vibrate(50);
@@ -256,15 +259,25 @@ const AdminAccess = () => {
                   }
                 }}
                 disabled={isVerifying}
-              />
+              >
+                <Ionicons name="close-circle" size={20} color="#FFFFFF" />
+                <Text style={styles.adminButtonText}>Cancelar</Text>
+              </TouchableOpacity>
               
-              <CustomButton
-                title="Verificar"
-                icon="enter"
+              <TouchableOpacity
+                style={[styles.adminActionButton, { backgroundColor: isVerifying || code.length === 0 ? '#555555' : '#666666' }]}
                 onPress={handleVerifyCode}
-                loading={isVerifying}
                 disabled={isVerifying || code.length === 0}
-              />
+              >
+                {isVerifying ? (
+                  <ActivityIndicator color="#FFFFFF" size="small" />
+                ) : (
+                  <>
+                    <Ionicons name="enter" size={20} color="#FFFFFF" />
+                    <Text style={styles.adminButtonText}>Verificar</Text>
+                  </>
+                )}
+              </TouchableOpacity>
             </View>
           </View>
         </Animated.View>

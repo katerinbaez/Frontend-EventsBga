@@ -1,7 +1,8 @@
-import { StyleSheet } from "react-native";
+import ResponsiveStyleSheet from '../utils/ResponsiveStyleSheet';
+import { moderateScale, verticalScale, horizontalScale } from '../utils/ResponsiveUtils';
 
 
-export const styles = StyleSheet.create({
+export const styles = ResponsiveStyleSheet.create({
     // Contenedor principal con fondo negro
     container: {
       flex: 1,
@@ -10,54 +11,54 @@ export const styles = StyleSheet.create({
     // Encabezado con gradiente visual
     header: {
       backgroundColor: '#1E1E1E',
-      paddingTop: 45,
-      paddingBottom: 18,
-      paddingHorizontal: 20,
+      paddingTop: verticalScale(45),
+      paddingBottom: verticalScale(18),
+      paddingHorizontal: horizontalScale(20),
       flexDirection: 'row',
       alignItems: 'center',
       borderBottomWidth: 1,
-      borderBottomColor: '#FF3A5E',
+      borderBottomColor: '#FF3A5E', // Color de acento rojo preferido por el usuario
     },
     backButton: {
-      marginRight: 15,
-      backgroundColor: 'rgba(255, 58, 94, 0.2)',
-      padding: 8,
-      borderRadius: 20,
+      marginRight: horizontalScale(15),
+      backgroundColor: 'rgba(255, 58, 94, 0.2)', // Color de acento rojo con transparencia
+      padding: moderateScale(8),
+      borderRadius: moderateScale(20),
     },
     headerTitle: {
       color: '#fff',
-      fontSize: 22,
+      fontSize: moderateScale(22),
       fontWeight: 'bold',
       letterSpacing: 0.5,
     },
     // Contenido principal
     content: {
       flex: 1,
-      padding: 20,
+      padding: moderateScale(20),
     },
     sectionTitle: {
-      fontSize: 24,
+      fontSize: moderateScale(24),
       fontWeight: 'bold',
-      marginBottom: 15,
+      marginBottom: verticalScale(15),
       color: '#FFF',
-      textShadowColor: 'rgba(255, 58, 94, 0.3)',
-      textShadowOffset: { width: 0, height: 2 },
+      textShadowColor: 'rgba(255, 58, 94, 0.3)', // Color de acento rojo con transparencia
+      textShadowOffset: { width: 0, height: verticalScale(2) },
       textShadowRadius: 3,
     },
     spaceInfo: {
-      fontSize: 16,
-      marginBottom: 20,
-      color: '#CCC',
+      fontSize: moderateScale(16),
+      marginBottom: verticalScale(20),
+      color: '#FFF',
       fontStyle: 'italic',
     },
     // Contenedor del formulario con fondo oscuro
     formContainer: {
       backgroundColor: '#1E1E1E',
-      borderRadius: 12,
-      padding: 20,
-      marginBottom: 20,
-      shadowColor: '#FF3A5E',
-      shadowOffset: { width: 0, height: 4 },
+      borderRadius: moderateScale(12),
+      padding: moderateScale(20),
+      marginBottom: verticalScale(20),
+      shadowColor: '#FF3A5E', // Color de acento rojo preferido por el usuario
+      shadowOffset: { width: 0, height: verticalScale(4) },
       shadowOpacity: 0.2,
       shadowRadius: 8,
       elevation: 5,
@@ -65,9 +66,9 @@ export const styles = StyleSheet.create({
       borderColor: '#333',
     },
     label: {
-      fontSize: 16,
+      fontSize: moderateScale(16),
       fontWeight: '600',
-      marginBottom: 8,
+      marginBottom: verticalScale(8),
       color: '#FFF',
       letterSpacing: 0.5,
     },
@@ -75,15 +76,15 @@ export const styles = StyleSheet.create({
     input: {
       borderWidth: 1,
       borderColor: '#444',
-      borderRadius: 8,
-      padding: 12,
-      fontSize: 16,
-      marginBottom: 15,
+      borderRadius: moderateScale(8),
+      padding: moderateScale(12),
+      fontSize: moderateScale(16),
+      marginBottom: verticalScale(15),
       backgroundColor: '#2A2A2A',
       color: '#FFF',
     },
     textArea: {
-      height: 100,
+      height: verticalScale(100),
       textAlignVertical: 'top',
     },
     // Selector de fecha estilizado
@@ -93,39 +94,39 @@ export const styles = StyleSheet.create({
       alignItems: 'center',
       borderWidth: 1,
       borderColor: '#444',
-      borderRadius: 8,
-      padding: 12,
-      marginBottom: 15,
+      borderRadius: moderateScale(8),
+      padding: moderateScale(12),
+      marginBottom: verticalScale(15),
       backgroundColor: '#2A2A2A',
     },
     dateText: {
-      fontSize: 16,
+      fontSize: moderateScale(16),
       color: '#FFF',
     },
     // Contenedor de categorías
     categoryContainer: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      marginBottom: 15,
+      marginBottom: verticalScale(15),
     },
     // Botones de categoría con estilo moderno
     categoryButton: {
-      paddingHorizontal: 12,
-      paddingVertical: 8,
-      borderRadius: 20,
+      paddingHorizontal: horizontalScale(12),
+      paddingVertical: verticalScale(8),
+      borderRadius: moderateScale(20),
       backgroundColor: '#2A2A2A',
-      marginRight: 8,
-      marginBottom: 8,
+      marginRight: horizontalScale(8),
+      marginBottom: verticalScale(8),
       borderWidth: 1,
       borderColor: '#444',
     },
     categoryButtonSelected: {
-      backgroundColor: '#FF3A5E',
-      borderColor: '#FF3A5E',
+      backgroundColor: '#FF3A5E', // Color de acento rojo preferido por el usuario
+      borderColor: '#FF3A5E', // Color de acento rojo preferido por el usuario
     },
     categoryButtonText: {
-      fontSize: 14,
-      color: '#CCC',
+      fontSize: moderateScale(14),
+      color: '#FFF',
     },
     categoryButtonTextSelected: {
       color: '#fff',
@@ -135,64 +136,64 @@ export const styles = StyleSheet.create({
     timeSlotsContainer: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      marginBottom: 20,
+      marginBottom: verticalScale(20),
     },
     // Slots de tiempo con estilo moderno
     timeSlot: {
-      paddingHorizontal: 12,
-      paddingVertical: 8,
-      borderRadius: 20,
+      paddingHorizontal: horizontalScale(12),
+      paddingVertical: verticalScale(8),
+      borderRadius: moderateScale(20),
       backgroundColor: '#2A2A2A',
-      marginRight: 8,
-      marginBottom: 8,
+      marginRight: horizontalScale(8),
+      marginBottom: verticalScale(8),
       borderWidth: 1,
       borderColor: '#444',
     },
     timeSlotSelected: {
-      backgroundColor: '#FF3A5E',
-      borderColor: '#FF3A5E',
+      backgroundColor: '#FF3A5E', // Color de acento rojo preferido por el usuario
+      borderColor: '#FF3A5E', // Color de acento rojo preferido por el usuario
     },
     timeSlotText: {
-      fontSize: 14,
-      color: '#CCC',
+      fontSize: moderateScale(14),
+      color: '#FFF',
     },
     timeSlotTextSelected: {
       color: '#fff',
       fontWeight: 'bold',
     },
     noSlotsText: {
-      fontSize: 16,
-      color: '#AAA',
+      fontSize: moderateScale(16),
+      color: '#FFF',
       fontStyle: 'italic',
-      marginBottom: 20,
+      marginBottom: verticalScale(20),
       textAlign: 'center',
-      padding: 15,
+      padding: moderateScale(15),
     },
     loader: {
-      marginVertical: 20,
+      marginVertical: verticalScale(20),
     },
     // Botón de envío con efecto de brillo
     submitButton: {
-      backgroundColor: '#FF3A5E',
-      paddingVertical: 15,
-      borderRadius: 8,
+      backgroundColor: '#FF3A5E', // Color de acento rojo preferido por el usuario
+      paddingVertical: verticalScale(15),
+      borderRadius: moderateScale(8),
       alignItems: 'center',
-      marginTop: 20,
-      marginBottom: 30,
-      shadowColor: '#FF3A5E',
-      shadowOffset: { width: 0, height: 2 },
+      marginTop: verticalScale(20),
+      marginBottom: verticalScale(30),
+      shadowColor: '#FF3A5E', // Color de acento rojo preferido por el usuario
+      shadowOffset: { width: 0, height: verticalScale(2) },
       shadowOpacity: 0.5,
       shadowRadius: 5,
       elevation: 5,
     },
     submitButtonDisabled: {
-      backgroundColor: 'rgba(255, 58, 94, 0.4)',
+      backgroundColor: 'rgba(255, 58, 94, 0.4)', // Color de acento rojo con transparencia
       shadowOpacity: 0.2,
     },
     submitButtonText: {
-      color: '#fff',
-      fontSize: 18,
-      fontWeight: 'bold',
+      color: '#FFF',
+      fontSize: moderateScale(16),
+      fontWeight: '600',
       letterSpacing: 0.5,
     },
     // Modal con estilo oscuro
@@ -201,16 +202,16 @@ export const styles = StyleSheet.create({
       backgroundColor: 'rgba(0, 0, 0, 0.7)',
       justifyContent: 'center',
       alignItems: 'center',
-      padding: 20,
+      padding: moderateScale(20),
     },
     modalContainer: {
       backgroundColor: '#1E1E1E',
-      borderRadius: 12,
-      padding: 20,
+      borderRadius: moderateScale(12),
+      padding: moderateScale(20),
       width: '100%',
-      maxWidth: 500,
-      shadowColor: '#FF3A5E',
-      shadowOffset: { width: 0, height: 4 },
+      maxWidth: horizontalScale(500),
+      shadowColor: '#FF3A5E', // Color de acento rojo preferido por el usuario
+      shadowOffset: { width: 0, height: verticalScale(4) },
       shadowOpacity: 0.3,
       shadowRadius: 10,
       elevation: 8,
@@ -218,70 +219,73 @@ export const styles = StyleSheet.create({
       borderColor: '#333',
     },
     modalTitle: {
-      fontSize: 22,
+      fontSize: moderateScale(18),
       fontWeight: 'bold',
-      marginBottom: 15,
+      marginBottom: verticalScale(15),
       color: '#FFF',
       textAlign: 'center',
-      textShadowColor: 'rgba(255, 58, 94, 0.3)',
-      textShadowOffset: { width: 0, height: 1 },
+      textShadowColor: 'rgba(255, 58, 94, 0.3)', // Color de acento rojo con transparencia
+      textShadowOffset: { width: 0, height: verticalScale(1) },
       textShadowRadius: 2,
     },
     modalContent: {
-      marginBottom: 20,
+      marginBottom: verticalScale(20),
     },
     modalLabel: {
-      fontSize: 16,
+      fontSize: moderateScale(14),
       fontWeight: '600',
-      color: '#AAA',
-      marginTop: 10,
+      color: '#FFF',
+      marginTop: verticalScale(10),
     },
     modalValue: {
-      fontSize: 16,
+      fontSize: moderateScale(14),
       color: '#FFF',
-      marginBottom: 5,
+      marginBottom: verticalScale(5),
     },
     modalWarning: {
-      fontSize: 14,
-      color: '#FF3A5E',
+      fontSize: moderateScale(12),
+      color: '#FF3A5E', // Color de acento rojo preferido por el usuario
       fontStyle: 'italic',
-      marginTop: 15,
+      marginTop: verticalScale(15),
       textAlign: 'center',
     },
     modalButtons: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      marginTop: 10,
+      marginTop: verticalScale(20),
     },
     cancelButton: {
-      flex: 1,
       backgroundColor: '#333',
-      padding: 12,
-      borderRadius: 8,
-      marginRight: 10,
+      paddingVertical: verticalScale(12),
+      paddingHorizontal: horizontalScale(20),
+      borderRadius: moderateScale(8),
       alignItems: 'center',
+      justifyContent: 'center',
+      flex: 0.48,
       borderWidth: 1,
       borderColor: '#444',
     },
     cancelButtonText: {
-      fontSize: 16,
+      fontSize: moderateScale(14),
       color: '#FFF',
       fontWeight: '600',
     },
     confirmButton: {
-      flex: 1,
-      backgroundColor: '#FF3A5E',
-      padding: 12,
-      borderRadius: 8,
+      backgroundColor: '#FF3A5E', // Color de acento rojo preferido por el usuario
+      paddingVertical: verticalScale(12),
+      paddingHorizontal: horizontalScale(20),
+      borderRadius: moderateScale(8),
       alignItems: 'center',
-      shadowColor: '#FF3A5E',
-      shadowOffset: { width: 0, height: 2 },
+      justifyContent: 'center',
+      flex: 0.48,
+      shadowColor: '#FF3A5E', // Color de acento rojo preferido por el usuario
+      shadowOffset: { width: 0, height: verticalScale(2) },
       shadowOpacity: 0.5,
       shadowRadius: 3,
       elevation: 3,
     },
     confirmButtonText: {
-      fontSize: 16,
+      fontSize: moderateScale(14),
       color: '#fff',
       fontWeight: '600',
     },

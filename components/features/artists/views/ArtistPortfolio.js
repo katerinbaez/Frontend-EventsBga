@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, Modal, Alert, ActivityIndicator, SafeAreaView, StatusBar, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, Alert, ScrollView, Modal, ActivityIndicator, SafeAreaView, StatusBar, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import { BACKEND_URL } from '../../../../constants/config';
 import { useAuth } from '../../../../context/AuthContext';
+import CloudinaryService from '../../spaces/services/CloudinaryService';
 import { styles } from '../../../../styles/ArtistPortfolioStyles';
 import AddProjectModal from '../modals/AddProjectModal';
 import PreviewProjectModal from '../modals/PreviewProjectModal';
@@ -92,10 +94,34 @@ const ArtistPortfolio = ({ navigation, route }) => {
       if (!result.canceled && result.assets.length > 0) {
         // Agregar todas las imágenes seleccionadas al array existente
         const newImages = result.assets.map(asset => asset.uri);
-        setNewItem({ 
-          ...newItem, 
-          images: [...newItem.images, ...newImages]
-        });
+        
+        // Mostrar indicador de carga
+        setIsLoading(true);
+        
+        try {
+          // Subir imágenes a Cloudinary
+          console.warn('Subiendo imágenes a Cloudinary...');
+          const cloudinaryUrls = await CloudinaryService.uploadMultipleImages(newImages);
+          console.warn('Imágenes subidas a Cloudinary:', cloudinaryUrls);
+          
+          // Actualizar el estado con las URLs de Cloudinary
+          setNewItem({ 
+            ...newItem, 
+            images: [...newItem.images, ...cloudinaryUrls]
+          });
+          
+          Alert.alert('Éxito', 'Imágenes subidas correctamente');
+        } catch (cloudinaryError) {
+          console.error('Error subiendo a Cloudinary:', cloudinaryError);
+          // Si falla, usar las URIs locales
+          setNewItem({ 
+            ...newItem, 
+            images: [...newItem.images, ...newImages]
+          });
+          Alert.alert('Advertencia', 'No se pudieron subir las imágenes a la nube. Se usarán las imágenes locales temporalmente.');
+        } finally {
+          setIsLoading(false);
+        }
       }
     } catch (error) {
       console.error('Error seleccionando imágenes:', error);
@@ -122,13 +148,42 @@ const ArtistPortfolio = ({ navigation, route }) => {
     try {
       setIsLoading(true);
       
-      // Crear el nuevo elemento del portafolio
+      // Verificar si hay imágenes locales que necesitan ser subidas a Cloudinary
+      let cloudinaryImages = [];
+      try {
+        // Verificar si hay imágenes locales que necesitan ser subidas
+        const hasLocalImages = newItem.images.some(uri => !CloudinaryService.isCloudinaryUrl(uri));
+        
+        if (hasLocalImages) {
+          console.warn('Subiendo imágenes locales a Cloudinary antes de guardar...');
+          cloudinaryImages = await CloudinaryService.uploadMultipleImages(newItem.images);
+          console.warn('Imágenes subidas exitosamente:', cloudinaryImages);
+          
+          // Si se subieron correctamente, actualizar el estado con las URLs de Cloudinary
+          if (cloudinaryImages.length > 0 && cloudinaryImages.some(url => CloudinaryService.isCloudinaryUrl(url))) {
+            // Actualizar el estado con las URLs de Cloudinary para que queden registradas
+            setNewItem({
+              ...newItem,
+              images: cloudinaryImages
+            });
+          }
+        } else {
+          cloudinaryImages = newItem.images;
+        }
+      } catch (imageError) {
+        console.warn('Error al subir imágenes a Cloudinary:', imageError);
+        // Continuar con las imágenes originales si falla la subida
+        cloudinaryImages = newItem.images;
+        Alert.alert('Advertencia', 'No se pudieron subir algunas imágenes a la nube. Se intentará guardar con las imágenes locales.');
+      }
+      
+      // Crear el nuevo elemento del portafolio con las URLs de Cloudinary
       const newPortfolioItem = {
         id: Date.now().toString(),
         title: newItem.title,
         description: newItem.description,
-        imageUrl: newItem.images[0],
-        images: newItem.images,
+        imageUrl: cloudinaryImages[0], // Usar la primera imagen de Cloudinary como principal
+        images: cloudinaryImages,      // Usar todas las URLs de Cloudinary
         date: newItem.date
       };
       

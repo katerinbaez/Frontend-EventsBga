@@ -14,7 +14,7 @@ const EventCardSearch = ({
   isFavorite, 
   onToggleFavorite 
 }) => {
-  // Determinar si el evento ha expirado
+  // Determinar si el evento ha expirado (1 hora después de la hora de inicio)
   const expired = isEventExpired(event);
   
   // Obtener la fecha del evento (puede estar en diferentes propiedades)
@@ -66,7 +66,7 @@ const EventCardSearch = ({
           <View style={styles.eventInfoItem}>
             <Ionicons name="time-outline" size={16} color="#FFFFFF" />
             <Text style={styles.eventInfoText}>
-              {formatTime(eventDate)}{expired ? '' : ' - 07:00'}
+              {expired ? 'Terminado' : formatTime(eventDate)}
             </Text>
           </View>
           

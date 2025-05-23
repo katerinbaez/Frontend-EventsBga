@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+;
 
 export default StyleSheet.create({
   container: {
@@ -26,7 +27,7 @@ export default StyleSheet.create({
     borderRadius: 10,
     borderWidth: 2,
     borderColor: '#ff4757',
-    width: '45%',
+    width: '48%',
     backgroundColor: 'rgba(255, 71, 87, 0.1)', // Fondo semi-transparente
   },
   roleButtonSelected: {
@@ -39,8 +40,8 @@ export default StyleSheet.create({
   },
   roleButtonText: {
     marginLeft: 10,
-    fontSize: 18,
-    color: '#ff4757',
+    fontSize: 12,
+    color: '#FFFFFF',
     fontWeight: 'bold',
     textAlign: 'center',
   },
@@ -50,7 +51,7 @@ export default StyleSheet.create({
   fieldTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2C3E50',
+    color: '#ffffff',
     marginTop: 15,
     marginBottom: 8,
     letterSpacing: 0.3,
@@ -188,15 +189,18 @@ export default StyleSheet.create({
     marginBottom: 25,
   },
   button: {
-    padding: 18,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
     borderRadius: 12,
     width: '45%',
     alignItems: 'center',
+    justifyContent: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    height: 50,
   },
   submitButton: {
     backgroundColor: '#4A90E2',
@@ -211,6 +215,8 @@ export default StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 17,
     fontWeight: 'bold',
+    textAlign: 'center',
+    width: '100%',
     letterSpacing: 0.5,
   },
 });

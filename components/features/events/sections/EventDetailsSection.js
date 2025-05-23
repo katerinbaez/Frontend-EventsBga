@@ -12,7 +12,7 @@ const EventDetailsSection = ({
   return (
     <View>
       <Text style={styles.sectionTitle}>Programación de Eventos</Text>
-      <Text style={[styles.spaceInfo, { fontSize: 20, fontWeight: 'bold', marginBottom: 15, color: '#333' }]}>
+      <Text style={[styles.spaceInfo, { fontSize: 20, fontWeight: 'bold', marginBottom: 15, color: '#FFF' }]}>
         Espacio: {spaceName}
       </Text>
       
@@ -20,6 +20,7 @@ const EventDetailsSection = ({
       <TextInput
         style={styles.input}
         placeholder="Ingresa el nombre del evento"
+        placeholderTextColor="#FFF"
         value={eventName}
         onChangeText={onChangeEventName}
       />
@@ -28,6 +29,7 @@ const EventDetailsSection = ({
       <TextInput
         style={[styles.input, styles.textArea]}
         placeholder="Describe tu evento"
+        placeholderTextColor="#FFF"
         multiline
         numberOfLines={4}
         value={eventDescription}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TextInput } from 'react-native';
 import { styles } from '../../../../styles/ArtistProfileStyles';
+import { moderateScale, verticalScale } from '../../../../utils/ResponsiveUtils';
 
 const ContactForm = ({ contact, onContactChange }) => {
   return (
@@ -16,6 +17,8 @@ const ContactForm = ({ contact, onContactChange }) => {
           placeholderTextColor="#666"
         />
       ))}
+      {/* Espacio adicional al final de la información de contacto */}
+      <View style={{ height: verticalScale(30) }} />
     </View>
   );
 };

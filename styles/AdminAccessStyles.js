@@ -1,85 +1,114 @@
 import { COLORS, COMMON_STYLES, SIZES } from './theme';
+import ResponsiveStyleSheet from '../utils/ResponsiveStyleSheet';
+import { moderateScale, verticalScale, horizontalScale } from '../utils/ResponsiveUtils';
+import { Dimensions } from 'react-native';
 
-export const styles = {
+const { width, height } = Dimensions.get('window');
+
+export const styles = ResponsiveStyleSheet.create({
   adminButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: moderateScale(40),
+    height: moderateScale(40),
+    borderRadius: moderateScale(20),
     padding: 0,
-    backgroundColor: COLORS.primary,
+    backgroundColor: '#FF3A5E', // Color de acento rojo preferido por el usuario
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 3,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: verticalScale(2) },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
   },
   modalHeader: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: verticalScale(20),
   },
   iconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: moderateScale(80),
+    height: moderateScale(80),
+    borderRadius: moderateScale(40),
     backgroundColor: 'transparent',
-    borderWidth: 2,
-    borderColor: '#FF0000',
+    borderWidth: moderateScale(2),
+    borderColor: '#FF3A5E', // Color de acento rojo preferido por el usuario
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 15,
+    marginBottom: verticalScale(15),
   },
   modalTitle: {
-    fontSize: 24,
+    fontSize: moderateScale(24),
     fontWeight: 'bold',
     color: '#FFFFFF',
-    marginBottom: 20,
+    marginBottom: verticalScale(20),
     textAlign: 'center',
-    textShadowColor: '#FF0000',
-    textShadowOffset: { width: 0, height: 1 },
+    textShadowColor: '#FF3A5E', // Color de acento rojo preferido por el usuario
+    textShadowOffset: { width: 0, height: verticalScale(1) },
     textShadowRadius: 10,
   },
   welcomeText: {
-    ...COMMON_STYLES.fonts.h2,
-    color: COLORS.text.primary,
-    marginBottom: SIZES.margin.sm,
+    fontSize: moderateScale(20), // Equivalente a COMMON_STYLES.fonts.h2
+    fontWeight: 'bold',
+    color: '#FFFFFF', // Equivalente a COLORS.text.primary
+    marginBottom: verticalScale(10), // Equivalente a SIZES.margin.sm
   },
   instructionText: {
-    ...COMMON_STYLES.fonts.body,
-    color: COLORS.text.secondary,
-    marginBottom: SIZES.margin.lg,
+    fontSize: moderateScale(14), // Equivalente a COMMON_STYLES.fonts.body
+    color: '#AAAAAA', // Equivalente a COLORS.text.secondary
+    marginBottom: verticalScale(20), // Equivalente a SIZES.margin.lg
   },
   modalContent: {
     backgroundColor: '#000000',
-    padding: 30,
-    borderRadius: 20,
-    width: '85%',
+    padding: moderateScale(20),
+    borderRadius: moderateScale(20),
+    width: '90%',
+    maxWidth: 400,
     alignItems: 'center',
-    borderWidth: 3,
+    borderWidth: moderateScale(2),
     borderColor: '#FF0000',
     shadowColor: '#FF0000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: verticalScale(4) },
     shadowOpacity: 0.3,
     shadowRadius: 10,
     elevation: 8,
   },
   input: {
     width: '100%',
-    height: 50,
-    backgroundColor: 'transparent',
-    borderWidth: 2,
+    height: verticalScale(50),
+    backgroundColor: '#2A2A2A',
+    borderWidth: moderateScale(2),
     borderColor: '#FF0000',
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 20,
+    borderRadius: moderateScale(10),
+    paddingHorizontal: moderateScale(15),
+    marginBottom: verticalScale(20),
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: moderateScale(16),
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    gap: SIZES.padding.md,
+    gap: horizontalScale(10),
+    marginTop: verticalScale(10),
   },
-};
+  
+  // Estilos específicos para los botones del modal de acceso administrativo
+  adminActionButton: {
+    width: '48%',
+    height: verticalScale(45),
+    borderRadius: moderateScale(10),
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    backgroundColor: '#333333',
+  },
+  
+  adminButtonText: {
+    color: '#FFFFFF',
+    fontSize: moderateScale(16),
+    fontWeight: 'bold',
+    marginLeft: horizontalScale(5),
+  },
+});

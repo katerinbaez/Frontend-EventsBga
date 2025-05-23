@@ -16,6 +16,7 @@ const AdditionalInfoSection = ({
       <TextInput
         style={styles.input}
         placeholder="Ej: Concierto, Exposición, Taller..."
+        placeholderTextColor="#FFF"
         value={eventType}
         onChangeText={onEventTypeChange}
       />
@@ -24,6 +25,7 @@ const AdditionalInfoSection = ({
       <TextInput
         style={styles.input}
         placeholder="Número de asistentes esperados"
+        placeholderTextColor="#FFF"
         keyboardType="numeric"
         value={expectedAttendees}
         onChangeText={onExpectedAttendeesChange}
@@ -33,6 +35,7 @@ const AdditionalInfoSection = ({
       <TextInput
         style={[styles.input, styles.textArea]}
         placeholder="Especifica cualquier requerimiento adicional"
+        placeholderTextColor="#FFF"
         multiline
         numberOfLines={4}
         value={additionalRequirements}

@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+;
 
 const EventCalendarStyles = StyleSheet.create({
   // Estilos principales del contenedor

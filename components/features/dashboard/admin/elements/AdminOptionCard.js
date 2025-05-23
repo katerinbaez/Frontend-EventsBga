@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity, Text, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../../../../../styles/DashboardAdminStyles';
+import { moderateScale } from '../../../../../utils/ResponsiveUtils';
 
 const AdminOptionCard = ({ title, description, iconName, onPress, requiresNavigation, navigationTarget, navigation }) => {
   const handlePress = () => {
@@ -26,7 +27,7 @@ const AdminOptionCard = ({ title, description, iconName, onPress, requiresNaviga
       style={[styles.optionCard, styles.adminCard]}
       onPress={handlePress}
     >
-      <Ionicons name={iconName} size={40} color="#FFD700" />
+      <Ionicons name={iconName} size={moderateScale(40)} color="#FFFFFF" />
       <Text style={[styles.optionTitle, styles.adminText]}>{title}</Text>
       <Text style={[styles.optionDescription, styles.adminText]}>{description}</Text>
     </TouchableOpacity>

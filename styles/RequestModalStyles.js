@@ -1,22 +1,29 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
+import { moderateScale, verticalScale, horizontalScale } from '../utils/ResponsiveUtils';
 
 export 
 const styles = StyleSheet.create({
+  // Estilo para los enlaces
+  linkText: {
+    color: '#4287f5', // Color azul para los enlaces
+    fontSize: moderateScale(12),
+    textDecorationLine: 'underline',
+  },
   modalContainer: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 15,
+    padding: moderateScale(15),
   },
   modalContent: {
     backgroundColor: '#1E1E1E',
-    borderRadius: 15,
-    padding: 20,
+    borderRadius: moderateScale(15),
+    padding: moderateScale(20),
     width: '100%',
-    maxWidth: 500,
+    maxWidth: horizontalScale(500),
     maxHeight: '90%',
-    borderLeftWidth: 4,
+    borderLeftWidth: moderateScale(4),
     borderLeftColor: '#FF3A5E',
   },
   header: {
@@ -46,30 +53,30 @@ const styles = StyleSheet.create({
   },
   requestItem: {
     backgroundColor: '#2A2A2A',
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 15,
-    borderLeftWidth: 3,
+    borderRadius: moderateScale(10),
+    padding: moderateScale(15),
+    marginBottom: verticalScale(15),
+    borderLeftWidth: moderateScale(3),
     borderLeftColor: '#FF3A5E',
   },
   categoryText: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: moderateScale(14),
     fontWeight: 'bold',
   },
   dateText: {
     color: '#999999',
-    fontSize: 12,
+    fontSize: moderateScale(12),
     fontStyle: 'italic',
   },
   requestHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: verticalScale(10),
   },
   requestName: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     fontWeight: 'bold',
     color: '#FFFFFF',
     flex: 1,
@@ -77,39 +84,39 @@ const styles = StyleSheet.create({
   statusBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 20,
-    marginLeft: 10,
+    paddingHorizontal: horizontalScale(10),
+    paddingVertical: verticalScale(5),
+    borderRadius: moderateScale(20),
+    marginLeft: horizontalScale(10),
   },
   statusIcon: {
-    marginRight: 5,
+    marginRight: horizontalScale(5),
   },
   statusText: {
     color: '#FFFFFF',
-    fontSize: 12,
+    fontSize: moderateScale(12),
     fontWeight: 'bold',
   },
   requestDetails: {
-    marginBottom: 10,
+    marginBottom: verticalScale(10),
   },
   detailItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 5,
+    marginBottom: verticalScale(5),
   },
   detailText: {
-    marginLeft: 8,
+    marginLeft: horizontalScale(8),
     color: '#CCCCCC',
-    fontSize: 14,
+    fontSize: moderateScale(12), // Letra más pequeña
   },
   requestFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderTopWidth: 1,
+    borderTopWidth: moderateScale(1),
     borderTopColor: 'rgba(255, 255, 255, 0.1)',
-    paddingTop: 10,
+    paddingTop: verticalScale(10),
   },
   requestDate: {
     color: '#999999',
@@ -318,12 +325,20 @@ const styles = StyleSheet.create({
   detailValue: {
     color: '#DDDDDD',
     flex: 1,
-    fontSize: 15,
+    fontSize: moderateScale(12), // Letra más pequeña
     fontWeight: 'normal',
   },
-  linkText: {
-    color: '#FF3A5E',
+  detailValueLink: {
+    color: '#4287f5', // Color azul para los enlaces
+    flex: 1,
+    fontSize: moderateScale(12),
+    fontWeight: 'normal',
     textDecorationLine: 'underline',
+  },
+  linkText: {
+    color: '#4287f5', // Color azul para los enlaces
+    textDecorationLine: 'underline',
+    fontSize: moderateScale(12),
   },
   noSocialText: {
     color: '#999999',

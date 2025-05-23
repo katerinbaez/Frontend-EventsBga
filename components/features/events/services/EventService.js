@@ -34,14 +34,23 @@ export const loadAvailableEvents = async (artistId) => {
     const response = await axios.get(`${BACKEND_URL}/api/event-attendances/available-events`);
     
     if (response.data && response.data.success) {
-      const events = response.data.events;
+      let events = response.data.events;
+      
+      // Ordenar eventos del más reciente al más antiguo
+      events = events.sort((a, b) => {
+        // Usar la fecha más relevante para cada evento (fechaInicio, fechaProgramada o fecha)
+        const dateA = new Date(a.fechaInicio || a.fechaProgramada || a.fecha || 0);
+        const dateB = new Date(b.fechaInicio || b.fechaProgramada || b.fecha || 0);
+        // Ordenar de más reciente a más antiguo (descendente)
+        return dateB - dateA;
+      });
       
       if (!artistId) {
-        console.error('No se pudo obtener el ID del artista para verificar asistencias');
+        console.warn('No se pudo obtener el ID del artista para verificar asistencias');
         return { events, attendingEvents: {} };
       }
       
-      console.log('Verificando asistencias con artistId:', artistId);
+      console.warn('Verificando asistencias con artistId:', artistId);
       
       // Verificar a cuáles eventos ya ha confirmado asistencia el artista
       const attendanceMap = {};
@@ -55,7 +64,7 @@ export const loadAvailableEvents = async (artistId) => {
             attendanceMap[event.id] = isAttending;
           }
         } catch (error) {
-          console.error(`Error al verificar asistencia para evento ${event.id}:`, error);
+          console.warn(`Error al verificar asistencia para evento ${event.id}:`, error);
         }
       }));
       
@@ -124,23 +133,27 @@ export const cancelAttendance = async (eventId, artistId) => {
   }
 };
 
-// Verificar si un evento ha expirado
+// Verificar si un evento ha expirado (1 hora después de la hora de inicio)
 export const isEventExpired = (event) => {
   const currentDate = new Date();
   
-  // Si hay fecha de finalización, verificamos si ya pasó
+  // Obtener la fecha del evento (puede estar en diferentes propiedades)
+  const eventDate = event.fechaInicio || event.fechaProgramada || event.fecha;
+  
+  if (eventDate) {
+    const eventDateTime = new Date(eventDate);
+    
+    // Calcular la hora de fin (1 hora después del inicio)
+    const endDateTime = new Date(eventDateTime);
+    endDateTime.setHours(endDateTime.getHours() + 1);
+    
+    // El evento ha expirado si la hora actual es mayor que la hora de inicio + 1 hora
+    return currentDate > endDateTime;
+  }
+  
+  // Si hay fecha de finalización específica, la usamos
   if (event.fechaFin) {
     return new Date(event.fechaFin) < currentDate;
-  }
-  
-  // Si hay fecha de inicio, verificamos si ya pasó
-  if (event.fechaInicio) {
-    return new Date(event.fechaInicio) < currentDate;
-  }
-  
-  // Si hay fecha programada (para solicitudes de eventos), verificamos si ya pasó
-  if (event.fechaProgramada) {
-    return new Date(event.fechaProgramada) < currentDate;
   }
   
   // Si no hay ninguna fecha, asumimos que no ha expirado

@@ -15,7 +15,7 @@ const RoleSelector = ({ selectedRole, onSelectRole, errors }) => {
           ]}
           onPress={() => onSelectRole('Artista')}
         >
-          <Ionicons name="brush" size={24} color={selectedRole === 'Artista' ? '#FFF' : '#4A90E2'} />
+          <Ionicons name="brush" size={24} color="#FFFFFF" />
           <Text style={[
             styles.roleButtonText,
             selectedRole === 'Artista' && styles.roleButtonTextSelected
@@ -30,7 +30,7 @@ const RoleSelector = ({ selectedRole, onSelectRole, errors }) => {
           ]}
           onPress={() => onSelectRole('Manager')}
         >
-          <Ionicons name="business" size={24} color={selectedRole === 'Manager' ? '#FFF' : '#4A90E2'} />
+          <Ionicons name="business" size={24} color="#FFFFFF" />
           <Text style={[
             styles.roleButtonText,
             selectedRole === 'Manager' && styles.roleButtonTextSelected

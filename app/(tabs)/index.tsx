@@ -1,16 +1,17 @@
 import React from 'react';
-import { StyleSheet, SafeAreaView } from 'react-native';
+import { SafeAreaView } from 'react-native';
+import ResponsiveStyleSheet from '../../utils/ResponsiveStyleSheet';
 import App from '../../App';
 
 function HomeScreen() {
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container as any}>
       <App />
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = ResponsiveStyleSheet.create({
   container: {
     flex: 1,
   },
