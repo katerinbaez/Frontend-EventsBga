@@ -1,7 +1,8 @@
 {
   "cli": {
     "version": ">= 16.1.0",
-    "appVersionSource": "remote"
+    "requireCommit": false,
+    "promptToConfigurePushNotifications": false
   },
   "build": {
     "development": {
@@ -9,7 +10,16 @@
       "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal"
+      "android":{
+        "buildType":"apk",
+        "gradleCommand": ":app:assembleRelease"
+      },
+      "env": {
+        "NODE_ENV": "production",
+        "EXPO_NO_CACHE": "1",
+        "EXPO_CLEAR_CACHE": "1",
+        "BACKEND_URL": "https://backend-eventsbga-production.up.railway.app"
+      }
     },
     "production": {
       "autoIncrement": true

@@ -5,16 +5,19 @@ import App from '../../App';
 
 function HomeScreen() {
   return (
-    <SafeAreaView style={styles.container as any}>
+    <SafeAreaView style={styles.container}>
       <App />
     </SafeAreaView>
   );
 }
 
-const styles = ResponsiveStyleSheet.create({
+const rawStyles = {
   container: {
     flex: 1,
   },
-});
+};
+
+const styles = ResponsiveStyleSheet.create(rawStyles) as typeof rawStyles;
+
 
 export default HomeScreen;

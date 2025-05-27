@@ -6,8 +6,8 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "splash": {
-  "backgroundColor": "#000000"
-},
+      "backgroundColor": "#000000"
+    },
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -23,11 +23,53 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "myapp",
+              "host": "auth"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        },
+        {
+          "action": "VIEW",
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ],
+          "data": {
+            "scheme": "https",
+            "host": "*.eventsbga.us.auth0.com",
+            "pathPrefix": "/android/com.eventsbga.app/callback"
+          }
+        }
+      ],
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyCMU89H8fISyKNOMSt2bSy0wtWdfFjs4Ag"
         }
-      }
+      },
+      "gradlePluginVersion": "8.6.0",
+      "buildToolsVersion": "34.0.0",
+      "compileSdkVersion": 35,
+      "targetSdkVersion": 34,
+      "softwareKeyboardLayoutMode": "resize",
+      "allowBackup": true,
+      "permissions": [
+        "INTERNET",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_NETWORK_STATE"
+      ],
+      "usesCleartextTraffic": false,
+      "jsEngine": "hermes"
     },
     "web": {
       "bundler": "metro",
@@ -43,7 +85,19 @@
           "backgroundColor": "#1A0011"
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 34,
+            "buildToolsVersion": "34.0.0",
+            "enableProguardInReleaseBuilds": true,
+            "usesCleartextTraffic": false
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
@@ -53,7 +107,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "1574b3a7-af1e-4d74-8f60-bfcf7263bcbb"
+        "projectId": "79449c76-f236-460d-bb22-60b95f30211e"
       }
     }
   }

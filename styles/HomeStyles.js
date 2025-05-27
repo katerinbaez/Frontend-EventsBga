@@ -105,11 +105,19 @@ export const styles = ResponsiveStyleSheet.create({
     marginHorizontal: horizontalScale(20),
     marginBottom: verticalScale(20),
   },
+  errorContainer: {
+    marginTop: verticalScale(5),
+    padding: moderateScale(10),
+    backgroundColor: '#ffeeee',
+    borderRadius: moderateScale(5),
+    width: '100%',
+    marginHorizontal: horizontalScale(20),
+  },
   errorText: {
-    color: '#FF3A5E',
-    fontSize: moderateScale(16),
+    color: '#d32f2f',
     textAlign: 'center',
-    padding: moderateScale(20),
+    fontWeight: 'bold',
+    fontSize: moderateScale(14),
   },
   emptyText: {
     color: '#AAAAAA',
