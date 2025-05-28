@@ -14,7 +14,7 @@
     "ios": {
       "supportsTablet": true,
       "config": {
-        "googleMapsApiKey": "AIzaSyCMU89H8fISyKNOMSt2bSy0wtWdfFjs4Ag"
+        "googleMapsApiKey": "YOUR_API_KEY"
       }
     },
     "android": {
@@ -53,7 +53,7 @@
       ],
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyCMU89H8fISyKNOMSt2bSy0wtWdfFjs4Ag"
+          "apiKey": "YOUR_API_KEY"
         }
       },
       "gradlePluginVersion": "8.6.0",
