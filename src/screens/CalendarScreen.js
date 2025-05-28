@@ -1,10 +1,16 @@
-import { StyleSheet, View, Text, SafeAreaView, Platform, StatusBar } from 'react-native';
+// src/screens/CalendarScreen.js (conector mínimo)
+// Este archivo actúa como un conector entre la navegación y el componente real
+
+import EventCalendar from '../components/features/calendar/views/EventCalendar';
+
+// Componente conector que proporciona la estructura básica para la pantalla de calendario
+// Mantiene el estilo visual consistente con el diseño original
+import React from 'react';
+import { StyleSheet, View, Text, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-// @ts-nocheck
-import EventCalendar from '../../components/features/calendar/views/EventCalendar';
 
-export default function CalendarScreen() {
+const CalendarScreen = () => {
   const insets = useSafeAreaInsets();
   
   return (
@@ -19,13 +25,12 @@ export default function CalendarScreen() {
       </View>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#000000',
-    // Eliminamos paddingTop ya que ahora usamos insets.top
   },
   header: {
     flexDirection: 'row',
@@ -50,3 +55,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
 });
+
+export default CalendarScreen;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Modal, TouchableOpacity, Text, ScrollView, TextInput, ActivityIndicator, Alert } from 'react-native';
+import { View, Modal, TouchableOpacity, Text, ScrollView, TextInput, ActivityIndicator, Alert, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { styles } from '../../../../styles/EventRequestFormStyles';
@@ -182,11 +182,13 @@ ${eventCategory === 'otro' ? `Categoría personalizada: ${customCategory}` : ''}
               </View>
               {showDatePicker && (
                 <DateTimePicker
+                  testID="dateTimePicker"
                   value={eventDate}
                   mode="date"
-                  display="default"
+                  display={Platform.OS === 'ios' ? 'spinner' : 'default'}
                   onChange={handleDateChange}
                   minimumDate={new Date()}
+                  themeVariant="dark"
                 />
               )}
             </View>

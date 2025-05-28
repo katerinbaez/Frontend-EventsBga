@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Platform } from 'react-native';
 
 const useEventFormState = () => {
   // Estados para el formulario
@@ -40,20 +41,35 @@ const useEventFormState = () => {
 
   // Manejar cambio de fecha
   const handleDateChange = (event, selectedDate, showPicker = false) => {
+    // Para Android, el evento puede ser 'set' o 'dismissed'
+    if (event && event.type === 'dismissed') {
+      setShowDatePicker(false);
+      return;
+    }
+    
     // Si solo queremos mostrar/ocultar el picker
     if (showPicker !== undefined) {
       setShowDatePicker(showPicker);
       return;
     }
     
-    // Ocultar el picker
-    setShowDatePicker(false);
+    // Ocultar el picker en iOS, en Android se maneja automáticamente
+    if (Platform.OS === 'ios') {
+      setShowDatePicker(false);
+    }
     
     // Si no hay fecha seleccionada, mantener la actual
     if (!selectedDate) return;
     
+    // Crear una nueva instancia de Date para evitar problemas de referencia
+    const newDate = new Date(selectedDate);
+    
+    // Asegurar que la fecha sea correcta (sin problemas de zona horaria)
+    // Establecer la hora a mediodía para evitar problemas con cambios de día debido a zonas horarias
+    newDate.setHours(12, 0, 0, 0);
+    
     // Actualizar la fecha seleccionada
-    setEventDate(selectedDate);
+    setEventDate(newDate);
   };
 
   // Resetear el formulario

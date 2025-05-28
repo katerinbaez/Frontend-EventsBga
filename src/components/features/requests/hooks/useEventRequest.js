@@ -73,11 +73,27 @@ const useEventRequest = ({ visible, onClose, spaceId, spaceName, managerId }) =>
 
   // Función para manejar el cambio de fecha que también actualiza los slots
   const handleDateChange = (event, selectedDate, showPicker = false) => {
+    // Para Android, el evento puede ser 'set' o 'dismissed'
+    if (event && event.type === 'dismissed') {
+      formState.handleDateChange(null, null, false);
+      return;
+    }
+    
     // Primero manejar el cambio de fecha en el estado del formulario
     formState.handleDateChange(event, selectedDate, showPicker);
     
     // Si hay una fecha seleccionada, también actualizar los slots
     if (selectedDate) {
+      // Crear una nueva instancia de Date para evitar problemas de referencia
+      const newDate = new Date(selectedDate);
+      
+      // Asegurar que la fecha sea correcta (sin problemas de zona horaria)
+      // Establecer la hora a mediodía para evitar problemas con cambios de día debido a zonas horarias
+      newDate.setHours(12, 0, 0, 0);
+      
+      // Actualizar explícitamente la fecha en el estado del formulario
+      formState.setEventDate(newDate);
+      
       // Reiniciar los slots seleccionados
       timeSlots.setSelectedTimeSlots([]);
       timeSlots.setSelectedTimeSlot(null);
@@ -85,23 +101,26 @@ const useEventRequest = ({ visible, onClose, spaceId, spaceName, managerId }) =>
       // Indicar que estamos cargando
       timeSlots.setLoadingSlots(true);
       
-      // Cargar disponibilidad para la nueva fecha
-      availability.loadAvailability(
-        managerId, 
-        spaceId, 
-        selectedDate, 
-        timeSlots.setLoadingSlots,
-        timeSlots.setFilteredTimeSlots,
-        formState.setSpaceCapacity,
-        (date) => availability.filterAvailableTimeSlots(
-          date, 
-          selectedDate, 
-          availability.availableSlots, 
-          availability.blockedSlots, 
-          timeSlots.setFilteredTimeSlots, 
-          timeSlots.setLoadingSlots
-        )
-      );
+      // Esperar un momento para asegurar que el estado de la fecha se actualice
+      setTimeout(() => {
+        // Cargar disponibilidad para la nueva fecha
+        availability.loadAvailability(
+          managerId, 
+          spaceId, 
+          newDate, 
+          timeSlots.setLoadingSlots,
+          timeSlots.setFilteredTimeSlots,
+          formState.setSpaceCapacity,
+          (date) => availability.filterAvailableTimeSlots(
+            date, 
+            newDate, 
+            availability.availableSlots, 
+            availability.blockedSlots, 
+            timeSlots.setFilteredTimeSlots, 
+            timeSlots.setLoadingSlots
+          )
+        );
+      }, 300); // Aumentar el tiempo de espera para asegurar que los estados se actualicen
     }
   };
 

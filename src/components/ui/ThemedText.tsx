@@ -2,7 +2,7 @@ import { Text, type TextProps } from 'react-native';
 import ResponsiveStyleSheet from '../../utils/ResponsiveStyleSheet';
 import { moderateScale, verticalScale } from '../../utils/ResponsiveUtils';
 
-import { useThemeColor } from '@/hooks/useThemeColor';
+import { useThemeColor } from '@/src/hooks/useThemeColor';
 
 export type ThemedTextProps = TextProps & {
   lightColor?: string;

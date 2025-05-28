@@ -657,10 +657,11 @@ const SpaceSearch = ({ onClose }) => {
       )}
 
       <Modal
-        animationType="fade"
+        animationType="slide"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
+        statusBarTranslucent={true}
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -674,7 +675,15 @@ const SpaceSearch = ({ onClose }) => {
             {selectedSpace && (
               <ScrollView 
                 contentContainerStyle={styles.modalScrollContent}
-                showsVerticalScrollIndicator={false}
+                showsVerticalScrollIndicator={true}
+                persistentScrollbar={true}
+                bounces={true}
+                overScrollMode="always"
+                alwaysBounceVertical={true}
+                removeClippedSubviews={false}
+                keyboardShouldPersistTaps="handled"
+                scrollEventThrottle={16}
+                style={styles.modalScrollView}
               >
                 {/* Imagen o placeholder con fondo de color */}
                 <View style={styles.spacePlaceholder}>

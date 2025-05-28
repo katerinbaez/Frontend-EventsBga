@@ -11,5 +11,5 @@
   "include": [
     "**/*.ts",
     "**/*.tsx"
-, "components/navigation/Navigation.js", "utils/ResponsiveStyleSheet.js"  ]
+, "components/navigation/Navigation.js", "src/utils/ResponsiveStyleSheet.js"  ]
 }
