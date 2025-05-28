@@ -103,27 +103,29 @@ Con una interfaz profesional que utiliza colores vibrantes y contrastantes, dest
 ```
 EventsBga/
 ├── assets/                 # Recursos estáticos (imágenes, fuentes, animaciones)
-├── components/             # Componentes React Native
-│   ├── features/           # Componentes organizados por características
-│   │   ├── admin/          # Componentes de administración
-│   │   │   ├── metrics/    # Métricas y estadísticas
-│   │   │   └── users/      # Gestión de usuarios
-│   │   ├── artists/        # Componentes relacionados con artistas
-│   │   │   ├── forms/      # Formularios para artistas
-│   │   │   ├── modals/     # Ventanas modales
-│   │   │   ├── sections/   # Secciones de perfil
-│   │   │   ├── services/   # Servicios de datos
+├── src/                    # Código fuente principal
+│   ├── components/         # Componentes React Native
+│   ├── common/             # Componentes comunes reutilizables
+│   │   ├── buttons/        # Botones personalizados
+│   │   ├── cards/          # Tarjetas de información
+│   │   ├── forms/          # Componentes de formularios
+│   │   ├── headers/        # Encabezados de sección
+│   │   ├── loaders/        # Indicadores de carga
+│   │   ├── modals/         # Ventanas modales
+│   │   └── typography/     # Componentes de texto
+│   ├── features/           # Componentes específicos de características
+│   │   ├── auth/           # Componentes de autenticación
+│   │   │   ├── hooks/      # Hooks personalizados
 │   │   │   ├── ui/         # Componentes de UI
 │   │   │   └── views/      # Vistas principales
-│   │   ├── auth/           # Componentes de autenticación
-│   │   │   ├── admin/      # Autenticación de administradores
-│   │   │   └── login/      # Pantallas de inicio de sesión
+│   │   ├── dashboard/      # Componentes de paneles principales
+│   │   │   ├── HomeScreen/ # Pantalla de inicio
+│   │   │   ├── admin/      # Panel de administrador de sesión
 │   │   ├── calendar/       # Componentes de calendario
 │   │   │   └── views/      # Vistas principales del calendario
 │   │   ├── dashboard/      # Componentes de paneles principales
 │   │   │   ├── HomeScreen/ # Pantalla de inicio
 │   │   │   ├── admin/      # Panel de administrador
-│   │   │   │   ├── elements/  # Elementos de UI
 │   │   │   │   └── views/     # Vistas principales
 │   │   │   ├── artist/     # Panel de artista
 │   │   │   │   ├── elements/  # Elementos de UI
@@ -162,17 +164,28 @@ EventsBga/
 │   │   │   └── Views/      # Vistas principales
 │   │   ├── requests/       # Componentes de solicitudes
 │   │   │   ├── hooks/      # Hooks personalizados
+│   │   │   │   ├── useEventRequest.js    # Lógica de solicitud de eventos
+│   │   │   │   ├── useEventFormState.js  # Estado del formulario
+│   │   │   │   ├── useTimeSlots.js       # Gestión de franjas horarias
+│   │   │   │   └── useAvailability.js    # Verificación de disponibilidad
 │   │   │   ├── services/   # Servicios de datos
 │   │   │   ├── ui/         # Componentes de UI
 │   │   │   ├── utils/      # Utilidades
 │   │   │   └── views/      # Vistas principales
+│   │   │       └── EventRequestForm.js  # Formulario de solicitud de eventos
 │   │   └── spaces/         # Componentes de espacios culturales
 │   │       ├── forms/      # Formularios para espacios
 │   │       ├── hooks/      # Hooks personalizados
 │   │       ├── services/   # Servicios para manejo de datos
 │   │       ├── ui/         # Componentes de UI específicos
+│   │       │   ├── SpaceDetailsModal.js  # Modal de detalles de espacios
+│   │       │   ├── SpaceCard.js          # Tarjeta de espacio cultural
+│   │       │   ├── SpaceSchedule.js      # Componente de horarios
+│   │       │   └── SpaceFilters.js       # Filtros de búsqueda
 │   │       ├── utils/      # Utilidades (geolocalización, etc.)
 │   │       └── views/      # Vistas principales
+│   │           ├── SpaceSearch.js        # Búsqueda de espacios culturales
+│   │           └── SpaceManager.js       # Gestión de espacios
 │   ├── ui/                 # Componentes de UI reutilizables
 ├── constants/              # Constantes y configuración
 ├── context/                # Contextos de React (Auth, etc.)
@@ -180,6 +193,10 @@ EventsBga/
 ├── polyfills/              # Polyfills para compatibilidad
 ├── scripts/                # Scripts de utilidad
 ├── styles/                 # Estilos globales
+│   ├── CulturalSpacesModalStyles.js  # Estilos para modales de espacios culturales
+│   ├── SpaceSearchStyles.js          # Estilos para búsqueda de espacios
+│   ├── EventRequestFormStyles.js     # Estilos para formulario de solicitud de eventos
+│   └── GlobalStyles.js               # Estilos globales de la aplicación
 └── app/                    # Estructura de navegación (Expo Router)
     ├── (tabs)/             # Navegación por pestañas
 ```
