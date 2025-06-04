@@ -121,16 +121,30 @@ const DashboardUser = () => {
           style: 'destructive',
           onPress: async () => {
             try {
+              console.log(`Intentando eliminar perfil de artista para usuario ID: ${user.id}`);
+              // Usar el servicio API configurado en lugar de axios directamente
               const response = await axios.delete(`${BACKEND_URL}/api/artists/profile/${user.id}`);
-              if (response.data && response.data.success) {
-                Alert.alert('Éxito', 'Tu perfil de artista ha sido eliminado correctamente');
-                setHasArtistProfile(false);
+              console.log('Respuesta de eliminación de perfil de artista:', response.data);
+              
+              // Verificar la estructura de la respuesta
+              if (response.data) {
+                if (response.data.success) {
+                  Alert.alert('Éxito', 'Tu perfil de artista ha sido eliminado correctamente');
+                  setHasArtistProfile(false);
+                } else if (response.data.message) {
+                  // Si hay un mensaje específico del backend
+                  Alert.alert('Información', response.data.message);
+                } else {
+                  Alert.alert('Error', 'No se pudo eliminar el perfil de artista. La respuesta no indica éxito.');
+                }
               } else {
-                Alert.alert('Error', 'No se pudo eliminar el perfil de artista');
+                Alert.alert('Error', 'No se pudo eliminar el perfil de artista. Respuesta vacía del servidor.');
               }
             } catch (error) {
               console.error('Error al eliminar perfil de artista:', error);
-              Alert.alert('Error', 'Ocurrió un error al intentar eliminar el perfil');
+              const errorMessage = error.response?.data?.message || error.message || 'Ocurrió un error al intentar eliminar el perfil';
+              console.log('Mensaje de error detallado:', errorMessage);
+              Alert.alert('Error', errorMessage);
             }
           }
         }
@@ -338,20 +352,13 @@ const DashboardUser = () => {
             </TouchableOpacity>
           </View>
 
-          {notifications.length > 0 ? (
-            <View style={styles.notificationsList}>
-              <NotificationCenter 
-                notifications={notifications} 
-                onDismiss={handleNotificationDismiss}
-                onArtistProfileClick={handleArtistProfileNavigation}
-                onAction={handleShowRoleRequest}
-              />
-            </View>
-          ) : (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <Text style={styles.noNotificationsText}>No tienes notificaciones</Text>
-            </View>
-          )}
+          <View style={styles.notificationsList}>
+            <NotificationCenter 
+              onDismiss={handleNotificationDismiss}
+              onArtistProfileClick={handleArtistProfileNavigation}
+              onAction={handleShowRoleRequest}
+            />
+          </View>
         </View>
       </Modal>
 

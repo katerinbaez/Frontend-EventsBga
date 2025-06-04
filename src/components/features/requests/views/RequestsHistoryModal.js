@@ -59,7 +59,7 @@ const RequestsHistoryModal = ({ visible, onClose }) => {
                     <RequestItem 
                       key={request.id}
                       request={request}
-                      onPress={() => showRequestDetails(request)}
+                      onPress={() => {/* No hacer nada al presionar */}}
                     />
                   ))}
                 </ScrollView>

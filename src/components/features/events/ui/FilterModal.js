@@ -4,7 +4,11 @@ import {
   Text, 
   Modal, 
   TouchableOpacity, 
-  ScrollView 
+  ScrollView,
+  SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
+  Dimensions
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Calendar } from 'react-native-calendars';
@@ -32,6 +36,19 @@ const FilterModal = ({
   // Verificar si hay filtros aplicados
   const hasFilters = startDate || endDate || location;
   
+  // Obtener las dimensiones de la pantalla
+  const { height } = Dimensions.get('window');
+  
+  // Estilo personalizado para asegurar que el contenido sea desplazable
+  const modalBodyStyle = {
+    ...styles.modalBody,
+    maxHeight: height * 0.65, // Limitar la altura del cuerpo del modal al 65% de la pantalla
+  };
+  
+  const modalContentContainerStyle = {
+    paddingBottom: 20, // Añadir padding al final del contenido
+  };
+  
   return (
     <Modal
       visible={visible}
@@ -39,8 +56,12 @@ const FilterModal = ({
       transparent={true}
       onRequestClose={onClose}
     >
-      <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
+      <SafeAreaView style={styles.modalContainer}>
+        <KeyboardAvoidingView 
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={styles.keyboardAvoidingView}
+        >
+          <View style={styles.modalContent}>
           {/* Encabezado del modal */}
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Filtros de búsqueda</Text>
@@ -50,7 +71,11 @@ const FilterModal = ({
           </View>
           
           {/* Contenido del modal */}
-          <ScrollView style={styles.modalBody}>
+          <ScrollView 
+            style={modalBodyStyle}
+            contentContainerStyle={modalContentContainerStyle}
+            showsVerticalScrollIndicator={true}
+            persistentScrollbar={true}>
             {/* Filtro por categoría */}
             <Text style={styles.filterLabel}>Categoría</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesContentContainer}>
@@ -190,8 +215,9 @@ const FilterModal = ({
               <Text style={styles.applyButtonText}>Aplicar</Text>
             </TouchableOpacity>
           </View>
-        </View>
-      </View>
+          </View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     </Modal>
   );
 };

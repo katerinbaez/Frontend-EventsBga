@@ -195,6 +195,14 @@ const AppNavigator = () => {
                     headerShown: false
                 }}
             />
+            <Stack.Screen 
+                name="ManagerRegistration" 
+                component={ManagerRegistration}
+                options={{ 
+                    title: 'Registro de Espacio Cultural',
+                    headerShown: true
+                }}
+            />
             
             {/* Conectores de pantallas para mejor organización */}
             <Stack.Screen 

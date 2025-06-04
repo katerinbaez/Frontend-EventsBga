@@ -38,15 +38,27 @@ const FavoritesList = ({ user, navigation }) => {
   const handleItemPress = (item) => {
     try {
       if (activeTab === 'event') {
-        const eventIdNum = parseInt(item.targetId);
-        if (isNaN(eventIdNum)) {
-          console.error('ID de evento inválido:', item.targetId);
+        // Verificar si tenemos un targetId válido
+        if (!item.targetId) {
+          console.error('ID de evento no encontrado');
           Alert.alert('Error', 'No se puede abrir este evento');
           return;
         }
         
+        // Intentar convertir a número si es string
+        let eventId = item.targetId;
+        if (typeof eventId === 'string') {
+          // Si es un string, intentar convertirlo a número
+          const eventIdNum = parseInt(eventId);
+          if (!isNaN(eventIdNum)) {
+            eventId = eventIdNum;
+          }
+        }
+        
+        console.log('Navegando a EventDetails con ID:', eventId);
+        
         // Usar la ruta original de navegación para eventos
-        navigation.navigate('EventDetails', { eventId: eventIdNum });
+        navigation.navigate('EventDetails', { eventId: eventId });
       } else if (activeTab === 'artist') {
         // Para artistas, mostrar el modal de perfiles de artistas directamente
         console.log('Mostrando modal de artista con ID:', item.targetId);

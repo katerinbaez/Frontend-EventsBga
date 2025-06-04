@@ -23,6 +23,24 @@ export const createEvent = async ({
     // Formatear la fecha para la API
     const formattedDate = eventDate.toISOString().split('T')[0]; // YYYY-MM-DD
     
+    // Validar el spaceId - asegurarse de que sea un número entero
+    let validSpaceId = 1; // Valor predeterminado si no hay un spaceId válido
+    
+    if (spaceId) {
+      // Si es un UUID (contiene guiones), no lo usamos directamente
+      if (typeof spaceId === 'string' && spaceId.includes('-')) {
+        console.log('spaceId es un UUID, usando valor predeterminado');
+        // Mantenemos el valor predeterminado
+      } else {
+        // Intentar convertir a número si no es ya un número
+        const parsedId = parseInt(spaceId, 10);
+        if (!isNaN(parsedId)) {
+          validSpaceId = parsedId;
+          console.log('spaceId convertido a número:', validSpaceId);
+        }
+      }
+    }
+    
     // Preparar los datos para la solicitud
     const eventData = {
       titulo: eventName,
@@ -30,7 +48,7 @@ export const createEvent = async ({
       fecha: formattedDate,
       horaInicio: firstSlot.start,
       horaFin: lastSlot.end,
-      spaceId: spaceId || 1, 
+      spaceId: validSpaceId, // Usar el ID validado
       managerId: managerId,
       categoria: eventCategory,
       tipoEvento: eventType,

@@ -1,5 +1,4 @@
 import { StyleSheet } from 'react-native';
-;
 export const styles = StyleSheet.create({
     modalContainer: {
       flex: 1,
@@ -50,6 +49,7 @@ export const styles = StyleSheet.create({
       marginBottom: 15,
       borderLeftWidth: 3,
       borderLeftColor: '#FF3A5E',
+      overflow: 'hidden',
     },
     requestHeader: {
       flexDirection: 'row',
@@ -82,6 +82,11 @@ export const styles = StyleSheet.create({
     requestDetails: {
       marginBottom: 10,
     },
+    divider: {
+      height: 1,
+      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      marginVertical: 10,
+    },
     detailItem: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -96,11 +101,14 @@ export const styles = StyleSheet.create({
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      borderTopWidth: 1,
-      borderTopColor: 'rgba(255, 255, 255, 0.1)',
-      paddingTop: 10,
+      paddingTop: 5,
     },
     requestDate: {
+      color: '#999999',
+      fontSize: 12,
+      fontStyle: 'italic',
+    },
+    requestDateText: {
       color: '#999999',
       fontSize: 12,
       fontStyle: 'italic',
