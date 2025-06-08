@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el header del dashboard del artista
+ * - UI
+ * - Sesión
+ * - Navegación
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { styles } from '../../../../../styles/DashboardArtistStyles';

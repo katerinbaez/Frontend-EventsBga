@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja la sección de detalles del evento
+ * - UI
+ * - Formulario
+ * - Datos
+ */
+
 import React from 'react';
 import { View, Text, TextInput } from 'react-native';
 import { styles } from '../../../../styles/EventProgrammingStyles';

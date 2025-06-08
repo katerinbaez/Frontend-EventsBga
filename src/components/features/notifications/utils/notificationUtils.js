@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja las utilidades de notificación
+ * - Utilidades
+ * - Notificaciones
+ * - Colores
+ */
+
 export const getStatusColor = (type) => {
     switch (type) {
       case 'roleApproved':

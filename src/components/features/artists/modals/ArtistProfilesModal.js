@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el modal de perfiles de artistas
+ * - Lista de artistas
+ * - Detalles
+ * - API
+ */
+
 import React, { useState, useEffect } from 'react';
 import { 
   View, 
@@ -15,19 +22,13 @@ import { useAuth } from '../../../../context/AuthContext';
 import styles from '../../../../styles/ArtistProfilesModalStyles';
 import { BACKEND_URL } from '../../../../constants/config';
 
-// Componentes
 import ArtistListItem from '../ui/ArtistListItem';
 import ArtistDetails from '../sections/ArtistDetails';
 
-/**
- * Modal para mostrar perfiles de artistas
- */
 const ArtistProfilesModal = ({ visible = true, onClose, initialSelectedArtistId }) => {
-  // Obtener dimensiones de la pantalla para cálculos de altura
   const windowHeight = Dimensions.get('window').height;
   const { user } = useAuth();
   
-  // Estados
   const [artists, setArtists] = useState([]);
   const [loading, setLoading] = useState(false);
   const [favorites, setFavorites] = useState([]);
@@ -36,9 +37,6 @@ const ArtistProfilesModal = ({ visible = true, onClose, initialSelectedArtistId 
   const [loadingDetails, setLoadingDetails] = useState(false);
   const [expandedTrabajoId, setExpandedTrabajoId] = useState(null);
   
-  /**
-   * Carga todos los artistas desde el backend
-   */
   const loadArtists = async () => {
     setLoading(true);
     try {
@@ -48,13 +46,9 @@ const ArtistProfilesModal = ({ visible = true, onClose, initialSelectedArtistId 
       if (data && data.success) {
         console.log('Artistas cargados:', data.artists.length);
         
-        // Procesar fotos de perfil para asegurar URLs válidas
         const processedArtists = data.artists.map(artist => {
-          // Verificar si la foto de perfil existe y tiene un formato válido
           if (artist.fotoPerfil) {
-            // Asegurarse de que la URL sea absoluta
             if (!artist.fotoPerfil.startsWith('http')) {
-              // Si es una ruta relativa, convertirla a absoluta
               artist.fotoPerfil = `${BACKEND_URL}${artist.fotoPerfil}`;
             }
             console.log(`Foto de perfil de ${artist.nombreArtistico} (procesada):`, artist.fotoPerfil);
@@ -77,9 +71,6 @@ const ArtistProfilesModal = ({ visible = true, onClose, initialSelectedArtistId 
     }
   };
 
-  /**
-   * Carga los artistas favoritos del usuario desde el backend
-   */
   const loadFavorites = async () => {
     if (!user || !user.id) {
       console.log('No hay usuario autenticado, no se cargarán favoritos');
@@ -87,7 +78,6 @@ const ArtistProfilesModal = ({ visible = true, onClose, initialSelectedArtistId 
     }
     
     try {
-      // Usar el mismo endpoint que FavoritesList para consistencia
       const userId = user.id || user.sub || user._id;
       const response = await axios.get(`${BACKEND_URL}/api/favorites`, {
         params: { 
@@ -99,7 +89,6 @@ const ArtistProfilesModal = ({ visible = true, onClose, initialSelectedArtistId 
       if (response.data && Array.isArray(response.data)) {
         console.log('Favoritos cargados:', response.data.length);
         
-        // Extraer los IDs de los favoritos
         const favoriteIds = response.data.map(fav => fav.targetId);
         console.log('IDs de favoritos:', favoriteIds);
         
@@ -112,10 +101,6 @@ const ArtistProfilesModal = ({ visible = true, onClose, initialSelectedArtistId 
     }
   };
 
-  /**
-   * Procesa los detalles completos de un artista
-   * @param {string} artistId - ID del artista a cargar
-   */
   const loadArtistDetails = async (artistId) => {
     console.log('Cargando detalles del artista:', artistId);
     setSelectedArtistId(artistId);
@@ -128,21 +113,17 @@ const ArtistProfilesModal = ({ visible = true, onClose, initialSelectedArtistId 
       if (data && data.success) {
         console.log('Detalles del artista cargados:', data.artist.nombreArtistico);
         
-        // Procesar los datos del artista
         const artistData = data.artist;
         
-        // Asegurarse de que la foto de perfil tenga una URL absoluta
         if (artistData.fotoPerfil && !artistData.fotoPerfil.startsWith('http')) {
           artistData.fotoPerfil = `${BACKEND_URL}${artistData.fotoPerfil}`;
         }
         
-        // Asegurarse de que portfolio tenga la estructura correcta según el modelo
         if (!artistData.portfolio) {
           artistData.portfolio = { trabajos: [], imagenes: [] };
           console.log('No se encontró portfolio, se inicializó vacío');
         } else if (typeof artistData.portfolio === 'string') {
           try {
-            // Intentar parsear el portfolio si viene como string JSON
             artistData.portfolio = JSON.parse(artistData.portfolio);
             console.log('Portfolio parseado de string JSON:', JSON.stringify(artistData.portfolio, null, 2));
           } catch (e) {
@@ -151,10 +132,8 @@ const ArtistProfilesModal = ({ visible = true, onClose, initialSelectedArtistId 
           }
         }
         
-        // Procesar los trabajos del portfolio si existen
         if (artistData.portfolio && artistData.portfolio.trabajos) {
           artistData.portfolio.trabajos = artistData.portfolio.trabajos.map((trabajo, index) => {
-            // Si el trabajo es un string, intentar parsearlo como JSON
             if (typeof trabajo === 'string') {
               try {
                 return JSON.parse(trabajo);
@@ -167,23 +146,19 @@ const ArtistProfilesModal = ({ visible = true, onClose, initialSelectedArtistId 
               }
             }
             
-            // Procesar las imágenes del trabajo
             const processedTrabajo = {...trabajo};
             
-            // Asegurarse de que la imagen principal tenga una URL absoluta
             if (processedTrabajo.imageUrl && !processedTrabajo.imageUrl.startsWith('http')) {
               processedTrabajo.imageUrl = `${BACKEND_URL}${processedTrabajo.imageUrl}`;
             }
             
-            // Asegurarse de que el campo images exista y sea un array
             if (!processedTrabajo.images) {
               processedTrabajo.images = [];
               
-              // Si hay una imagen principal, añadirla al array de imágenes
               if (processedTrabajo.imageUrl) {
                 processedTrabajo.images.push(processedTrabajo.imageUrl);
               }
-              // Si hay una imagen en otro formato de nombre, añadirla también
+              
               if (processedTrabajo.ImageUrl && !processedTrabajo.images.includes(processedTrabajo.ImageUrl)) {
                 processedTrabajo.images.push(processedTrabajo.ImageUrl);
               }
@@ -194,16 +169,14 @@ const ArtistProfilesModal = ({ visible = true, onClose, initialSelectedArtistId 
                 processedTrabajo.images.push(processedTrabajo.imagen);
               }
             } else if (typeof processedTrabajo.images === 'string') {
-              // Si images es un string, intentar parsearlo como JSON
               try {
                 processedTrabajo.images = JSON.parse(processedTrabajo.images);
               } catch (e) {
                 console.error(`Error al parsear images de trabajo ${index}:`, e);
-                processedTrabajo.images = [processedTrabajo.images]; // Usar el string como única imagen
+                processedTrabajo.images = [processedTrabajo.images];
               }
             }
             
-            // Asegurarse de que todas las imágenes tengan URLs absolutas
             if (Array.isArray(processedTrabajo.images)) {
               processedTrabajo.images = processedTrabajo.images.map(img => {
                 if (typeof img === 'string' && !img.startsWith('http')) {
@@ -217,14 +190,11 @@ const ArtistProfilesModal = ({ visible = true, onClose, initialSelectedArtistId 
           });
         }
         
-        // Procesar las imágenes del portfolio si existen
         if (artistData.portfolio && artistData.portfolio.imagenes) {
           artistData.portfolio.imagenes = artistData.portfolio.imagenes.map(imagen => {
-            // Si la imagen es un string con una URL, asegurarse de que sea absoluta
             if (typeof imagen === 'string' && !imagen.startsWith('http')) {
               return `${BACKEND_URL}${imagen}`;
             }
-            // Si la imagen es un objeto con una propiedad url, asegurarse de que sea absoluta
             if (imagen && imagen.url && !imagen.url.startsWith('http')) {
               imagen.url = `${BACKEND_URL}${imagen.url}`;
             }
@@ -232,7 +202,6 @@ const ArtistProfilesModal = ({ visible = true, onClose, initialSelectedArtistId 
           });
         }
         
-        // Actualizar el estado con los detalles del artista
         setSelectedArtistDetails(artistData);
       } else {
         console.error('Error al cargar detalles del artista:', data);
@@ -246,10 +215,7 @@ const ArtistProfilesModal = ({ visible = true, onClose, initialSelectedArtistId 
     }
   };
 
-  /**
-   * Alterna el estado de favorito de un artista
-   * @param {Object} artist - Artista a alternar en favoritos
-   */
+  
   const toggleFavorite = async (artist) => {
     if (!user || !user.id) {
       Alert.alert('Error', 'Debes iniciar sesión para guardar favoritos');
@@ -261,7 +227,6 @@ const ArtistProfilesModal = ({ visible = true, onClose, initialSelectedArtistId 
     
     try {
       if (isFavorite) {
-        // Eliminar de favoritos usando el mismo endpoint que FavoritesList
         await axios.delete(`${BACKEND_URL}/api/favorites`, {
           data: { 
             userId: userId,
@@ -272,7 +237,6 @@ const ArtistProfilesModal = ({ visible = true, onClose, initialSelectedArtistId 
         setFavorites(favorites.filter(id => id !== artist.id));
         console.log('Artista eliminado de favoritos:', artist.nombreArtistico);
       } else {
-        // Agregar a favoritos usando el mismo endpoint que FavoritesList
         await axios.post(`${BACKEND_URL}/api/favorites`, {
           userId: userId,
           targetType: 'artist',
@@ -287,12 +251,7 @@ const ArtistProfilesModal = ({ visible = true, onClose, initialSelectedArtistId 
     }
   };
 
-  /**
-   * Maneja la visualización de los detalles de un artista
-   * @param {Object} artist - Artista cuyos detalles se quieren ver
-   */
   const handleViewArtistDetails = async (artist) => {
-    // Si ya estamos viendo este artista, lo cerramos (toggle)
     if (selectedArtistId === artist.id) {
       console.log('Cerrando detalles del artista:', artist.nombreArtistico);
       setSelectedArtistId(null);
@@ -301,17 +260,12 @@ const ArtistProfilesModal = ({ visible = true, onClose, initialSelectedArtistId 
     }
     
     console.log('Mostrando detalles del artista:', artist.nombreArtistico);
-    // Cargar los detalles del artista
     await loadArtistDetails(artist.id);
   };
 
-  /**
-   * Renderiza los detalles del artista seleccionado
-   */
   const renderArtistDetails = () => {
     if (!selectedArtistDetails) return null;
     
-    // Depuración del portfolio
     console.log('Renderizando detalles del artista:', selectedArtistDetails.nombreArtistico);
     console.log('Portfolio disponible:', selectedArtistDetails.portfolio);
     if (selectedArtistDetails.portfolio && selectedArtistDetails.portfolio.trabajos) {
@@ -330,19 +284,15 @@ const ArtistProfilesModal = ({ visible = true, onClose, initialSelectedArtistId 
     );
   };
 
-  // Cargar artistas cuando se monta el componente
   useEffect(() => {
     loadArtists();
   }, []);
-
-  // Cargar favoritos cuando se cargan los artistas
   useEffect(() => {
     if (artists.length > 0) {
       loadFavorites();
     }
   }, [artists, user]);
   
-  // Mostrar detalles del artista seleccionado si se proporciona un ID inicial
   useEffect(() => {
     if (initialSelectedArtistId) {
       setSelectedArtistId(initialSelectedArtistId);
@@ -350,11 +300,7 @@ const ArtistProfilesModal = ({ visible = true, onClose, initialSelectedArtistId 
     }
   }, [initialSelectedArtistId]);
 
-  /**
-   * Renderiza un elemento de la lista de artistas
-   */
   const renderArtistItem = ({ item }) => {
-    // Verificar si el artista está en favoritos (comparando como string para mayor seguridad)
     const isFavorite = favorites.some(favId => 
       favId === item.id || favId === item.id.toString()
     );

@@ -1,13 +1,15 @@
+/**
+ * Este archivo maneja el hook de favoritos
+ * - Hooks
+ * - Favoritos
+ * - Estado
+ */
+
 import { useState, useEffect } from 'react';
 import { Alert } from 'react-native';
 import * as FavoritesService from '../services/FavoritesService';
 
-/**
- * Hook personalizado para gestionar favoritos
- * @param {Object} user - Usuario actual
- * @param {string} initialActiveTab - Pestaña activa inicial (event, artist, space)
- * @returns {Object} - Estado y funciones para gestionar favoritos
- */
+
 const useFavorites = (user, initialActiveTab = 'event') => {
   const [favorites, setFavorites] = useState([]);
   const [activeTab, setActiveTab] = useState(initialActiveTab);
@@ -38,7 +40,6 @@ const useFavorites = (user, initialActiveTab = 'event') => {
         setError('No tienes favoritos guardados');
       }
       
-      // Si estamos en la pestaña de artistas, cargar detalles de los artistas
       if (activeTab === 'artist' && favoritesData.length > 0) {
         const artistsWithDetails = await Promise.all(favoritesData.map(async (favorite) => {
           const artistDetails = await FavoritesService.loadArtistDetails(favorite.targetId);

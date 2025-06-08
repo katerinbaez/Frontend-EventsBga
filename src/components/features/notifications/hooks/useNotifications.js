@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el hook de notificaciones
+ * - Hooks
+ * - Notificaciones
+ * - Estado
+ */
+
 import { useState, useEffect, useCallback } from 'react';
 import { Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -36,7 +43,6 @@ const useNotifications = (onAction) => {
           }
         }));
 
-      // Agregar notificación local de solicitud de rol si el usuario no tiene rol
       if (!user.role) {
         transformedNotifications = [
           {
@@ -76,7 +82,6 @@ const useNotifications = (onAction) => {
 
   const handleMarkAsRead = async (notificationId) => {
     try {
-      // Si es una notificación local, solo actualizamos el estado
       if (notificationId === 'local-role-request') {
         setNotifications(prev =>
           prev.map(n =>
@@ -139,16 +144,13 @@ const useNotifications = (onAction) => {
     
     try {
       if (roleType === 'manager') {
-        // Verificar si existe perfil de gestor
         try {
           const response = await axios.get(`${BACKEND_URL}/api/managers/profile/${user.id}`);
           if (response.data.success) {
-            // Si existe perfil, ir al dashboard
             navigation.replace('DashboardManager');
           }
         } catch (error) {
           if (error.response?.status === 404) {
-            // No existe perfil, ir a registro
             navigation.replace('ManagerRegistration');
           } else {
             console.error('Error al verificar perfil de gestor:', error);
@@ -156,16 +158,13 @@ const useNotifications = (onAction) => {
           }
         }
       } else if (roleType === 'artist') {
-        // Verificar si existe perfil de artista
         try {
           const response = await axios.get(`${BACKEND_URL}/api/artists/profile/${user.id}`);
           if (response.data.success) {
-            // Si existe perfil, ir al dashboard
             navigation.replace('DashboardArtist');
           }
         } catch (error) {
           if (error.response?.status === 404) {
-            // No existe perfil, ir a registro
             navigation.replace('ArtistRegistration');
           } else {
             console.error('Error al verificar perfil de artista:', error);

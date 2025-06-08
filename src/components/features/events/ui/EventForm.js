@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el formulario de evento
+ * - UI
+ * - Formulario
+ * - Validación
+ */
+
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -7,7 +14,8 @@ import {
   StyleSheet,
   ScrollView,
   Platform,
-  ActivityIndicator
+  ActivityIndicator,
+  Alert
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -23,7 +31,6 @@ const EventForm = ({
   onTimeSlotSelect = () => {},
   onDateChange = () => {}
 }) => {
-  // Estados para los campos del formulario
   const [titulo, setTitulo] = useState(event?.titulo || '');
   const [descripcion, setDescripcion] = useState(event?.descripcion || '');
   const [fecha, setFecha] = useState(event?.fecha || new Date());
@@ -34,26 +41,22 @@ const EventForm = ({
   const [asistentesEsperados, setAsistentesEsperados] = useState(event?.asistentesEsperados?.toString() || '');
   const [requerimientosAdicionales, setRequerimientosAdicionales] = useState(event?.requerimientosAdicionales || '');
   
-  // Estados para los pickers
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [timePickerMode, setTimePickerMode] = useState('inicio'); // 'inicio' o 'fin'
+  const [timePickerMode, setTimePickerMode] = useState('inicio');
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
   
-  // Inicializar datos si estamos en modo edición
   useEffect(() => {
     if (event) {
       console.log('Inicializando formulario con datos:', event);
       
-      // Establecer los valores iniciales
       setTitulo(event.titulo || '');
       setDescripcion(event.descripcion || '');
       
-      // Manejar la fecha correctamente
       if (event.fecha) {
         try {
           const fechaObj = new Date(event.fecha);
-          if (!isNaN(fechaObj.getTime())) { // Verificar que la fecha sea válida
+          if (!isNaN(fechaObj.getTime())) { 
             setFecha(fechaObj);
           } else {
             console.warn('Fecha inválida:', event.fecha);
@@ -67,11 +70,9 @@ const EventForm = ({
         setFecha(new Date());
       }
       
-      // Establecer horas
       setHoraInicio(event.horaInicio || '18:00');
       setHoraFin(event.horaFin || '20:00');
       
-      // Establecer campos del modelo Event
       setCategoria(event.categoria || '');
       setTipoEvento(event.tipoEvento || 'General');
       setAsistentesEsperados(event.asistentesEsperados?.toString() || '0');
@@ -85,8 +86,6 @@ const EventForm = ({
     if (selectedDate) {
       setFecha(selectedDate);
       
-      // Notificar al componente padre sobre el cambio de fecha
-      // para que pueda cargar los horarios disponibles
       onDateChange(selectedDate);
     }
   };
@@ -107,20 +106,17 @@ const EventForm = ({
   };
 
   const handleSubmit = () => {
-    // Validar campos requeridos
     if (!titulo.trim()) {
-      alert('Por favor, ingresa un título para el evento');
+      Alert.alert('Error', 'Por favor, ingresa un título para el evento');
       return;
     }
     
     if (!descripcion.trim()) {
-      alert('Por favor, ingresa una descripción para el evento');
+      Alert.alert('Error', 'Por favor, ingresa una descripción para el evento');
       return;
     }
     
-    // Preparar los datos básicos del evento
     const eventData = {
-      // Si estamos editando un evento existente, incluir su ID
       ...(event && event.id && { id: event.id }),
       titulo,
       descripcion,
@@ -131,39 +127,30 @@ const EventForm = ({
       requerimientosAdicionales
     };
     
-    // Verificar si hay horarios seleccionados
     if (selectedTimeSlots.length > 0) {
-      // Ordenar los slots por hora
       const sortedSlots = [...selectedTimeSlots].sort((a, b) => a.hour - b.hour);
       
-      // Usar el primer y último slot para determinar el rango de horas
       const firstSlot = sortedSlots[0];
       const lastSlot = sortedSlots[sortedSlots.length - 1];
       
-      // Actualizar las horas de inicio y fin basadas en los slots seleccionados
       eventData.horaInicio = firstSlot.formattedHour || firstSlot.start || horaInicio;
       eventData.horaFin = lastSlot.end || horaFin;
-      eventData.selectedTimeSlots = sortedSlots; // Incluir los slots seleccionados para referencia
+      eventData.selectedTimeSlots = sortedSlots;
     } else {
-      // Si no hay slots seleccionados, usar las horas ingresadas manualmente
       eventData.horaInicio = horaInicio;
       eventData.horaFin = horaFin;
     }
     
     console.log('Enviando datos del evento:', eventData);
     
-    // Enviar datos al componente padre
     onSubmit(eventData);
   };
 
   const getCategoryName = (categoryId) => {
-    // Si no hay ID de categoría, mostrar 'General'
     if (!categoryId) return 'General';
     
-    // Buscar la categoría por ID
     const category = categories.find(c => c._id === categoryId);
     
-    // Si se encuentra la categoría, usar su nombre, de lo contrario usar el ID como nombre
     return category?.nombre || categoryId;
   };
 
@@ -212,9 +199,6 @@ const EventForm = ({
         </TouchableOpacity>
       </View>
       
-      {/* Se eliminó la sección de Horario del evento ya que se muestra en Horarios disponibles */}
-      
-      {/* Sección de horarios disponibles */}
       <View style={styles.formGroup}>
         <Text style={styles.label}>Horarios disponibles</Text>
         {loadingSlots ? (
@@ -343,7 +327,6 @@ const EventForm = ({
         </TouchableOpacity>
       </View>
       
-      {/* DatePicker Modal */}
       {showDatePicker && (
         <DateTimePicker
           value={fecha}
@@ -354,7 +337,6 @@ const EventForm = ({
         />
       )}
       
-      {/* TimePicker Modal */}
       {showTimePicker && (
         <DateTimePicker
           value={new Date(fecha.setHours(

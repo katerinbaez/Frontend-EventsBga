@@ -1,3 +1,11 @@
+/**
+ * Este archivo maneja el header del dashboard del usuario
+ * - UI
+ * - Sesión
+ * - Navegación
+ * - Roles
+ */
+
 import React from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
 import { styles } from '../../../../../styles/DashboardUserStyles';

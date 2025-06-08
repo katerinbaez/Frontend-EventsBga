@@ -1,3 +1,11 @@
+/**
+ * Este archivo maneja las imágenes del espacio
+ * - UI
+ * - Espacios
+ * - Imágenes
+ * - Galería
+ */
+
 import React from 'react';
 import { View, Text, Image, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,7 +22,6 @@ const SpaceImages = ({ images }) => {
     );
   }
 
-  // Filtrar imágenes válidas
   const validImages = images.filter(img => isValidImageUri(img));
   
   if (validImages.length === 0) {

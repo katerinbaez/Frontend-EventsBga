@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja la vista de lista vacía de solicitudes
+ * - UI
+ * - Solicitudes
+ * - Vista
+ */
+
 import React from 'react';
 import { View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

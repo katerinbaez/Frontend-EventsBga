@@ -1,3 +1,11 @@
+/**
+ * Este archivo maneja los detalles del espacio
+ * - UI
+ * - Espacios
+ * - Detalles
+ * - Formulario
+ */
+
 import React from 'react';
 import { View, Text, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

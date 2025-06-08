@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el modal de detalles de solicitud de gestor
+ * - UI
+ * - Solicitudes
+ * - Modal
+ */
+
 import React from 'react';
 import { View, Text, Modal, TouchableOpacity, ScrollView, TextInput, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -17,10 +24,8 @@ const ManagerRequestDetailsModal = ({
 }) => {
   if (!request) return null;
 
-  // Obtener información del artista
   const artistContact = getArtistContact(request);
   
-  // Normalizar los datos de la solicitud para manejar diferentes formatos
   const normalizedRequest = {
     id: request.id,
     title: request.title || request.eventName || 'Sin título',
@@ -38,12 +43,9 @@ const ManagerRequestDetailsModal = ({
     rejectionReason: request.rejectionReason
   };
 
-  // Formatear fechas para mostrar
   const formattedDate = formatDate(normalizedRequest.date);
   const formattedCreatedDate = formatDate(normalizedRequest.createdAt);
   const formattedUpdatedDate = normalizedRequest.updatedAt ? formatDate(normalizedRequest.updatedAt) : null;
-
-  // Verificar si la solicitud está pendiente
   const isPending = normalizedRequest.status.toLowerCase() === 'pendiente';
 
   return (

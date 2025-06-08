@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja la programación de eventos
+ * - UI
+ * - Eventos
+ * - Programación
+ */
+
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, Alert } from 'react-native';
 import { useAuth } from '../../../../context/AuthContext';
@@ -20,12 +27,10 @@ const EventProgramming = ({ navigation, route }) => {
   const [loading, setLoading] = useState(false);
   const [confirmModalVisible, setConfirmModalVisible] = useState(false);
   
-  // Estados para datos del espacio
   const [spaceId, setSpaceId] = useState(route?.params?.spaceId || '');
   const [spaceName, setSpaceName] = useState(route?.params?.spaceName || 'Mi Espacio Cultural');
   const [managerId, setManagerId] = useState(route?.params?.managerId || '');
   
-  // Estados para el formulario
   const [eventName, setEventName] = useState('');
   const [eventDescription, setEventDescription] = useState('');
   const [eventDate, setEventDate] = useState(new Date());
@@ -36,15 +41,13 @@ const EventProgramming = ({ navigation, route }) => {
   const [customCategory, setCustomCategory] = useState('');
   const [additionalRequirements, setAdditionalRequirements] = useState('');
   
-  // Estados para slots y disponibilidad
   const [availableSlots, setAvailableSlots] = useState([]);
   const [blockedSlots, setBlockedSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(true);
   const [filteredTimeSlots, setFilteredTimeSlots] = useState([]);
   const [selectedTimeSlots, setSelectedTimeSlots] = useState([]);
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState(null); // Mantener para compatibilidad
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
   
-  // Cargar datos del gestor cultural al iniciar
   useEffect(() => {
     if (route?.params?.managerId) {
       console.log(`Usando managerId de parámetros: ${route.params.managerId}`);
@@ -83,7 +86,6 @@ const EventProgramming = ({ navigation, route }) => {
     initializeManager();
   }, [user, navigation, route?.params?.managerId]);
   
-  // Función para cargar disponibilidad
   const handleLoadAvailability = async (selectedDate = eventDate) => {
     if (!managerId) {
       console.error('No se puede cargar disponibilidad sin managerId');
@@ -92,13 +94,11 @@ const EventProgramming = ({ navigation, route }) => {
     
     setLoadingSlots(true);
     try {
-      // Cargar disponibilidad y slots bloqueados
       const { availableSlots: slots, blockedSlots: blocked } = await loadAvailability(managerId, selectedDate);
       
       setAvailableSlots(slots);
       setBlockedSlots(blocked);
       
-      // Filtrar slots disponibles
       setTimeout(() => {
         handleFilterTimeSlots(selectedDate);
       }, 100);
@@ -114,7 +114,6 @@ const EventProgramming = ({ navigation, route }) => {
     }
   };
   
-  // Filtrar horarios disponibles
   const handleFilterTimeSlots = (dateToFilter = null) => {
     const filtered = filterAvailableTimeSlots(
       availableSlots,
@@ -124,48 +123,39 @@ const EventProgramming = ({ navigation, route }) => {
     setFilteredTimeSlots(filtered);
   };
   
-  // Manejar selección de slots
   const handleTimeSlotSelection = (slot) => {
-    // Si no hay slots seleccionados, simplemente añadir el slot
     if (selectedTimeSlots.length === 0) {
       setSelectedTimeSlots([slot]);
-      setSelectedTimeSlot(slot); // Mantener para compatibilidad
+      setSelectedTimeSlot(slot);
       return;
     }
     
-    // Ordenar los slots seleccionados por hora
     const sortedSlots = [...selectedTimeSlots].sort((a, b) => a.hour - b.hour);
     const firstSlot = sortedSlots[0];
     const lastSlot = sortedSlots[sortedSlots.length - 1];
     
-    // Si el slot es una hora antes del primer slot seleccionado
     if (slot.hour === firstSlot.hour - 1) {
       const newSlots = [slot, ...sortedSlots];
       setSelectedTimeSlots(newSlots);
-      setSelectedTimeSlot(newSlots[0]); // Actualizar para compatibilidad
+      setSelectedTimeSlot(newSlots[0]);
       return;
     }
     
-    // Si el slot es una hora después del último slot seleccionado
     if (slot.hour === lastSlot.hour + 1) {
       const newSlots = [...sortedSlots, slot];
       setSelectedTimeSlots(newSlots);
-      setSelectedTimeSlot(newSlots[0]); // Mantener el primer slot para compatibilidad
+      setSelectedTimeSlot(newSlots[0]);
       return;
     }
     
-    // Si el slot ya está seleccionado, deseleccionarlo
     if (selectedTimeSlots.some(s => s.hour === slot.hour)) {
-      // Si solo hay un slot seleccionado, deseleccionar todo
       if (selectedTimeSlots.length === 1) {
         setSelectedTimeSlots([]);
         setSelectedTimeSlot(null);
         return;
       }
       
-      // Si hay múltiples slots, verificar si el slot a deseleccionar rompe la secuencia
       if (slot.hour !== firstSlot.hour && slot.hour !== lastSlot.hour) {
-        // No permitir deseleccionar slots intermedios
         Alert.alert(
           'Selección no válida', 
           'Solo puedes deseleccionar el primer o último slot de la secuencia.',
@@ -174,14 +164,12 @@ const EventProgramming = ({ navigation, route }) => {
         return;
       }
       
-      // Deseleccionar el primer o último slot
       const newSlots = selectedTimeSlots.filter(s => s.hour !== slot.hour);
       setSelectedTimeSlots(newSlots);
-      setSelectedTimeSlot(newSlots[0]); // Actualizar para compatibilidad
+      setSelectedTimeSlot(newSlots[0]);
       return;
     }
     
-    // Si el slot no es consecutivo, mostrar un mensaje
     Alert.alert(
       'Selección no válida', 
       'Solo puedes seleccionar slots consecutivos. Si necesitas más tiempo, selecciona un slot que sea consecutivo con los ya seleccionados.',
@@ -189,7 +177,6 @@ const EventProgramming = ({ navigation, route }) => {
     );
   };
   
-  // Manejar la creación del evento
   const handleCreateEvent = async () => {
     if (!eventName || !eventDescription || selectedTimeSlots.length === 0) {
       Alert.alert('Datos incompletos', 'Por favor, completa todos los campos obligatorios.');
@@ -220,7 +207,6 @@ const EventProgramming = ({ navigation, route }) => {
           [{ 
             text: 'OK', 
             onPress: () => {
-              // Limpiar el formulario
               setEventName('');
               setEventDescription('');
               setEventDate(new Date());
@@ -232,10 +218,8 @@ const EventProgramming = ({ navigation, route }) => {
               setCustomCategory('');
               setAdditionalRequirements('');
               
-              // Cerrar el modal de confirmación
               setConfirmModalVisible(false);
               
-              // Navegar de vuelta al dashboard
               navigation.navigate('DashboardManager');
             }
           }]
@@ -259,7 +243,6 @@ const EventProgramming = ({ navigation, route }) => {
     }
   };
   
-  // Funciones auxiliares para el modal
   const getTimeRangeForModal = () => {
     return getTimeRange(selectedTimeSlots);
   };

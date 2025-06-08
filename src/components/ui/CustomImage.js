@@ -1,12 +1,18 @@
+/**
+ * Componente de imagen personalizado con manejo de URLs y estados
+ * - UI
+ * - Imagen
+ * - Carga
+ * - Manejo de errores
+ * - URLs remotas y locales
+ */
+
 import React, { useState, useEffect } from 'react';
 import { Image, View, ActivityIndicator, Platform } from 'react-native';
 import { BACKEND_URL } from '../../constants/config';
 import * as FileSystem from 'expo-file-system';
 
-/**
- * Componente de imagen personalizado que maneja diferentes formatos de URL
- * y proporciona un indicador de carga y manejo de errores
- */
+
 const CustomImage = ({ 
   source, 
   style, 
@@ -18,7 +24,6 @@ const CustomImage = ({
   const [hasError, setHasError] = useState(false);
   const [processedSource, setProcessedSource] = useState(source);
   
-  // Procesar la URL de la imagen
   useEffect(() => {
     const processImageSource = async () => {
       if (typeof source !== 'object' || !source.uri) {
@@ -28,15 +33,11 @@ const CustomImage = ({
       
       let { uri } = source;
       
-      // Manejar URLs de archivo local
       if (uri && uri.startsWith('file://')) {
-        // Si estamos en un dispositivo móvil y la imagen es local
         if (Platform.OS !== 'web' && !forceRemote) {
-          // Usar la URI local directamente
           setProcessedSource(source);
           return;
         } else {
-          // Intentar convertir a base64 para compartir entre dispositivos
           try {
             const base64 = await FileSystem.readAsStringAsync(uri, {
               encoding: FileSystem.EncodingType.Base64,
@@ -47,14 +48,11 @@ const CustomImage = ({
             return;
           } catch (error) {
             console.error('Error al convertir imagen local a base64:', error);
-            // Si falla, continuar con el procesamiento normal
           }
         }
       }
       
-      // Si la URI no comienza con http, añadir el BACKEND_URL
       if (uri && !uri.startsWith('http') && !uri.startsWith('data:')) {
-        // Si comienza con /, mantener tal cual, si no, añadir /
         uri = uri.startsWith('/') ? `${BACKEND_URL}${uri}` : `${BACKEND_URL}/${uri}`;
         setProcessedSource({ ...source, uri });
       } else {

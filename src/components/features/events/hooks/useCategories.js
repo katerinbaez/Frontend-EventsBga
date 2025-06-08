@@ -1,17 +1,19 @@
+/**
+ * Este archivo maneja el hook personalizado para categorías
+ * - Estado
+ * - Carga
+ * - Selección
+ */
+
 import { useState, useEffect } from 'react';
 import { Alert } from 'react-native';
 import { fetchCategories } from '../services/EventSearchService';
 
-/**
- * Hook personalizado para gestionar las categorías
- */
 const useCategories = () => {
-  // Estados
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('');
   
-  // Cargar categorías al montar el componente
   useEffect(() => {
     const loadCategories = async () => {
       setLoading(true);

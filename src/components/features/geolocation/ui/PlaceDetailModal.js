@@ -1,20 +1,18 @@
+/**
+ * Este archivo maneja el modal de detalles del lugar
+ * - UI
+ * - Lugares
+ * - Detalles
+ */
+
 import React from 'react';
 import { View, Text, Modal, TouchableOpacity, ScrollView, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../../../../styles/OpenSteetMapStyles';
 
-/**
- * Modal para mostrar detalles completos de un lugar
- * @param {boolean} visible - Controla la visibilidad del modal
- * @param {Object} place - Datos del lugar seleccionado
- * @param {function} onClose - Función para cerrar el modal
- * @param {function} onSelect - Función para seleccionar el lugar
- * @returns {JSX.Element}
- */
 const PlaceDetailModal = ({ visible, place, onClose, onSelect }) => {
   if (!place) return null;
 
-  // Determinar el icono según el tipo de lugar
   const getIconForType = (type) => {
     switch (type) {
       case 'Restaurante': return 'restaurant';
@@ -33,7 +31,6 @@ const PlaceDetailModal = ({ visible, place, onClose, onSelect }) => {
     }
   };
 
-  // Formatear la distancia para mostrarla
   const formatDistance = (distance) => {
     if (distance === null) return null;
     if (distance < 1) {
@@ -42,7 +39,6 @@ const PlaceDetailModal = ({ visible, place, onClose, onSelect }) => {
     return `${distance.toFixed(1)} km`;
   };
 
-  // Abrir la ubicación en el mapa
   const openInMap = () => {
     const url = `https://www.google.com/maps/search/?api=1&query=${place.latitude},${place.longitude}`;
     Linking.canOpenURL(url).then(supported => {

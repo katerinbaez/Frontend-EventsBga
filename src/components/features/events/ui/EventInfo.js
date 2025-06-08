@@ -1,16 +1,19 @@
+/**
+ * Este archivo maneja la información del evento
+ * - UI
+ * - Datos
+ * - Formato
+ */
+
 import React from 'react';
 import { View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../../../../styles/EventDetailStyles';
 import { formatDate } from '../services/EventDetailService';
 
-/**
- * Componente que muestra la información básica de un evento (fecha, hora, ubicación)
- */
 const EventInfo = ({ event }) => {
   return (
     <View style={styles.infoSection}>
-      {/* Fecha y hora */}
       <View style={styles.infoItem}>
         <Ionicons name="calendar" size={20} color="#FF3A5E" />
         <Text style={styles.infoText}>
@@ -18,7 +21,6 @@ const EventInfo = ({ event }) => {
         </Text>
       </View>
       
-      {/* Ubicación */}
       <View style={styles.infoItem}>
         <Ionicons name="location" size={20} color="#FF3A5E" />
         <Text style={styles.infoText}>
@@ -26,7 +28,6 @@ const EventInfo = ({ event }) => {
         </Text>
       </View>
       
-      {/* Dirección del espacio */}
       {(event.space?.direccion || event.direccion) && (
         <View style={styles.infoItem}>
           <Ionicons name="navigate" size={20} color="#FF3A5E" />
@@ -36,7 +37,6 @@ const EventInfo = ({ event }) => {
         </View>
       )}
       
-      {/* Organizador */}
       {event.organizador && (
         <View style={styles.infoItem}>
           <Ionicons name="person" size={20} color="#FF3A5E" />
@@ -48,7 +48,6 @@ const EventInfo = ({ event }) => {
         </View>
       )}
       
-      {/* Estado del evento */}
       {event.estado && (
         <View style={styles.infoItem}>
           <Ionicons name="information-circle" size={20} color="#FF3A5E" />

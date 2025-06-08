@@ -1,15 +1,17 @@
+/**
+ * Este archivo maneja la lista de categorías
+ * - UI
+ * - Categorías
+ * - Búsqueda
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../../../../styles/OpenSteetMapStyles';
 
-/**
- * Lista horizontal de categorías para búsqueda rápida
- * @param {function} onCategorySelect - Función para manejar la selección de categoría
- * @returns {JSX.Element}
- */
+
 const CategoryList = ({ onCategorySelect }) => {
-  // Categorías predefinidas
   const categories = [
     { id: 'cultural', name: 'Cultural', icon: 'color-palette' },
     { id: 'museum', name: 'Museos', icon: 'business' },

@@ -1,25 +1,24 @@
+/**
+ * Este archivo maneja el servicio de ubicación
+ * - Servicios
+ * - Ubicación
+ * - API
+ */
+
 import * as Location from 'expo-location';
 
-/**
- * Obtiene solo la ubicación del usuario sin buscar lugares
- * @returns {Promise<Object|null>} Coordenadas del usuario o null si hay error
- */
 export const getLocationOnly = async () => {
   try {
-    // No activamos el indicador de carga para no molestar al usuario
     console.log('Obteniendo ubicación del usuario en segundo plano...');
     
-    // Verificar si el dispositivo tiene permisos de ubicación
     const { status } = await Location.requestForegroundPermissionsAsync();
     console.log('Estado de permiso de ubicación:', status);
     
     if (status !== 'granted') {
-      // Solo registrar en consola, sin mostrar error al usuario
       console.log('Permiso de ubicación no disponible. El usuario tendrá que buscar manualmente.');
       return null;
     }
     
-    // Obtener la ubicación actual
     const location = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.Balanced
     });
@@ -32,20 +31,15 @@ export const getLocationOnly = async () => {
   }
 };
 
-/**
- * Obtiene la ubicación actual del usuario con alta precisión
- * @returns {Promise<Object>} Objeto con la ubicación o error
- */
+
 export const refreshUserLocation = async () => {
   try {
     console.log('Actualizando ubicación del usuario...');
     
-    // Verificar si el dispositivo tiene permisos de ubicación
     const { status } = await Location.requestForegroundPermissionsAsync();
     console.log('Estado de permiso de ubicación:', status);
     
     if (status !== 'granted') {
-      // Mostrar error discreto sin alerta
       console.error('Permiso de ubicación denegado');
       return {
         error: 'Necesitamos permisos de ubicación para mostrar lugares cercanos.',
@@ -55,7 +49,6 @@ export const refreshUserLocation = async () => {
     
     console.log('Obteniendo ubicación actual...');
     
-    // Obtener la ubicación actual con máxima precisión
     const location = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.Highest,
       timeout: 15000
@@ -64,7 +57,6 @@ export const refreshUserLocation = async () => {
     const { latitude, longitude } = location.coords;
     console.log('Coordenadas obtenidas:', latitude, longitude);
     
-    // Mostrar mensaje discreto en la consola
     console.log(`Ubicación actualizada: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
     
     return {
@@ -80,15 +72,8 @@ export const refreshUserLocation = async () => {
   }
 };
 
-/**
- * Realiza geocodificación inversa (coordenadas a dirección)
- * @param {number} latitude - Latitud
- * @param {number} longitude - Longitud
- * @returns {Promise<Object|null>} Información de la dirección o null si hay error
- */
 export const reverseGeocode = async (latitude, longitude) => {
   try {
-    // URL correcta para geocodificación inversa
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1&limit=1`;
     
     console.log('Realizando geocodificación inversa:', url);
@@ -101,16 +86,13 @@ export const reverseGeocode = async (latitude, longitude) => {
       }
     });
     
-    // Verificar si la respuesta es exitosa
     if (!response.ok) {
       throw new Error(`Error HTTP: ${response.status}`);
     }
     
-    // Obtener el texto de la respuesta primero para depurar
     const responseText = await response.text();
     
     try {
-      // Intentar parsear el texto como JSON
       const data = JSON.parse(responseText);
       
       if (data && data.display_name) {

@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja la sección de habilidades del artista
+ * - Visualización
+ * - Etiquetas
+ * - UI de habilidades
+ */
+
 import React from 'react';
 import { View, Text } from 'react-native';
 import { styles } from '../../../../styles/ArtistProfileStyles';

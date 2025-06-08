@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el centro de notificaciones
+ * - UI
+ * - Notificaciones
+ * - Centro
+ */
+
 import React from 'react';
 import { View, FlatList, RefreshControl } from 'react-native';
 import { styles } from '../../../../styles/NotificationCenterStyles';

@@ -1,9 +1,16 @@
+/**
+ * Este archivo maneja la galería de imágenes
+ * - UI
+ * - Espacios
+ * - Imágenes
+ * - Galería
+ */
+
 import React, { useState } from 'react';
 import { View, ScrollView, Image, TouchableOpacity, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../../../../styles/CulturalSpaceStyles';
 
-// Estilos adicionales para evitar estilos inline
 const additionalStyles = StyleSheet.create({
   loaderContainer: {
     position: 'absolute',
@@ -65,32 +72,25 @@ const ImageGallery = ({ images, isEditing, onPickImage, onRemoveImage }) => {
     console.warn(`Error loading image at index ${safeIndex}`);
   };
 
-  // Función para normalizar URLs
   const normalizeUri = (uri) => {
     if (!uri) return null;
     
-    // Asegurarse de que la URI sea una cadena
     const uriStr = String(uri);
     
-    // Si la URI ya tiene un esquema (http://, https://, file://, etc.), devolverla tal cual
     if (uriStr.match(/^(http|https|file|content|data):/i)) {
       return uriStr;
     }
     
-    // Si es una ruta relativa, convertirla a una URI de archivo
     if (uriStr.startsWith('/')) {
       return `file://${uriStr}`;
     }
     
-    // Si no tiene un esquema, asumir que es http
     return `https://${uriStr}`;
   };
 
-  // Función para verificar si una URI es válida
   const isValidImageUri = (uri) => {
     if (!uri) return false;
     try {
-      // Verificar que sea una cadena y no esté vacía
       return typeof uri === 'string' && uri.trim().length > 0;
     } catch (error) {
       console.warn('Error validando URI de imagen:', error);

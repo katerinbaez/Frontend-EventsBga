@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el modal de filtros
+ * - UI
+ * - Filtros
+ * - Calendario
+ */
+
 import React from 'react';
 import { 
   View, 
@@ -10,9 +17,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { Calendar } from 'react-native-calendars';
 import { styles } from '../../../../styles/EventSearchStyles';
 
-/**
- * Modal para mostrar y aplicar filtros de búsqueda
- */
 const FilterModal = ({ 
   visible, 
   onClose, 
@@ -29,7 +33,6 @@ const FilterModal = ({
   onApplyFilters,
   onClearFilters
 }) => {
-  // Verificar si hay filtros aplicados
   const hasFilters = startDate || endDate || location;
   
   return (
@@ -41,7 +44,6 @@ const FilterModal = ({
     >
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
-          {/* Encabezado del modal */}
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Filtros de búsqueda</Text>
             <TouchableOpacity onPress={onClose}>
@@ -49,17 +51,13 @@ const FilterModal = ({
             </TouchableOpacity>
           </View>
           
-          {/* Contenido del modal */}
           <ScrollView style={styles.modalBody}>
-            {/* Filtro por categoría */}
             <Text style={styles.filterLabel}>Categoría</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesContentContainer}>
               {categories && categories.length > 0 && categories.map(category => {
-                // Asegurarse de que la categoría tenga un ID válido
                 const categoryId = category.id || category._id || category.nombre;
                 const categoryName = category.nombre || 'Categoría';
                 
-                // Convertir el nombre de la categoría a minúsculas y reemplazar espacios por guiones bajos
                 const formattedName = categoryName.toLowerCase().replace(/ /g, '_');
                 
                 return (
@@ -71,7 +69,6 @@ const FilterModal = ({
                     ]}
                     onPress={() => {
                       if (typeof onCategoryChange === 'function') {
-                        // Si ya está seleccionada, deseleccionarla
                         if (selectedCategory === categoryId) {
                           onCategoryChange('');
                         } else {
@@ -91,7 +88,6 @@ const FilterModal = ({
               })}
             </ScrollView>
             
-            {/* Filtro por fecha de inicio */}
             <Text style={styles.filterLabel}>Fecha de inicio</Text>
             <Calendar
               style={styles.calendar}
@@ -119,7 +115,6 @@ const FilterModal = ({
               }}
             />
             
-            {/* Filtro por fecha de fin */}
             <Text style={styles.filterLabel}>Fecha de fin</Text>
             <Calendar
               style={styles.calendar}
@@ -147,7 +142,6 @@ const FilterModal = ({
               }}
             />
             
-            {/* Filtro por ubicación */}
             <Text style={styles.filterLabel}>Ubicación</Text>
             <View style={styles.locationsContainer}>
               {locations && locations.map(loc => (
@@ -174,7 +168,6 @@ const FilterModal = ({
             </View>
           </ScrollView>
           
-          {/* Botones de acción */}
           <View style={styles.modalFooter}>
             <TouchableOpacity 
               style={styles.clearButton}

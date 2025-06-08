@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja la sección de categoría del evento
+ * - UI
+ * - Selección
+ * - Datos
+ */
+
 import React from 'react';
 import { View, Text } from 'react-native';
 import { styles } from '../../../../styles/EventProgrammingStyles';

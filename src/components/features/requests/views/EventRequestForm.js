@@ -1,15 +1,20 @@
+/**
+ * Este archivo maneja el formulario de solicitud de evento
+ * - UI
+ * - Eventos
+ * - Formulario
+ */
+
 import React from 'react';
 import { View, Modal, TouchableOpacity, Text, ScrollView, TextInput, ActivityIndicator, Alert, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { styles } from '../../../../styles/EventRequestFormStyles';
 
-// Hooks
 import useEventRequest from '../hooks/useEventRequest';
 
 const EventRequestForm = ({ visible, onClose, spaceId, spaceName, managerId }) => {
   const {
-    // Estados
     loading,
     loadingSlots,
     filteredTimeSlots,
@@ -27,7 +32,6 @@ const EventRequestForm = ({ visible, onClose, spaceId, spaceName, managerId }) =
     additionalRequirements,
     spaceCapacity,
     
-    // Métodos
     setEventName,
     setEventDescription,
     setEventType,
@@ -43,7 +47,6 @@ const EventRequestForm = ({ visible, onClose, spaceId, spaceName, managerId }) =
     calculateTotalDuration
   } = useEventRequest({ visible, onClose, spaceId, spaceName, managerId });
   
-  // Función para convertir el valor de la categoría a un texto más legible
   const getCategoryLabel = (category) => {
     const categoryLabels = {
       'musica': 'Música',
@@ -58,32 +61,27 @@ const EventRequestForm = ({ visible, onClose, spaceId, spaceName, managerId }) =
     return categoryLabels[category] || (category ? category.charAt(0).toUpperCase() + category.slice(1) : 'No especificada');
   };
   
-  // Mostrar resumen y confirmar envío
   const showSummaryAndConfirm = () => {
     if (!eventName || !eventDescription || selectedTimeSlots.length === 0 || !expectedAttendees || !eventType) {
       Alert.alert('Campos incompletos', 'Por favor complete todos los campos obligatorios');
       return;
     }
     
-    // Calcular la duración total del evento
     const totalDuration = calculateTotalDuration();
     
-    // Formatear la hora para mostrar en formato más amigable
     const formatTime = (timeString) => {
       const [hours, minutes] = timeString.split(':');
       const hour = parseInt(hours, 10);
       return `${hour > 12 ? hour - 12 : hour}:${minutes} ${hour >= 12 ? 'PM' : 'AM'}`;
     };
     
-    // Verificar si se excede la capacidad
     let warningMessage = '';
-    const defaultCapacity = 100; // Capacidad predeterminada si no se puede obtener del servidor
+    const defaultCapacity = 100;
     const capacity = spaceCapacity || defaultCapacity;
     if (parseInt(expectedAttendees, 10) > capacity) {
       warningMessage = `\n\n⚠️ ADVERTENCIA: El número de asistentes (${expectedAttendees}) excede la capacidad del espacio (${capacity} personas).`;
     }
     
-    // Obtener el rango de tiempo seleccionado
     const timeRange = getTimeRange();
     
     Alert.alert(
@@ -204,7 +202,6 @@ ${eventCategory === 'otro' ? `Categoría personalizada: ${customCategory}` : ''}
               </View>
               <Text style={styles.infoText}>Selecciona un horario disponible para tu evento</Text>
               
-              {/* Indicador de selección múltiple */}
               {selectedTimeSlots.length > 0 && (
                 <View style={styles.multiSelectInfo}>
                   <Ionicons name="information-circle" size={16} color="#FF3A5E" style={{marginRight: 6}} />
@@ -385,8 +382,6 @@ ${eventCategory === 'otro' ? `Categoría personalizada: ${customCategory}` : ''}
               )}
             </TouchableOpacity>
           </ScrollView>
-          
-          {/* No se necesita el modal de confirmación ya que usamos Alert.alert */}
         </View>
       </View>
     </Modal>

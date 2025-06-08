@@ -1,3 +1,12 @@
+/**
+ * Este archivo maneja el modal de espacios culturales
+ * - UI
+ * - Espacios
+ * - Modal
+ * - Lista
+ * - Detalles
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity, Modal, TouchableWithoutFeedback, StatusBar, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -19,14 +28,12 @@ const CulturalSpacesModal = ({ visible = true, onClose, initialSelectedSpaceId }
     closeDetails
   } = useCulturalSpaces(initialSelectedSpaceId);
 
-  // Esta función maneja el cierre del modal
   const handleClose = () => {
     if (onClose) {
       onClose();
     }
   };
 
-  // Esta función maneja el cierre de los detalles
   const handleCloseDetails = () => {
     if (initialSelectedSpaceId) {
       handleClose();

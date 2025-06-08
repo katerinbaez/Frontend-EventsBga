@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja la autenticación de login
+ * - UI
+ * - Navegación
+ * - API
+ */
+
 import React, { useState } from 'react';
 import { View, Vibration, TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -7,7 +14,6 @@ import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, COMMON_STYLES } from '../../../../styles/theme';
 
-// Componente CustomButton integrado
 const CustomButton = ({
   title,
   onPress,
@@ -57,18 +63,14 @@ const CustomButton = ({
 };
 import { AUTH0_DOMAIN, AUTH0_CLIENT_ID, BACKEND_URL, REDIRECT_URI } from '../../../../constants/config';
 
-// Configuración global de axios
 axios.defaults.headers.common['Origin'] = REDIRECT_URI;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 axios.defaults.headers.common['Accept'] = 'application/json';
-
-// Interceptor para manejar errores globalmente
 axios.interceptors.response.use(
     response => response,
     error => {
         if (error.response?.status === 401) {
             console.log('Token expirado o inválido');
-            // Aquí podrías implementar un refresh token si lo necesitas
         }
         return Promise.reject(error);
     }
@@ -79,8 +81,8 @@ const LoginAuth = () => {
     const [error, setError] = useState(null);
     const navigation = useNavigation();
 
-    const { isAuthenticated, handleLogin } = useAuth(); // ya no usamos setToken directamente
-
+    const { isAuthenticated, handleLogin } = useAuth();
+    
     const handleLoginPress = async () => {
         try {
             Vibration.vibrate(50);
@@ -114,7 +116,6 @@ const LoginAuth = () => {
                 if (params.access_token) {
                     console.log('Token obtenido:', params.access_token);
 
-                    // Configurar el token en axios
                     axios.defaults.headers.common['Authorization'] = `Bearer ${params.access_token}`;
 
                     const userInfoResponse = await axios.get(`https://${AUTH0_DOMAIN}/userinfo`);
@@ -129,7 +130,6 @@ const LoginAuth = () => {
                     const userData = loginResponse.data.user;
                     handleLogin(userData, params.access_token);
 
-                    // Verificar que el token se guardó
                     console.log('Token guardado en el contexto');
 
                     navigation.replace(userData.role === 'admin' ? 'DashboardAdmin' : 'Dashboard');

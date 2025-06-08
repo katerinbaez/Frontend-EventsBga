@@ -1,3 +1,13 @@
+/**
+ * Configuración global de Expo
+ * - Expo
+ * - Configuración
+ * - Identidad
+ * - UI
+ * - Splash
+ * - Plataformas
+ */
+
 const config = {
   expo: {
     owner: "adminkate",

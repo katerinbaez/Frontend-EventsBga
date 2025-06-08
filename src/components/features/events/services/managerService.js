@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el servicio del gestor
+ * - API
+ * - Perfil
+ * - Carga
+ */
+
 import axios from 'axios';
 import { BACKEND_URL } from '../../../../constants/config';
 

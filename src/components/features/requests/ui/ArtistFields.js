@@ -1,4 +1,10 @@
-// c:\Users\123\EventsBga\components\features\requests\ui\ArtistFields.js
+/**
+ * Este archivo maneja los campos del artista
+ * - UI
+ * - Roles
+ * - Campos
+ */
+
 import React from 'react';
 import { View, Text, TextInput } from 'react-native';
 import styles from '../../../../styles/RoleRequestFormStyles';

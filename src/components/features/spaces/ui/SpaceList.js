@@ -1,3 +1,11 @@
+/**
+ * Este archivo maneja la lista de espacios
+ * - UI
+ * - Espacios
+ * - Lista
+ * - Carga
+ */
+
 import React from 'react';
 import { FlatList, View, Text, ActivityIndicator } from 'react-native';
 import SpaceListItem from './SpaceListItem';
@@ -32,7 +40,6 @@ const SpaceList = ({
       data={spaces}
       keyExtractor={(item, index) => `space-${item.id || index}`}
       renderItem={({ item }) => {
-        // Calcular distancia si hay ubicación de usuario
         let distance = null;
         if (userLocation && item.latitud && item.longitud) {
           distance = calculateDistance(

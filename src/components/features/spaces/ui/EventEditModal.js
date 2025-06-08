@@ -1,3 +1,11 @@
+/**
+ * Este archivo maneja el modal de edición de evento
+ * - UI
+ * - Espacios
+ * - Eventos
+ * - Edición
+ */
+
 import React from 'react';
 import { 
   View, 
@@ -103,7 +111,6 @@ const EventEditModal = ({
                     marginRight: 10
                   }}
                   onPress={() => {
-                    // Aquí iría la lógica para mostrar un selector de fecha
                     const date = new Date();
                     setCurrentEvent({...currentEvent, fechaProgramada: date});
                   }}
@@ -130,7 +137,6 @@ const EventEditModal = ({
                 ) : Array.isArray(filteredTimeSlots) && filteredTimeSlots.length > 0 ? (
                   <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     {filteredTimeSlots.map((slot, index) => {
-                      // Determinar si este slot está seleccionado
                       const isSelected = currentEvent?.fechaProgramada && 
                         new Date(currentEvent.fechaProgramada).getHours() === slot.hour;
                       
@@ -147,14 +153,11 @@ const EventEditModal = ({
                           }}
                           onPress={() => {
                             try {
-                              // Seleccionar este horario
                               const newDate = new Date(currentEvent.fechaProgramada);
                               const hour = slot.hour || 0;
                               
-                              // Establecer la hora en la fecha
                               newDate.setHours(hour, 0, 0, 0);
                               
-                              // Actualizar el evento con la nueva fecha
                               setCurrentEvent({...currentEvent, fechaProgramada: newDate});
                             } catch (error) {
                               console.error('Error al actualizar la hora:', error);
@@ -172,7 +175,6 @@ const EventEditModal = ({
               </View>
             </View>
             
-            {/* Botón de guardar fijo en la parte inferior */}
             <View style={styles.fixedButtonContainer}>
               <TouchableOpacity 
                 style={styles.saveButton}

@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el modal de asistentes
+ * - UI
+ * - Asistentes
+ * - Eventos
+ */
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, Modal, TouchableOpacity, FlatList, ActivityIndicator, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -6,37 +13,28 @@ import { BACKEND_URL } from '../../../../constants/config';
 import { styles } from '../../../../styles/EventAttendeesModalStyles';
 import { formatDate } from '../services/EventAttendanceService';
 
-/**
- * Modal que muestra los asistentes confirmados a un evento
- */
 const EventAttendeesModal = ({ visible, onClose, eventId, eventTitle }) => {
   const [artistAttendees, setArtistAttendees] = useState([]);
   const [userAttendees, setUserAttendees] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState('artists'); // 'artists' o 'users'
+  const [activeTab, setActiveTab] = useState('artists');
 
-  // Cargar asistentes cuando se abre el modal
   useEffect(() => {
     if (visible && eventId) {
       loadConfirmedAttendees();
     }
   }, [visible, eventId]);
 
-  /**
-   * Carga los asistentes confirmados para el evento
-   */
   const loadConfirmedAttendees = async () => {
     try {
       setLoading(true);
       
-      // Cargar artistas confirmados
       const artistsResponse = await axios.get(`${BACKEND_URL}/api/event-attendances/confirmed-artists/${eventId}`);
       
       if (artistsResponse.data && artistsResponse.data.success) {
         setArtistAttendees(artistsResponse.data.attendances);
       }
       
-      // Cargar usuarios confirmados
       const usersResponse = await axios.get(`${BACKEND_URL}/api/event-attendances/confirmed-users/${eventId}`);
       
       if (usersResponse.data && usersResponse.data.success) {
@@ -53,9 +51,6 @@ const EventAttendeesModal = ({ visible, onClose, eventId, eventTitle }) => {
     }
   };
 
-  /**
-   * Renderiza un elemento de asistente en la lista
-   */
   const renderAttendeeItem = ({ item }) => (
     <View style={styles.attendeeItem}>
       <View style={styles.attendeeInfo}>
@@ -69,9 +64,6 @@ const EventAttendeesModal = ({ visible, onClose, eventId, eventTitle }) => {
     </View>
   );
 
-  /**
-   * Renderiza las pestañas de navegación
-   */
   const renderTabs = () => (
     <View style={styles.tabContainer}>
       <TouchableOpacity 

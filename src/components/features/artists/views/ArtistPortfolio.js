@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el portafolio del artista
+ * - Proyectos
+ * - Imágenes
+ * - Edición
+ */
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, Alert, ScrollView, Modal, ActivityIndicator, SafeAreaView, StatusBar, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,32 +17,22 @@ import { styles } from '../../../../styles/ArtistPortfolioStyles';
 import AddProjectModal from '../modals/AddProjectModal';
 import PreviewProjectModal from '../modals/PreviewProjectModal';
 
-// Colores de acento del tema importados desde el archivo de estilos
 const { ACCENT_COLOR, DARK_BG, LIGHT_TEXT } = styles;
 
-/**
- * Pantalla para que los artistas puedan gestionar su portafolio de trabajos.
- * Permite subir, editar y eliminar proyectos artísticos con imágenes y descripciones.
- */
 const ArtistPortfolio = ({ navigation, route }) => {
-  // Contexto de autenticación
   const { user, token } = useAuth();
   
-  // Estados principales
   const [isLoading, setIsLoading] = useState(true);
   const [artistData, setArtistData] = useState(null);
   const [portfolioItems, setPortfolioItems] = useState([]);
   
-  // Estados de UI
   const [showAddModal, setShowAddModal] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   
-  // Determinar si se debe mostrar el header basado en parámetros de navegación
   const showHeader = route?.params?.showHeader !== false;
   
-  // Estado para nuevo elemento del portafolio
   const [newItem, setNewItem] = useState({
     title: '',
     description: '',
@@ -47,14 +44,11 @@ const ArtistPortfolio = ({ navigation, route }) => {
     loadArtistData();
   }, []);
 
-  // Cargar datos del artista al montar el componente
   useEffect(() => {
     loadArtistData();
   }, []);
 
-  /**
-   * Carga los datos del perfil del artista desde el backend
-   */
+ 
   const loadArtistData = async () => {
     try {
       setIsLoading(true);
@@ -63,7 +57,6 @@ const ArtistPortfolio = ({ navigation, route }) => {
       if (response.data.success) {
         setArtistData(response.data.artist);
         
-        // Convertir el portafolio en un formato más fácil de usar
         if (response.data.artist.portfolio && response.data.artist.portfolio.trabajos) {
           setPortfolioItems(response.data.artist.portfolio.trabajos);
         }
@@ -87,24 +80,20 @@ const ArtistPortfolio = ({ navigation, route }) => {
       
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsMultipleSelection: true, // Permitir selección múltiple
+        allowsMultipleSelection: true,
         quality: 0.8,
       });
       
       if (!result.canceled && result.assets.length > 0) {
-        // Agregar todas las imágenes seleccionadas al array existente
         const newImages = result.assets.map(asset => asset.uri);
         
-        // Mostrar indicador de carga
         setIsLoading(true);
         
         try {
-          // Subir imágenes a Cloudinary
           console.warn('Subiendo imágenes a Cloudinary...');
           const cloudinaryUrls = await CloudinaryService.uploadMultipleImages(newImages);
           console.warn('Imágenes subidas a Cloudinary:', cloudinaryUrls);
           
-          // Actualizar el estado con las URLs de Cloudinary
           setNewItem({ 
             ...newItem, 
             images: [...newItem.images, ...cloudinaryUrls]
@@ -113,7 +102,6 @@ const ArtistPortfolio = ({ navigation, route }) => {
           Alert.alert('Éxito', 'Imágenes subidas correctamente');
         } catch (cloudinaryError) {
           console.error('Error subiendo a Cloudinary:', cloudinaryError);
-          // Si falla, usar las URIs locales
           setNewItem({ 
             ...newItem, 
             images: [...newItem.images, ...newImages]
@@ -130,16 +118,11 @@ const ArtistPortfolio = ({ navigation, route }) => {
   };
 
   const handleRemoveImage = (indexToRemove) => {
-    // Filtrar el array de imágenes para eliminar la imagen en el índice especificado
     const updatedImages = newItem.images.filter((_, index) => index !== indexToRemove);
     setNewItem({ ...newItem, images: updatedImages });
   };
 
-  /**
-   * Maneja la adición de un nuevo proyecto al portafolio
-   */
   const handleAddItem = async () => {
-    // Validar campos requeridos
     if (!newItem.title.trim() || !newItem.description.trim() || newItem.images.length === 0) {
       Alert.alert('Datos incompletos', 'Por favor completa todos los campos y añade al menos una imagen');
       return;
@@ -148,10 +131,8 @@ const ArtistPortfolio = ({ navigation, route }) => {
     try {
       setIsLoading(true);
       
-      // Verificar si hay imágenes locales que necesitan ser subidas a Cloudinary
       let cloudinaryImages = [];
       try {
-        // Verificar si hay imágenes locales que necesitan ser subidas
         const hasLocalImages = newItem.images.some(uri => !CloudinaryService.isCloudinaryUrl(uri));
         
         if (hasLocalImages) {
@@ -159,9 +140,8 @@ const ArtistPortfolio = ({ navigation, route }) => {
           cloudinaryImages = await CloudinaryService.uploadMultipleImages(newItem.images);
           console.warn('Imágenes subidas exitosamente:', cloudinaryImages);
           
-          // Si se subieron correctamente, actualizar el estado con las URLs de Cloudinary
           if (cloudinaryImages.length > 0 && cloudinaryImages.some(url => CloudinaryService.isCloudinaryUrl(url))) {
-            // Actualizar el estado con las URLs de Cloudinary para que queden registradas
+            
             setNewItem({
               ...newItem,
               images: cloudinaryImages
@@ -172,32 +152,30 @@ const ArtistPortfolio = ({ navigation, route }) => {
         }
       } catch (imageError) {
         console.warn('Error al subir imágenes a Cloudinary:', imageError);
-        // Continuar con las imágenes originales si falla la subida
         cloudinaryImages = newItem.images;
         Alert.alert('Advertencia', 'No se pudieron subir algunas imágenes a la nube. Se intentará guardar con las imágenes locales.');
       }
       
-      // Crear el nuevo elemento del portafolio con las URLs de Cloudinary
       const newPortfolioItem = {
         id: Date.now().toString(),
         title: newItem.title,
         description: newItem.description,
-        imageUrl: cloudinaryImages[0], // Usar la primera imagen de Cloudinary como principal
-        images: cloudinaryImages,      // Usar todas las URLs de Cloudinary
+        imageUrl: cloudinaryImages[0], 
+        images: cloudinaryImages,      
         date: newItem.date
       };
       
-      // Actualizar array de trabajos
+      
       const updatedItems = [...portfolioItems, newPortfolioItem];
       
-      // Preparar datos para el backend
+      
       const formData = new FormData();
       formData.append('portfolio', JSON.stringify({
         trabajos: updatedItems,
         imagenes: artistData?.portfolio?.imagenes || []
       }));
       
-      // Actualizar en el backend
+      
       const updateResponse = await axios.put(
         `${BACKEND_URL}/api/artists/profile/${user.id}`,
         formData,
@@ -210,7 +188,7 @@ const ArtistPortfolio = ({ navigation, route }) => {
       );
       
       if (updateResponse.data.success) {
-        // Actualizar el estado local
+        
         setPortfolioItems(updatedItems);
         setShowAddModal(false);
         setNewItem({
@@ -235,7 +213,7 @@ const ArtistPortfolio = ({ navigation, route }) => {
 
   const handleViewItem = (item) => {
     setSelectedItem(item);
-    setCurrentImageIndex(0); // Reiniciar el índice de imagen al abrir un nuevo item
+    setCurrentImageIndex(0); 
     setShowPreviewModal(true);
   };
 
@@ -255,9 +233,7 @@ const ArtistPortfolio = ({ navigation, route }) => {
     }
   };
 
-  /**
-   * Maneja la eliminación de un proyecto del portafolio
-   */
+  
   const handleDeleteItem = (itemId) => {
     Alert.alert(
       'Confirmar eliminación',
@@ -273,24 +249,20 @@ const ArtistPortfolio = ({ navigation, route }) => {
     );
   };
   
-  /**
-   * Realiza la eliminación del proyecto en el backend
-   */
+  
   const deleteProject = async (itemId) => {
     try {
       setIsLoading(true);
       
-      // Filtrar el elemento a eliminar
       const updatedItems = portfolioItems.filter(item => item.id !== itemId);
       
-      // Crear FormData para enviar al backend
       const formData = new FormData();
       formData.append('portfolio', JSON.stringify({
         trabajos: updatedItems,
         imagenes: artistData.portfolio.imagenes || []
       }));
       
-      // Actualizar en el backend
+      
       await axios.put(
         `${BACKEND_URL}/api/artists/profile/${user.id}`,
         formData,
@@ -302,13 +274,11 @@ const ArtistPortfolio = ({ navigation, route }) => {
         }
       );
       
-      // Actualizar localmente
       updateUIAfterDelete(updatedItems);
       Alert.alert('Eliminado', 'El proyecto ha sido eliminado de tu portafolio');
     } catch (error) {
       console.error('Error eliminando proyecto:', error?.response?.data || error.message);
       
-      // Intentar con JSON directo en lugar de FormData
       try {
         const updatedItems = portfolioItems.filter(item => item.id !== itemId);
         await axios.put(
@@ -332,7 +302,6 @@ const ArtistPortfolio = ({ navigation, route }) => {
       } catch (secondError) {
         console.error('Error en segundo intento:', secondError?.response?.data || secondError.message);
         
-        // Actualizar la UI de todas formas
         const updatedItems = portfolioItems.filter(item => item.id !== itemId);
         updateUIAfterDelete(updatedItems);
         Alert.alert('Error', 'Hubo un problema al comunicarse con el servidor, pero el proyecto ha sido eliminado de tu vista local.');
@@ -342,18 +311,12 @@ const ArtistPortfolio = ({ navigation, route }) => {
     }
   };
   
-  /**
-   * Actualiza la UI después de eliminar un proyecto
-   */
   const updateUIAfterDelete = (updatedItems) => {
     setPortfolioItems(updatedItems);
     setShowPreviewModal(false);
     setSelectedItem(null);
   };
 
-  /**
-   * Renderiza el componente de carga
-   */
   const renderLoading = () => (
     <View style={styles.loadingContainer}>
       <ActivityIndicator size="large" color={ACCENT_COLOR} />
@@ -361,9 +324,6 @@ const ArtistPortfolio = ({ navigation, route }) => {
     </View>
   );
 
-  /**
-   * Renderiza el encabezado del portafolio
-   */
   const renderHeader = () => (
     showHeader && (
       <View style={styles.header}>
@@ -384,9 +344,6 @@ const ArtistPortfolio = ({ navigation, route }) => {
     )
   );
 
-  /**
-   * Renderiza el estado vacío cuando no hay proyectos
-   */
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
       <Ionicons name="images-outline" size={80} color="#999" />
@@ -403,9 +360,7 @@ const ArtistPortfolio = ({ navigation, route }) => {
     </View>
   );
 
-  /**
-   * Renderiza la cuadrícula de proyectos
-   */
+  
   const renderPortfolioGrid = () => (
     <ScrollView contentContainerStyle={styles.contentContainer}>
       <View style={styles.portfolioGrid}>
@@ -446,7 +401,7 @@ const ArtistPortfolio = ({ navigation, route }) => {
       {renderHeader()}
       {portfolioItems.length === 0 ? renderEmptyState() : renderPortfolioGrid()}
       
-      {/* Modal para añadir nuevo proyecto */}
+      
       <AddProjectModal
         visible={showAddModal}
         onClose={() => setShowAddModal(false)}

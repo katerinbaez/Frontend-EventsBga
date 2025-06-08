@@ -1,16 +1,22 @@
+/**
+ * Componente de superposición de depuración para mostrar logs en tiempo real
+ * - UI
+ * - Depuración
+ * - Logs
+ * - Overlay
+ * - Consola
+ */
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 
-// Crear un sistema global de logs
 const logs = [];
-const maxLogs = 50; // Limitar el número de logs para evitar problemas de memoria
+const maxLogs = 50; 
 
-// Reemplazar los métodos de console para capturar logs
 const originalConsoleLog = console.log;
 const originalConsoleWarn = console.warn;
 const originalConsoleError = console.error;
 
-// Función para añadir un log
 const addLog = (type, ...args) => {
   const log = {
     id: Date.now(),
@@ -28,15 +34,12 @@ const addLog = (type, ...args) => {
     }).join(' ')
   };
   
-  logs.unshift(log); // Añadir al principio para mostrar los más recientes primero
-  
-  // Limitar el número de logs
+  logs.unshift(log); 
   if (logs.length > maxLogs) {
     logs.pop();
   }
 };
 
-// Reemplazar los métodos de console
 console.log = (...args) => {
   originalConsoleLog(...args);
   addLog('log', ...args);
@@ -52,13 +55,11 @@ console.error = (...args) => {
   addLog('error', ...args);
 };
 
-// Componente para mostrar los logs
 const DebugOverlay = ({ visible = true }) => {
   const [localLogs, setLocalLogs] = useState([]);
   const [expanded, setExpanded] = useState(false);
   
   useEffect(() => {
-    // Actualizar los logs cada 500ms
     const interval = setInterval(() => {
       setLocalLogs([...logs]);
     }, 500);

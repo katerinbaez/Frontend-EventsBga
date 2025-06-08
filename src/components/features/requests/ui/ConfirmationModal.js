@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el modal de confirmación
+ * - UI
+ * - Eventos
+ * - Modal
+ */
+
 import React from 'react';
 import { View, Text, Modal, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
 import { styles } from '../../../../styles/EventRequestFormStyles';
@@ -24,7 +31,6 @@ const ConfirmationModal = ({
     spaceName
   } = formData;
   
-  // Obtener el nombre de la categoría para mostrar
   const getCategoryDisplay = () => {
     if (eventCategory === 'otro' && customCategory) {
       return customCategory;

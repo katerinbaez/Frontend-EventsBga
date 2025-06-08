@@ -1,3 +1,11 @@
+/**
+ * Este archivo maneja la vista del espacio cultural
+ * - UI
+ * - Espacios
+ * - Vista
+ * - Detalles
+ */
+
 import React from 'react';
 import { View, ScrollView, ActivityIndicator } from 'react-native';
 import { styles } from '../../../../styles/CulturalSpaceStyles';

@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el hook de visualización de solicitudes de rol
+ * - Hooks
+ * - Roles
+ * - Visualización
+ */
+
 import { useState, useEffect } from 'react';
 import { Alert, Linking } from 'react-native';
 import axios from 'axios';
@@ -76,7 +83,6 @@ const useViewRoleRequests = () => {
         'x-user-email': 'admin@eventsbga.com'
       };
 
-      // Actualizar el estado de la solicitud y enviar el tipo correcto de notificación
       await axios.patch(
         `${BACKEND_URL}/api/role-requests/${id}/status`,
         { 
@@ -92,7 +98,6 @@ const useViewRoleRequests = () => {
         { headers }
       );
 
-      // Crear la notificación localmente
       await axios.post(
         `${BACKEND_URL}/api/notifications`,
         {
@@ -109,12 +114,9 @@ const useViewRoleRequests = () => {
         { headers }
       );
 
-      // Actualizar la lista de solicitudes y cerrar el modal
       await fetchRequests();
       setModalVisible(false);
-      setError(''); // Limpiar cualquier error previo
-
-      // Mostrar mensaje de éxito
+      setError('');
       Alert.alert(
         'Éxito',
         newStatus === 'Aprobado' 
@@ -139,24 +141,19 @@ const useViewRoleRequests = () => {
     try {
       if (url.startsWith('file://')) {
         setDownloading(true);
-        // Obtener el nombre del archivo de la URL
         const fileName = url.split('/').pop();
-        
-        // Crear un directorio para los documentos si no existe
         const documentsDir = FileSystem.documentDirectory + 'RoleRequests/';
         const dirInfo = await FileSystem.getInfoAsync(documentsDir);
         if (!dirInfo.exists) {
           await FileSystem.makeDirectoryAsync(documentsDir, { intermediates: true });
         }
 
-        // Copiar el archivo al directorio de documentos
         const newPath = documentsDir + fileName;
         await FileSystem.copyAsync({
           from: url,
           to: newPath
         });
 
-        // Compartir el archivo
         const canShare = await Sharing.isAvailableAsync();
         if (canShare) {
           await Sharing.shareAsync(newPath);
@@ -164,7 +161,6 @@ const useViewRoleRequests = () => {
           Alert.alert('Error', 'Compartir archivos no está disponible en este dispositivo');
         }
       } else {
-        // Si es una URL web normal, abrirla
         await Linking.openURL(url);
       }
     } catch (error) {

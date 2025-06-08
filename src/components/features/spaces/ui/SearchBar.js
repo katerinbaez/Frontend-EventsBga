@@ -1,3 +1,11 @@
+/**
+ * Este archivo maneja la barra de búsqueda
+ * - UI
+ * - Espacios
+ * - Búsqueda
+ * - Barra
+ */
+
 import React from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

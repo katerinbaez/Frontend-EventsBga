@@ -1,14 +1,19 @@
+/**
+ * Este archivo maneja el modal de eventos disponibles
+ * - UI
+ * - Eventos
+ * - Estado
+ */
+
 import React, { useState, useEffect } from 'react';
 import { View, Modal, FlatList, ActivityIndicator, Alert } from 'react-native';
 import { useAuth } from '../../../../context/AuthContext';
 import { styles } from '../../../../styles/AvaiableEventsModalStyles';
 
-// Componentes UI
 import EventItem from '../ui/EventItem';
 import EmptyEvents from '../ui/EmptyEvents';
 import ModalHeader from '../ui/ModalHeader';
 
-// Servicios
 import { 
   loadArtistProfile, 
   loadAvailableEvents, 
@@ -25,7 +30,6 @@ const AvailableEventsModal = ({ visible, onClose }) => {
   const [attendingEvents, setAttendingEvents] = useState({});
   const [artistProfile, setArtistProfile] = useState(null);
 
-  // Cargar eventos disponibles y perfil del artista
   useEffect(() => {
     if (visible) {
       fetchArtistProfile();
@@ -33,7 +37,6 @@ const AvailableEventsModal = ({ visible, onClose }) => {
     }
   }, [visible]);
 
-  // Cargar el perfil del artista
   const fetchArtistProfile = async () => {
     const artistId = user.sub || user.id;
     const profile = await loadArtistProfile(artistId);
@@ -42,7 +45,6 @@ const AvailableEventsModal = ({ visible, onClose }) => {
     }
   };
 
-  // Cargar eventos disponibles
   const fetchAvailableEvents = async () => {
     try {
       setLoading(true);
@@ -60,7 +62,6 @@ const AvailableEventsModal = ({ visible, onClose }) => {
     }
   };
 
-  // Manejar la asistencia a un evento
   const handleAttendEvent = async (eventId) => {
     try {
       setLoading(true);
@@ -71,7 +72,6 @@ const AvailableEventsModal = ({ visible, onClose }) => {
         return;
       }
       
-      // Verificar que el artista tenga un perfil completo con nombre artístico
       if (!artistProfile || !artistProfile.nombreArtistico) {
         Alert.alert(
           'Perfil Incompleto',
@@ -85,7 +85,6 @@ const AvailableEventsModal = ({ visible, onClose }) => {
       if (result.success) {
         Alert.alert('Éxito', result.message);
         
-        // Actualizar el estado local para reflejar que ahora está asistiendo
         setAttendingEvents(prev => ({
           ...prev,
           [eventId]: true
@@ -101,7 +100,6 @@ const AvailableEventsModal = ({ visible, onClose }) => {
     }
   };
 
-  // Manejar la cancelación de asistencia a un evento
   const handleCancelAttendance = async (eventId) => {
     try {
       setLoading(true);
@@ -117,7 +115,6 @@ const AvailableEventsModal = ({ visible, onClose }) => {
       if (result.success) {
         Alert.alert('Éxito', result.message);
         
-        // Actualizar el estado local para reflejar que ya no está asistiendo
         setAttendingEvents(prev => ({
           ...prev,
           [eventId]: false
@@ -133,7 +130,6 @@ const AvailableEventsModal = ({ visible, onClose }) => {
     }
   };
 
-  // Renderizar un elemento de evento
   const renderEventItem = ({ item }) => {
     const expired = isEventExpired(item);
     return (

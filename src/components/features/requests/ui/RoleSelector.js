@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el selector de roles
+ * - UI
+ * - Roles
+ * - Selector
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

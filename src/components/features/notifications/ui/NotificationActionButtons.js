@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja los botones de acción de notificación
+ * - UI
+ * - Notificaciones
+ * - Acciones
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

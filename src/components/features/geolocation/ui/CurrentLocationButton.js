@@ -1,14 +1,16 @@
+/**
+ * Este archivo maneja el botón de ubicación actual
+ * - UI
+ * - Ubicación
+ * - Botones
+ */
+
 import React from 'react';
 import { TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../../../../styles/OpenSteetMapStyles';
 
-/**
- * Botón para obtener la ubicación actual del usuario
- * @param {boolean} loading - Indica si se está cargando la ubicación
- * @param {function} onPress - Función a ejecutar al presionar el botón
- * @returns {JSX.Element}
- */
+
 const CurrentLocationButton = ({ loading, onPress }) => {
   return (
     <TouchableOpacity

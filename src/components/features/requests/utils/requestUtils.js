@@ -1,26 +1,27 @@
-// Funciones de utilidad para las solicitudes de eventos
+/**
+ * Este archivo maneja las utilidades para las solicitudes
+ * - Utilidades
+ * - Solicitudes
+ * - Formateo
+ */
 
-// Función para obtener el color según el estado de la solicitud
 export const getStatusColor = (status) => {
-  // Verificar que status no sea undefined o null
-  if (!status) return '#999999'; // Gris por defecto si no hay estado
+  if (!status) return '#999999';
   
   switch (status.toLowerCase()) {
     case 'pendiente':
-      return '#FFA500'; // Naranja
+      return '#FFA500';
     case 'aprobada':
-      return '#4CAF50'; // Verde
+      return '#4CAF50';
     case 'rechazada':
-      return '#FF3A5E'; // Rojo (color de acento preferido)
+      return '#FF3A5E';
     default:
-      return '#999999'; // Gris por defecto
+      return '#999999';
   }
 };
 
-// Función para obtener el icono según el estado de la solicitud
 export const getStatusIcon = (status) => {
-  // Verificar que status no sea undefined o null
-  if (!status) return 'help-circle-outline'; // Icono de ayuda por defecto si no hay estado
+  if (!status) return 'help-circle-outline';
   
   switch (status.toLowerCase()) {
     case 'pendiente':
@@ -34,35 +35,27 @@ export const getStatusIcon = (status) => {
   }
 };
 
-// Función para formatear la fecha en español (29 de abril de 2025)
 export const formatDate = (dateString) => {
   console.log('Fecha recibida para formatear:', dateString);
   
   if (!dateString) {
     console.log('Fecha no disponible, usando fecha por defecto');
-    // Si no hay fecha, usar el 29 de abril de 2025 como en la imagen
     return '29 de abril de 2025';
   }
   
   try {
-    // Si la fecha es solo YYYY-MM-DD, ajustarla para evitar problemas de zona horaria
     if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
-      // Formato ISO sin hora, añadir T00:00:00 para evitar problemas de zona horaria
       dateString = `${dateString}T00:00:00`;
     }
     
-    // Crear una nueva fecha a partir del string
     const date = new Date(dateString);
     console.log('Fecha parseada:', date);
     
-    // Verificar que la fecha sea válida
     if (isNaN(date.getTime())) {
       console.error('Fecha inválida:', dateString);
-      // Si la fecha es inválida, usar el 29 de abril de 2025 como en la imagen
       return '29 de abril de 2025';
     }
     
-    // Formatear la fecha en español
     const day = date.getDate();
     const months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
     const month = months[date.getMonth()];
@@ -73,7 +66,6 @@ export const formatDate = (dateString) => {
     return formattedDate;
   } catch (error) {
     console.error('Error al formatear fecha:', error);
-    // En caso de error, usar el 29 de abril de 2025 como en la imagen
     return '29 de abril de 2025';
   }
 };

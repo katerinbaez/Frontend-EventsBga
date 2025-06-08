@@ -1,9 +1,15 @@
+/**
+ * Este archivo maneja el modal de vista previa de proyecto
+ * - Navegación de imágenes
+ * - Eliminación
+ * - Interfaz modal
+ */
+
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../../../../styles/ArtistPortfolioStyles';
 
-// Colores de acento del tema importados desde el archivo de estilos
 const { ACCENT_COLOR, LIGHT_TEXT, DARK_BG } = styles;
 
 const PreviewProjectModal = ({ 
@@ -83,7 +89,6 @@ const PreviewProjectModal = ({
               </View>
             )}
 
-            {/* Miniaturas de imágenes */}
             {selectedItem.images && selectedItem.images.length > 1 && (
               <ScrollView 
                 horizontal 

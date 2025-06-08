@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el contenedor de opciones administrativas
+ * - UI
+ * - Navegación
+ * - Gestión de opciones
+ */
+
 import React from 'react';
 import { View } from 'react-native';
 import AdminOptionCard from './AdminOptionCard';

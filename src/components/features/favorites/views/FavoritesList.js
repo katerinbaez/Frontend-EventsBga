@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja la lista de favoritos
+ * - UI
+ * - Favoritos
+ * - Lista
+ */
+
 import React, { useState } from 'react';
 import { 
   View, 
@@ -10,22 +17,17 @@ import ArtistProfilesModal from '../../artists/modals/ArtistProfilesModal';
 import CulturalSpacesModal from '../../spaces/views/CulturalSpacesModal';
 import { styles } from '../../../../styles/FavoritesListStyles';
 
-// Componentes UI
 import FavoritesTabs from '../ui/FavoritesTabs';
 import FavoriteItem from '../ui/FavoriteItem';
 import EmptyFavorites from '../ui/EmptyFavorites';
 
-// Hooks
 import useFavorites from '../hooks/useFavorites';
 
 const FavoritesList = ({ user, navigation }) => {
-  // Estados para modales
   const [showArtistModal, setShowArtistModal] = useState(false);
   const [selectedArtistId, setSelectedArtistId] = useState(null);
   const [showSpaceModal, setShowSpaceModal] = useState(false);
   const [selectedSpaceId, setSelectedSpaceId] = useState(null);
-  
-  // Usar el hook personalizado para gestionar favoritos
   const {
     favorites,
     activeTab,
@@ -45,20 +47,15 @@ const FavoritesList = ({ user, navigation }) => {
           return;
         }
         
-        // Usar la ruta original de navegación para eventos
         navigation.navigate('EventDetails', { eventId: eventIdNum });
       } else if (activeTab === 'artist') {
-        // Para artistas, mostrar el modal de perfiles de artistas directamente
         console.log('Mostrando modal de artista con ID:', item.targetId);
         
-        // Guardar el ID del artista seleccionado y mostrar el modal
         setSelectedArtistId(item.targetId);
         setShowArtistModal(true);
       } else if (activeTab === 'space') {
-        // Para espacios culturales, mostrar el modal directamente
         console.log('Mostrando modal de espacio cultural con ID:', item.targetId);
         
-        // Guardar el ID del espacio seleccionado y mostrar el modal
         setSelectedSpaceId(item.targetId);
         setShowSpaceModal(true);
       }
@@ -70,7 +67,6 @@ const FavoritesList = ({ user, navigation }) => {
 
   return (
     <View style={styles.container}>
-      {/* Modal para mostrar los detalles del artista */}
       <Modal
         visible={showArtistModal}
         animationType="slide"
@@ -81,7 +77,6 @@ const FavoritesList = ({ user, navigation }) => {
         <ArtistProfilesModal 
           visible={showArtistModal}
           onClose={() => {
-            // Cerrar el modal y limpiar el ID seleccionado
             setShowArtistModal(false);
             setSelectedArtistId(null);
           }} 
@@ -89,12 +84,10 @@ const FavoritesList = ({ user, navigation }) => {
         />
       </Modal>
 
-      {/* Modal para mostrar los detalles del espacio cultural */}
       {showSpaceModal && (
         <CulturalSpacesModal 
           visible={showSpaceModal}
           onClose={() => {
-            // Cerrar el modal y limpiar el ID seleccionado
             setShowSpaceModal(false);
             setSelectedSpaceId(null);
           }} 
@@ -102,13 +95,11 @@ const FavoritesList = ({ user, navigation }) => {
         />
       )}
       
-      {/* Pestañas de navegación */}
       <FavoritesTabs 
         activeTab={activeTab} 
         onTabChange={setActiveTab} 
       />
 
-      {/* Contenido principal */}
       {loading ? (
         <View style={styles.centerContainer}>
           <ActivityIndicator size="large" color="#4A90E2" />

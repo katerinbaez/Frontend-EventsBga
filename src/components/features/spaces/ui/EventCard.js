@@ -1,3 +1,11 @@
+/**
+ * Este archivo maneja la UI de tarjeta de evento
+ * - UI
+ * - Espacios
+ * - Eventos
+ * - Tarjeta
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

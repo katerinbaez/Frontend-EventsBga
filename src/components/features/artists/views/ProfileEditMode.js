@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el modo de edición del perfil
+ * - Formularios
+ * - Imágenes
+ * - Guardado
+ */
+
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

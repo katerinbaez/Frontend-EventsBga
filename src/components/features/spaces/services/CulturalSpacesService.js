@@ -1,7 +1,15 @@
+/**
+ * Este archivo maneja el servicio de espacios culturales
+ * - Servicios
+ * - Espacios
+ * - CRUD
+ * - Gestión
+ */
+
 import axios from 'axios';
 import { BACKEND_URL } from '../../../../constants/config';
 
-// Funciones de utilidad
+
 const isValidImageUri = (uri) => {
   if (!uri) return false;
   return uri.startsWith('file://') || uri.startsWith('http://') || uri.startsWith('https://');
@@ -11,7 +19,6 @@ const processImageForPersistence = (imageUri) => {
   return imageUri;
 };
 
-// Servicios para espacios culturales
 const getSpaces = async () => {
   try {
     const response = await axios.get(`${BACKEND_URL}/api/cultural-spaces`);

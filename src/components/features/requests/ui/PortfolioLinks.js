@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja los enlaces del portafolio
+ * - UI
+ * - Roles
+ * - Enlaces
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { styles } from '../../../../styles/ViewsRoleRequestStyles';

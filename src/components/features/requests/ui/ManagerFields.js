@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja los campos del gestor
+ * - UI
+ * - Roles
+ * - Campos
+ */
+
 import React from 'react';
 import { View, Text, TextInput } from 'react-native';
 import styles from '../../../../styles/RoleRequestFormStyles';

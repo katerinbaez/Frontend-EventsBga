@@ -1,3 +1,9 @@
+/**
+ * Este archivo maneja la UI de eventos vacíos
+ * - UI
+ * - Mensaje
+ */
+
 import React from 'react';
 import { View, Text } from 'react-native';
 import { styles } from '../../../../styles/AvaiableEventsModalStyles';

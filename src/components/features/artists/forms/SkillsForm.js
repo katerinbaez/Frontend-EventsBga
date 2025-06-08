@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el formulario de habilidades
+ * - Ingreso de habilidades
+ * - Botón de agregar
+ * - Estilos
+ */
+
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

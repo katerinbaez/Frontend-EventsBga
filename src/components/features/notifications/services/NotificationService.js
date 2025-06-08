@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el servicio de notificaciones
+ * - Servicios
+ * - Notificaciones
+ * - API
+ */
+
 import axios from 'axios';
 import { BACKEND_URL } from '../../../../constants/config';
 

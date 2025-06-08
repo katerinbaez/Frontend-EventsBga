@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el selector de ranuras horarias
+ * - UI
+ * - Selección
+ * - Horarios
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { styles } from '../../../../styles/EventProgrammingStyles';

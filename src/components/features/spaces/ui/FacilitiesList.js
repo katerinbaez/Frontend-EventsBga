@@ -1,3 +1,11 @@
+/**
+ * Este archivo maneja la lista de instalaciones
+ * - UI
+ * - Espacios
+ * - Instalaciones
+ * - Lista
+ */
+
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

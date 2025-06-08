@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja la gestión de usuarios
+ * - Lista de usuarios
+ * - Edición de usuarios
+ * - Interfaz modal
+ */
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Modal, Alert, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,7 +18,6 @@ const UserManagement = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   
-  // Estado para el usuario en edición
   const [editedUser, setEditedUser] = useState({
     id: '',
     name: '',
@@ -19,19 +25,14 @@ const UserManagement = () => {
     role: ''
   });
 
-  // Cargar usuarios al iniciar
   useEffect(() => {
     fetchUsers();
   }, []);
-  
-  // Obtener todos los usuarios
   const fetchUsers = async () => {
     try {
       setLoading(true);
       setRefreshing(true);
-      setUsers([]); // Limpiar la lista actual para mostrar visualmente que se está recargando
-      
-      // Mostrar un indicador de carga
+      setUsers([]);
       Alert.alert('Cargando', 'Actualizando lista de usuarios...');
       
       const response = await fetch(`${BACKEND_URL}/api/users`);
@@ -43,8 +44,6 @@ const UserManagement = () => {
       const data = await response.json();
       setUsers(data);
       setError(null);
-      
-      // Mostrar un mensaje de éxito al recargar
       Alert.alert('Éxito', 'Lista de usuarios actualizada');
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -55,7 +54,6 @@ const UserManagement = () => {
     }
   };
 
-  // Manejar la edición de un usuario
   const handleEditUser = (user) => {
     setEditedUser({
       id: user.id,
@@ -66,7 +64,6 @@ const UserManagement = () => {
     setModalVisible(true);
   };
 
-  // Actualizar un usuario
   const updateUser = async () => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/users/${editedUser.id}`, {
@@ -81,7 +78,6 @@ const UserManagement = () => {
         throw new Error('Error al actualizar usuario');
       }
 
-      // Actualizar la lista de usuarios
       fetchUsers();
       setModalVisible(false);
       Alert.alert('Éxito', 'Usuario actualizado correctamente');
@@ -91,7 +87,6 @@ const UserManagement = () => {
     }
   };
 
-  // Eliminar un usuario
   const deleteUser = async (userId) => {
     Alert.alert(
       'Confirmar eliminación',
@@ -111,7 +106,6 @@ const UserManagement = () => {
                 throw new Error('Error al eliminar usuario');
               }
 
-              // Actualizar la lista de usuarios
               fetchUsers();
               Alert.alert('Éxito', 'Usuario eliminado correctamente');
             } catch (error) {
@@ -124,9 +118,7 @@ const UserManagement = () => {
     );
   };
 
-  // Renderizar cada usuario en la lista
   const renderUserItem = ({ item }) => {
-    // Mapear el rol a un nombre más legible
     let roleDisplay = 'Usuario';
     let roleBgColor = '#757575';
     
@@ -166,7 +158,6 @@ const UserManagement = () => {
     );
   };
 
-  // Renderizado condicional para estado de carga
   if (loading && users.length === 0) {
     return (
       <View style={styles.centered}>
@@ -176,7 +167,6 @@ const UserManagement = () => {
     );
   }
 
-  // Renderizado condicional para estado de error
   if (error && users.length === 0) {
     return (
       <View style={styles.centered}>
@@ -195,7 +185,6 @@ const UserManagement = () => {
     );
   }
 
-  // Renderizado principal
   return (
     <View style={styles.container}>
       <View style={styles.header}>

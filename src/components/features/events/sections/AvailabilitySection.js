@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja la sección de disponibilidad del evento
+ * - UI
+ * - Horarios
+ * - Selección
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { styles } from '../../../../styles/EventProgrammingStyles';

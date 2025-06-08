@@ -1,11 +1,15 @@
+/**
+ * Este archivo maneja el encabezado del evento
+ * - UI
+ * - Datos
+ * - Acciones
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../../../../styles/EventDetailStyles';
 
-/**
- * Componente que muestra el encabezado de un evento con título, categoría y acciones
- */
 const EventHeader = ({ event, isFavorite, onBack, onShare, onToggleFavorite }) => {
   return (
     <View style={styles.header}>

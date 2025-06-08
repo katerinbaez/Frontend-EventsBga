@@ -1,15 +1,16 @@
+/**
+ * Este archivo maneja la barra de búsqueda
+ * - UI
+ * - Búsqueda
+ * - Barra
+ */
+
 import React from 'react';
 import { View, TextInput, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../../../../styles/OpenSteetMapStyles';
 
-/**
- * Componente de barra de búsqueda
- * @param {string} searchText - Texto de búsqueda actual
- * @param {function} onSearchChange - Función para manejar cambios en el texto
- * @param {function} onClearSearch - Función para limpiar la búsqueda
- * @returns {JSX.Element}
- */
+
 const SearchBar = ({ searchText, onSearchChange, onClearSearch }) => {
   return (
     <View style={styles.searchContainer}>

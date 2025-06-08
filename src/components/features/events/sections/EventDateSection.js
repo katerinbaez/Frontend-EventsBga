@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja la sección de fecha del evento
+ * - UI
+ * - Fecha
+ * - Selección
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

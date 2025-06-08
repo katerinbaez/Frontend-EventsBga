@@ -1,3 +1,9 @@
+/**
+ * Este archivo maneja el formulario de biografía
+ * - Área de texto
+ * - Estilos
+ * - Manejo de cambios
+ */
 import React from 'react';
 import { View, Text, TextInput } from 'react-native';
 import { styles } from '../../../../styles/ArtistProfileStyles';

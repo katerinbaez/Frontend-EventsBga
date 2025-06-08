@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja la vista de asistencia a eventos
+ * - UI
+ * - Eventos
+ * - Asistentes
+ */
+
 import React, { useState, useEffect } from 'react';
 import { 
   View, 
@@ -11,37 +18,25 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { styles } from '../../../../styles/EventAttendanceStyles';
 
-// Componentes
 import EventCard from '../ui/EventCard';
 import EmptyEventsList from '../ui/EmptyEventsList';
 import EventAttendeesModal from './EventAttendeesModal';
 
-// Servicios
 import { loadManagerEvents } from '../services/EventAttendanceService';
 
-/**
- * Componente que muestra los eventos de un manager y permite ver asistentes
- */
 const EventAttendance = () => {
-  // Estado
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState([]);
   const [attendeesModalVisible, setAttendeesModalVisible] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   
-  // Navegación
   const navigation = useNavigation();
   const route = useRoute();
   const { managerId } = route.params || {};
-
-  // Cargar eventos al montar el componente
   useEffect(() => {
     fetchEvents();
   }, []);
 
-  /**
-   * Carga los eventos del manager
-   */
   const fetchEvents = async () => {
     try {
       setLoading(true);
@@ -57,9 +52,6 @@ const EventAttendance = () => {
     }
   };
 
-  /**
-   * Maneja la acción de ver asistentes
-   */
   const handleViewAttendees = (event) => {
     setSelectedEvent(event);
     setAttendeesModalVisible(true);

@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja la sección de contacto del artista
+ * - Visualización
+ * - Manejo de datos
+ * - UI de contacto
+ */
+
 import React from 'react';
 import { View, Text } from 'react-native';
 import { styles } from '../../../../styles/ArtistProfileStyles';

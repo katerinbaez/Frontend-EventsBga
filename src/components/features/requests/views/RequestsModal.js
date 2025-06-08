@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el modal de solicitudes
+ * - UI
+ * - Solicitudes
+ * - Gestor
+ */
+
 import React from 'react';
 import { 
   View, 
@@ -11,13 +18,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../../../context/AuthContext';
 import { styles } from '../../../../styles/RequestModalStyles';
 
-// Componentes UI
 import CategoryFilter from '../ui/CategoryFilter';
 import EmptyManagerRequestsList from '../ui/EmptyManagerRequestsList';
 import ManagerRequestItem from '../ui/ManagerRequestItem';
 import ManagerRequestDetailsModal from '../ui/ManagerRequestDetailsModal';
-
-// Hooks
 import useRequestsManager from '../hooks/useRequestsManager';
 
 const RequestsModal = ({ visible, onClose }) => {

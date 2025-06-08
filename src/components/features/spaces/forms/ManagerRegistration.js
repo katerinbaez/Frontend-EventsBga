@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el registro de gestor
+ * - UI
+ * - Espacios
+ * - Registro
+ */
+
 import React, { useState } from 'react';
 import {
   View,
@@ -40,7 +47,7 @@ const ManagerRegistration = ({ navigation }) => {
         capacidad: parseInt(formData.capacidad) || 0,
         contacto: {
           ...formData.contacto,
-          whatsapp: formData.contacto.telefono // Usar el mismo número para WhatsApp
+          whatsapp: formData.contacto.telefono 
         }
       });
 

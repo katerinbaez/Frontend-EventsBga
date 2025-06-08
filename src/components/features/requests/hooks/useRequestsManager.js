@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el hook de gestión de solicitudes
+ * - Hooks
+ * - Solicitudes
+ * - Gestión
+ */
+
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Alert } from 'react-native';
@@ -218,22 +225,17 @@ const useRequestsManager = (visible, user) => {
       return;
     }
 
-    // Lista de categorías predeterminadas (excluyendo 'todas' y 'otro')
     const categoriasPreestablecidas = ['musica', 'teatro', 'danza', 'arte', 'literatura', 'cine'];
     
     if (category === 'todas') {
-      // Mostrar todas las solicitudes
       setFilteredRequests(requestsToFilter);
     } else if (category === 'otro') {
-      // Mostrar solicitudes con categorías diferentes a las predeterminadas
       const filtered = requestsToFilter.filter(request => {
         const requestCategory = (request.category || request.categoria || '').toLowerCase();
-        // Verificar si la categoría NO está en la lista de categorías predeterminadas
         return requestCategory !== '' && !categoriasPreestablecidas.includes(requestCategory);
       });
       setFilteredRequests(filtered);
     } else {
-      // Filtrar por la categoría específica seleccionada
       const filtered = requestsToFilter.filter(request => {
         const requestCategory = (request.category || request.categoria || '').toLowerCase();
         return requestCategory === category.toLowerCase();
@@ -260,34 +262,26 @@ const useRequestsManager = (visible, user) => {
     try {
       console.log('Aprobando solicitud:', selectedRequest.id);
       
-      // 1. Aprobar la solicitud usando el nuevo endpoint sin restricciones
       const response = await axios.post(`${BACKEND_URL}/api/event-requests/approve-request/${selectedRequest.id}`);
       console.log('Respuesta de aprobación:', response.data);
 
       if (response.data.success) {
-        // 2. Bloquear el horario en el calendario
         try {
-          // Obtener la fecha y hora de la solicitud
           const rawDate = selectedRequest.fecha || selectedRequest.date;
           console.log('Fecha original de la solicitud:', rawDate);
           
-          // Crear la fecha correctamente para evitar problemas de zona horaria
           let eventDate;
           if (typeof rawDate === 'string' && rawDate.includes('-')) {
-            // Formato YYYY-MM-DD
             const [year, month, day] = rawDate.split('-').map(num => parseInt(num, 10));
             eventDate = new Date(year, month - 1, day);
             console.log(`Fecha parseada: ${year}-${month}-${day}, día de la semana: ${eventDate.getDay()}`);
           } else {
-            // Otro formato
             eventDate = new Date(rawDate);
           }
           
-          // Extraer la hora de inicio (formato: "09:00")
           const startTimeStr = selectedRequest.horaInicio || selectedRequest.startTime || "09:00";
           const hour = parseInt(startTimeStr.split(':')[0], 10);
           
-          // Formatear la fecha para el bloqueo (YYYY-MM-DD) manteniendo el día correcto
           const year = eventDate.getFullYear();
           const month = String(eventDate.getMonth() + 1).padStart(2, '0');
           const day = String(eventDate.getDate()).padStart(2, '0');
@@ -295,41 +289,32 @@ const useRequestsManager = (visible, user) => {
           
           console.log(`Bloqueando horario: Fecha ${formattedDate}, Hora ${hour}, Evento ID ${selectedRequest.id}`);
           
-          // Obtener el ID de autenticación del gestor (idauth) si está disponible
-          // Esto es para mantener consistencia con los registros existentes
           let managerId = selectedRequest.managerId;
           
-          // Si el ID tiene formato de ID interno (UUID), intentar obtener el ID de autenticación
           if (managerId && managerId.includes('-')) {
             try {
-              // Intentar obtener el ID de autenticación del gestor desde los metadatos
               if (selectedRequest.metadatos && selectedRequest.metadatos.managerIdAuth) {
                 managerId = selectedRequest.metadatos.managerIdAuth;
                 console.log('Usando ID de autenticación del gestor desde metadatos:', managerId);
               } else if (selectedRequest.space && selectedRequest.space.managerIdAuth) {
-                // Alternativa: obtener del objeto space si está disponible
                 managerId = selectedRequest.space.managerIdAuth;
                 console.log('Usando ID de autenticación del gestor desde space:', managerId);
               }
             } catch (error) {
               console.error('Error al obtener ID de autenticación del gestor:', error);
-              // Continuar con el ID original
             }
           }
           
-          // Preparar los datos para el bloqueo
           const blockData = {
-            spaceId: managerId, // Usar el ID de autenticación si está disponible
-            day: formattedDate, // Usar la fecha específica en formato YYYY-MM-DD
+            spaceId: managerId,
+            day: formattedDate,
             hour: hour,
-            isRecurring: false, // No es recurrente, es una fecha específica
-            // No enviamos dayName para que el backend calcule el nombre del día correcto
-            eventId: selectedRequest.id // Referencia al evento para trazabilidad
+            isRecurring: false,
+            eventId: selectedRequest.id
           };
           
           console.log('Datos enviados para bloqueo:', blockData);
           
-          // Usar el endpoint que no requiere autenticación con manejo de errores mejorado
           const blockResponse = await axios.post(`${BACKEND_URL}/api/event-requests/block-slot`, blockData)
             .catch(blockError => {
               console.error('Error detallado al bloquear horario:', blockError.response?.data || blockError.message);
@@ -339,7 +324,6 @@ const useRequestsManager = (visible, user) => {
           if (blockResponse.data.success) {
             console.log('Horario bloqueado exitosamente:', blockResponse.data);
             
-            // Mostrar mensaje de éxito incluyendo la información del bloqueo
             Alert.alert(
               'Solicitud Aprobada', 
               'La solicitud ha sido aprobada correctamente y el horario ha sido bloqueado en el calendario.',
@@ -351,7 +335,6 @@ const useRequestsManager = (visible, user) => {
           } else {
             console.error('Error al bloquear horario:', blockResponse.data);
             
-            // Mostrar mensaje de éxito pero indicando que hubo un problema con el bloqueo
             Alert.alert(
               'Solicitud Aprobada', 
               'La solicitud ha sido aprobada correctamente, pero hubo un problema al bloquear el horario en el calendario.',
@@ -364,7 +347,6 @@ const useRequestsManager = (visible, user) => {
         } catch (blockError) {
           console.error('Error al intentar bloquear el horario:', blockError);
           
-          // Mostrar mensaje de éxito pero indicando que hubo un problema con el bloqueo
           Alert.alert(
             'Solicitud Aprobada', 
             'La solicitud ha sido aprobada correctamente, pero hubo un problema al bloquear el horario en el calendario.',
@@ -380,7 +362,6 @@ const useRequestsManager = (visible, user) => {
     } catch (error) {
       console.error('Error al aprobar solicitud:', error);
       
-      // Mostrar información más detallada del error
       let errorMessage = 'No se pudo aprobar la solicitud. Intenta nuevamente.';
       
       if (error.response) {
@@ -406,14 +387,11 @@ const useRequestsManager = (visible, user) => {
     try {
       console.log('Rechazando solicitud:', selectedRequest.id);
       
-      // Usar el nuevo endpoint que no requiere autenticación específica
       const response = await axios.post(`${BACKEND_URL}/api/event-requests/reject-request/${selectedRequest.id}`, {
         rejectionReason: rejectionReason,
-        // Incluir información adicional que pueda ser útil para el backend
         managerId: user.id || user.sub,
         managerEmail: user.email
       }, {
-        // Añadir headers para ayudar con la autenticación
         headers: {
           'Content-Type': 'application/json',
           'X-User-Id': user.id || user.sub,
@@ -439,7 +417,6 @@ const useRequestsManager = (visible, user) => {
     } catch (error) {
       console.error('Error al rechazar solicitud:', error);
       
-      // Mostrar información más detallada del error
       let errorMessage = 'No se pudo rechazar la solicitud. Intenta nuevamente.';
       
       if (error.response) {

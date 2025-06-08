@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el modal de confirmación
+ * - UI
+ * - Datos
+ * - Acciones
+ */
+
 import React from 'react';
 import { View, Text, Modal, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { styles } from '../../../../styles/EventProgrammingStyles';

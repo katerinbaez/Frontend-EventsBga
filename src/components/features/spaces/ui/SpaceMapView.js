@@ -1,3 +1,11 @@
+/**
+ * Este archivo maneja el mapa del espacio
+ * - UI
+ * - Espacios
+ * - Mapa
+ * - Visualización
+ */
+
 import React from 'react';
 import { View, Text } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
@@ -28,7 +36,7 @@ const SpaceMapView = ({
       ref={mapRef}
       style={styles.map}
       initialRegion={{
-        latitude: userLocation?.latitude || 7.119349, // Coordenadas por defecto (Bucaramanga)
+        latitude: userLocation?.latitude || 7.119349, 
         longitude: userLocation?.longitude || -73.1227416,
         latitudeDelta: 0.01,
         longitudeDelta: 0.01,
@@ -44,7 +52,6 @@ const SpaceMapView = ({
       loadingIndicatorColor="#FF3A5E"
       loadingBackgroundColor="#1E1E1E"
     >
-      {/* Marcador para la ubicación del usuario */}
       {userLocation && (
         <Marker
           coordinate={{
@@ -57,9 +64,7 @@ const SpaceMapView = ({
         />
       )}
       
-      {/* Marcadores para espacios culturales */}
       {spaces.map((space, index) => {
-        // Convertir coordenadas a números
         const lat = parseFloat(space.latitud);
         const lng = parseFloat(space.longitud);
         
@@ -87,7 +92,6 @@ const SpaceMapView = ({
         );
       })}
       
-      {/* Marcador para la ubicación seleccionada con OpenStreetMap */}
       {selectedPlace && (
         <Marker
           key="selected-place"

@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja la tarjeta de perfil del artista
+ * - Carga de datos
+ * - UI
+ * - Manejo de errores
+ */
+
 import React, { useState, useEffect } from 'react';
 import { 
   View, 
@@ -27,7 +34,6 @@ const ArtistProfileCard = ({ artistId, onPress, onRemove }) => {
       setLoading(true);
       setError(null);
       
-      // Intentar obtener los detalles del artista directamente
       const response = await axios.get(`${BACKEND_URL}/api/artists/profile-by-id/${artistId}`);
       
       if (response.data && response.data.success) {

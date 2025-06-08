@@ -1,3 +1,12 @@
+/**
+ * Este archivo maneja las instalaciones del espacio
+ * - UI
+ * - Espacios
+ * - Instalaciones
+ * - Lista
+ */
+
+
 import React from 'react';
 import { View, Text } from 'react-native';
 import { styles } from '../../../../styles/CulturalSpacesModalStyles';

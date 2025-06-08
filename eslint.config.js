@@ -1,4 +1,12 @@
-// eslint.config.js
+/**
+ * Configuración de ESLint para análisis estático
+ * - ESLint
+ * - Reglas
+ * - Seguridad
+ * - React
+ * - React Native
+ * - Testing
+ */
 const reactPlugin = require('eslint-plugin-react');
 const reactNativePlugin = require('eslint-plugin-react-native');
 const securityPlugin = require('eslint-plugin-security');
@@ -16,11 +24,9 @@ module.exports = [
         }
       },
       globals: {
-        // React Native globals
         __DEV__: 'readonly',
         fetch: 'readonly',
         FormData: 'readonly',
-        // Jest globals
         jest: 'readonly',
         describe: 'readonly',
         it: 'readonly',
@@ -38,7 +44,6 @@ module.exports = [
       security: securityPlugin
     },
     rules: {
-      // Reglas de seguridad
       'security/detect-object-injection': 'warn',
       'security/detect-non-literal-regexp': 'error',
       'security/detect-unsafe-regex': 'error',
@@ -49,12 +54,10 @@ module.exports = [
       'security/detect-possible-timing-attacks': 'warn',
       'security/detect-pseudoRandomBytes': 'error',
       
-      // Reglas React Native
       'react-native/no-unused-styles': 'error',
       'react-native/no-inline-styles': 'warn',
       'react-native/no-raw-text': 'warn',
       
-      // Reglas generales
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'no-alert': 'error',
       'no-eval': 'error',

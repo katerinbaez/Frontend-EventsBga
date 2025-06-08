@@ -1,23 +1,29 @@
+/**
+ * Componente de fondo animado con efectos de gradiente y partículas
+ * - UI
+ * - Animación
+ * - Fondo
+ * - Partículas
+ * - Gradiente
+ */
+
 import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, Animated, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import LottieView from 'lottie-react-native';
 
 const { width, height } = Dimensions.get('window');
-const PARTICLE_COUNT = 30; // Aumentamos la cantidad de partículas
+const PARTICLE_COUNT = 30; 
 
 const AnimatedBackground = () => {
-  // Referencias para la animación central
   const centralAnimation = useRef(null);
   
-  // Función para generar una posición aleatoria en toda la pantalla
   const generatePosition = () => {
     const x = Math.random() * width;
     const y = Math.random() * height;
     return { x, y };
   };
   
-  // Referencias para las animaciones de las partículas
   const particleAnims = useRef(
     Array.from({ length: PARTICLE_COUNT }, () => {
       const pos = generatePosition();
@@ -29,24 +35,19 @@ const AnimatedBackground = () => {
       };
     }))
   .current;
-  // Función para animar una partícula
   const animateParticle = (index) => {
     const particle = particleAnims[index];
     
-    // Generar un destino aleatorio en cualquier parte de la pantalla
     const newPos = generatePosition();
     
-    // Duración aleatoria entre 10-20 segundos
     const duration = Math.random() * 10000 + 10000;
     
-    // Animación de posición
     Animated.timing(particle.position, {
       toValue: { x: newPos.x, y: newPos.y },
       duration,
       useNativeDriver: true,
     }).start(() => animateParticle(index));
     
-    // Animación de opacidad
     Animated.sequence([
       Animated.timing(particle.opacity, {
         toValue: Math.random() * 0.7 + 0.3,
@@ -60,7 +61,6 @@ const AnimatedBackground = () => {
       }),
     ]).start();
     
-    // Animación de rotación
     Animated.timing(particle.rotation, {
       toValue: Math.random() * 2,
       duration,
@@ -68,17 +68,15 @@ const AnimatedBackground = () => {
     }).start();
   };
 
-  // Iniciar animaciones
   useEffect(() => {
     particleAnims.forEach((_, index) => {
       animateParticle(index);
     });
     
-    // Iniciar la animación central
     if (centralAnimation.current) {
       centralAnimation.current.play();
     }
-  }, []);
+  }, []); 
 
   return (
     <View style={styles.container}>
@@ -95,12 +93,10 @@ const AnimatedBackground = () => {
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       >
-        {/* Círculos decorativos fijos */}
         <View style={[styles.circle, styles.circle1]} />
         <View style={[styles.circle, styles.circle2]} />
         <View style={[styles.circle, styles.circle3]} />
         
-        {/* Partículas animadas distribuidas por toda la pantalla */}
         {particleAnims.map((particle, index) => (
           <Animated.View
             key={index}
@@ -140,7 +136,6 @@ const AnimatedBackground = () => {
           />
         ))}
         
-        {/* Animación central */}
         <View style={styles.centralAnimation}>
           <LottieView
             ref={centralAnimation}

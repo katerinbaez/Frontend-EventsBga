@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja los botones del formulario
+ * - UI
+ * - Roles
+ * - Botones
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import styles from '../../../../styles/RoleRequestFormStyles';

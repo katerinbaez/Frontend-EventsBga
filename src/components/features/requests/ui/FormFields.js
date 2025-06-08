@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja los campos del formulario
+ * - UI
+ * - Eventos
+ * - Campos
+ */
+
 import React from 'react';
 import { View, Text, TextInput } from 'react-native';
 import { styles } from '../../../../styles/EventRequestFormStyles';

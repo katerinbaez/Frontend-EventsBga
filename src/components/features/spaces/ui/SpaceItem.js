@@ -1,3 +1,12 @@
+/**
+ * Este archivo maneja el ítem del espacio
+ * - UI
+ * - Espacios
+ * - Ítem
+ * - Lista
+ */
+
+
 import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

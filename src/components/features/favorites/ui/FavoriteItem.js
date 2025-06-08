@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el ítem de favorito
+ * - UI
+ * - Favoritos
+ * - Elementos
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -5,14 +12,7 @@ import { styles } from '../../../../styles/FavoritesListStyles';
 
 const placeholderImage = 'https://via.placeholder.com/150/1A1A1A/FFFFFF?text=No+Image';
 
-/**
- * Componente para mostrar un elemento favorito
- * @param {Object} item - Elemento favorito
- * @param {string} activeTab - Tipo de favorito actual
- * @param {function} onPress - Función al presionar el elemento
- * @param {function} onRemove - Función para eliminar de favoritos
- * @returns {JSX.Element}
- */
+
 const FavoriteItem = ({ item, activeTab, onPress, onRemove }) => {
   let title = '';
   let description = '';
@@ -26,7 +26,6 @@ const FavoriteItem = ({ item, activeTab, onPress, onRemove }) => {
     iconName = 'calendar';
     iconColor = '#4A90E2';
 
-    // Intentar obtener el título del evento
     if (item.details && item.details.titulo) {
       title = item.details.titulo;
       description = item.details.descripcion || 'Sin descripción';
@@ -40,26 +39,21 @@ const FavoriteItem = ({ item, activeTab, onPress, onRemove }) => {
       description = item.descripcion || 'Sin descripción';
       imageUrl = item.imagenUrl || '';
     } else {
-      // Si no encontramos el título, usamos un valor por defecto
-      // No intentamos cargar los detalles para evitar errores 404
       title = 'Evento';
       description = 'Ver detalles';
     }
   } else if (activeTab === 'artist') {
     iconName = 'person';
-    iconColor = '#FF3A5E'; // Color de acento rojo que prefiere el usuario
+    iconColor = '#FF3A5E';
     
     console.log('Renderizando artista favorito:', item);
     
-    // Acceder directamente a las propiedades del artista
     title = item.nombreArtistico || 'Artista';
     description = item.biografia || 'Ver perfil completo';
     imageUrl = item.fotoPerfil || '';
   } else if (activeTab === 'space') {
     iconName = 'business';
     iconColor = '#2ECC71';
-
-    // No intentamos cargar los detalles para evitar errores 404
 
     if (item.details && item.details.nombre) {
       title = item.details.nombre;

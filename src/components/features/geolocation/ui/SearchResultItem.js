@@ -1,16 +1,17 @@
+/**
+ * Este archivo maneja el ítem de resultado de búsqueda
+ * - UI
+ * - Búsqueda
+ * - Resultados
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../../../../styles/OpenSteetMapStyles';
 
-/**
- * Componente para mostrar un resultado de búsqueda
- * @param {Object} item - Datos del lugar
- * @param {function} onPress - Función a ejecutar al presionar el resultado
- * @returns {JSX.Element}
- */
+
 const SearchResultItem = ({ item, onPress }) => {
-  // Determinar el icono según el tipo de lugar
   const getIconForType = (type) => {
     switch (type) {
       case 'Restaurante': return 'restaurant';
@@ -29,7 +30,6 @@ const SearchResultItem = ({ item, onPress }) => {
     }
   };
 
-  // Formatear la distancia para mostrarla
   const formatDistance = (distance) => {
     if (distance === null) return null;
     if (distance < 1) {

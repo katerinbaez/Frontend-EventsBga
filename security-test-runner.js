@@ -1,8 +1,17 @@
+/**
+ * Runner de pruebas de seguridad
+ * - Seguridad
+ * - Pruebas
+ * - Consola
+ * - Colores
+ * - Ejecución
+ * - Script
+ */
+
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-// Colores para la consola
 const colors = {
   reset: '\x1b[0m',
   bright: '\x1b[1m',
@@ -35,7 +44,6 @@ const colors = {
   }
 };
 
-// Función para ejecutar comandos y mostrar la salida
 function runCommand(command, description) {
   console.log(`\n${colors.fg.cyan}${colors.bright}=== ${description} ===${colors.reset}\n`);
   try {
@@ -48,7 +56,6 @@ function runCommand(command, description) {
   }
 }
 
-// Función para esperar la entrada del usuario
 function waitForUserInput(prompt) {
   return new Promise((resolve) => {
     console.log(`\n${colors.fg.yellow}${prompt} (Presiona Enter para continuar)${colors.reset}`);
@@ -58,7 +65,6 @@ function waitForUserInput(prompt) {
   });
 }
 
-// Función principal para ejecutar las pruebas
 async function runSecurityTests() {
   console.log(`\n${colors.fg.magenta}${colors.bright}========================================${colors.reset}`);
   console.log(`${colors.fg.magenta}${colors.bright}   PRUEBAS DE SEGURIDAD PARA EVENTSBGA   ${colors.reset}`);
@@ -69,7 +75,6 @@ async function runSecurityTests() {
   
   await waitForUserInput('¿Listo para comenzar las pruebas de seguridad del frontend?');
   
-  // 1. Verificar dependencias con npm audit
   console.log(`\n${colors.fg.cyan}${colors.bright}PASO 1: Verificación de dependencias${colors.reset}`);
   const auditSuccess = runCommand('npm audit', 'Verificando vulnerabilidades en dependencias');
   
@@ -78,19 +83,16 @@ async function runSecurityTests() {
     await waitForUserInput('¿Deseas continuar con las pruebas a pesar de las vulnerabilidades?');
   }
   
-  // 2. Ejecutar pruebas de autenticación
   console.log(`\n${colors.fg.cyan}${colors.bright}PASO 2: Pruebas de autenticación${colors.reset}`);
   await waitForUserInput('¿Listo para ejecutar las pruebas de autenticación?');
   
   runCommand('npx jest --config=jest.config.js --testMatch="**/__tests__/security/auth0.security.test.js"', 'Ejecutando pruebas de autenticación con Auth0');
   
-  // 3. Ejecutar pruebas de seguridad de datos
   console.log(`\n${colors.fg.cyan}${colors.bright}PASO 3: Pruebas de seguridad de datos${colors.reset}`);
   await waitForUserInput('¿Listo para ejecutar las pruebas de seguridad de datos?');
   
   runCommand('npx jest --config=jest.config.js --testMatch="**/__tests__/security/data.security.test.js"', 'Ejecutando pruebas de seguridad de datos');
   
-  // 4. Ejecutar análisis estático de código
   console.log(`\n${colors.fg.cyan}${colors.bright}PASO 4: Análisis estático de código${colors.reset}`);
   await waitForUserInput('¿Listo para ejecutar el análisis estático de código?');
   
@@ -100,22 +102,18 @@ async function runSecurityTests() {
   console.log(`${colors.fg.white}- Posibles inyecciones de objetos${colors.reset}`);
   console.log(`${colors.fg.white}- Problemas con CSRF y XSS${colors.reset}\n`);
   
-  // Ejecutar ESLint con la configuración de seguridad
   runCommand('npx eslint --config eslint.config.js App.js __tests__/security/ --ext .js,.jsx', 'Ejecutando análisis estático con ESLint');
   
-  // 5. Ejecutar pruebas de integración
   console.log(`\n${colors.fg.cyan}${colors.bright}PASO 5: Pruebas de integración Frontend-Backend${colors.reset}`);
   await waitForUserInput('¿Listo para ejecutar las pruebas de integración?');
   
   runCommand('npx jest --config=jest.config.js --testMatch="**/__tests__/security/integration.security.test.js"', 'Ejecutando pruebas de integración Frontend-Backend');
   
-  // 6. Ejecutar pruebas de seguridad en la red
   console.log(`\n${colors.fg.cyan}${colors.bright}PASO 6: Pruebas de seguridad en la red${colors.reset}`);
   await waitForUserInput('¿Listo para ejecutar las pruebas de seguridad en la red?');
   
   runCommand('npx jest --config=jest.config.js --testMatch="**/__tests__/security/network.security.test.js"', 'Ejecutando pruebas de seguridad en la red');
   
-  // 7. Resumen de resultados
   console.log(`\n${colors.fg.magenta}${colors.bright}========================================${colors.reset}`);
   console.log(`${colors.fg.magenta}${colors.bright}   RESUMEN DE PRUEBAS DE SEGURIDAD   ${colors.reset}`);
   console.log(`${colors.fg.magenta}${colors.bright}========================================${colors.reset}\n`);
@@ -135,5 +133,4 @@ async function runSecurityTests() {
   console.log(`\n${colors.fg.green}${colors.bright}¡Pruebas de seguridad completadas!${colors.reset}\n`);
 }
 
-// Ejecutar las pruebas
 runSecurityTests().catch(console.error);

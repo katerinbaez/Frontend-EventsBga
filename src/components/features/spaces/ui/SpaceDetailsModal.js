@@ -1,3 +1,11 @@
+/**
+ * Este archivo maneja el modal de detalles del espacio
+ * - UI
+ * - Espacios
+ * - Detalles
+ * - Modal
+ */
+
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, StatusBar, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

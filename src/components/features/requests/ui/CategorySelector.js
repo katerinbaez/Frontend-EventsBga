@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el selector de categorías
+ * - UI
+ * - Eventos
+ * - Selector
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import { styles } from '../../../../styles/EventRequestFormStyles';
@@ -9,7 +16,6 @@ const CategorySelector = ({
   customCategory, 
   setCustomCategory 
 }) => {
-  // Lista de categorías disponibles
   const categories = [
     'musica',
     'danza',

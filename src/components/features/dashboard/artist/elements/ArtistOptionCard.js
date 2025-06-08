@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja la tarjeta de opción del artista
+ * - UI
+ * - Navegación
+ * - Interacción
+ */
+
 import React from 'react';
 import { TouchableOpacity, Text, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

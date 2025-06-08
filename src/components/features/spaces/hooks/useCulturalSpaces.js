@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el hook de espacios culturales
+ * - Hooks
+ * - Espacios
+ * - Lista
+ */
+
 import React, { useState, useEffect } from 'react';
 import { Alert } from 'react-native';
 import { useAuth } from '../../../../context/AuthContext';
@@ -14,19 +21,16 @@ const useCulturalSpaces = (initialSelectedSpaceId) => {
   const [selectedSpaceDetails, setSelectedSpaceDetails] = useState(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
 
-  // Cargar espacios culturales cuando se monta el componente
   useEffect(() => {
     loadSpaces();
     loadFavorites();
     
-    // Si hay un ID inicial, cargar sus detalles
     if (initialSelectedSpaceId) {
       setSelectedSpaceId(initialSelectedSpaceId);
       handleViewSpaceDetails({ id: initialSelectedSpaceId });
     }
   }, [initialSelectedSpaceId]);
 
-  // Recargar favoritos cuando el componente recibe el foco
   useFocusEffect(
     React.useCallback(() => {
       console.log('CulturalSpacesModal recibió el foco - recargando favoritos');
@@ -35,7 +39,6 @@ const useCulturalSpaces = (initialSelectedSpaceId) => {
     }, [])
   );
 
-  // Cargar espacios culturales desde el servidor
   const loadSpaces = async () => {
     try {
       setLoading(true);
@@ -48,7 +51,6 @@ const useCulturalSpaces = (initialSelectedSpaceId) => {
     }
   };
 
-  // Cargar favoritos desde el servidor
   const loadFavorites = async () => {
     try {
       if (!user) return;
@@ -75,7 +77,6 @@ const useCulturalSpaces = (initialSelectedSpaceId) => {
         return;
       }
       
-      // Asegurarse de que tenemos un ID de usuario válido
       const userId = user.id || user.sub || user._id;
       if (!userId) {
         console.error('ID de usuario no válido:', user);
@@ -83,34 +84,26 @@ const useCulturalSpaces = (initialSelectedSpaceId) => {
         return;
       }
       
-      // Asegurarse de que tenemos un ID de espacio válido
       if (!space || !space.id) {
         console.error('ID de espacio no válido:', space);
         Alert.alert('Error', 'No se pudo identificar el espacio cultural.');
         return;
       }
       
-      // Convertir a string para asegurar consistencia
       const spaceId = String(space.id);
       
-      // Verificar si ya es favorito
       const isFavorite = favorites.includes(spaceId);
       console.log(`Actualizando favorito: ${space.nombre} (${spaceId}), Usuario: ${userId}, Es favorito actualmente: ${isFavorite}`);
       
-      // Actualizar el estado de favoritos inmediatamente para una respuesta UI más rápida
       let newFavorites;
       if (isFavorite) {
-        // Eliminar de favoritos localmente primero
         newFavorites = favorites.filter(id => id !== spaceId);
       } else {
-        // Agregar a favoritos localmente primero
         newFavorites = [...favorites, spaceId];
       }
       
-      // Actualizar estado inmediatamente
       setFavorites(newFavorites);
       
-      // Sincronizar con el servidor
       try {
         if (isFavorite) {
           await FavoritesService.removeFavorite(userId, spaceId);

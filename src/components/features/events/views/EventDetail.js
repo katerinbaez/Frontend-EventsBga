@@ -1,16 +1,21 @@
+/**
+ * Este archivo maneja los detalles del evento
+ * - UI
+ * - Eventos
+ * - Detalles
+ */
+
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, Alert } from 'react-native';
 import { useAuth } from '../../../../context/AuthContext';
 import { styles } from '../../../../styles/EventDetailStyles';
 
-// Componentes UI
 import EventHeader from '../ui/EventHeader';
 import EventInfo from '../ui/EventInfo';
 import EventDescription from '../ui/EventDescription';
 import AttendanceButton from '../ui/AttendanceButton';
 import LoadingErrorState from '../ui/LoadingErrorState';
 
-// Servicios
 import {
   loadEventDetails,
   isEventExpired,
@@ -22,26 +27,19 @@ import {
   checkAttendance
 } from '../services/EventDetailService';
 
-/**
- * Componente principal que muestra los detalles de un evento
- */
 const EventDetail = ({ route, navigation }) => {
-  // Extraer el eventId de los parámetros de la ruta y asegurarse de que sea un número
   const routeParams = route.params || {};
   const eventId = routeParams.eventId ? String(routeParams.eventId) : null;
-  const eventType = routeParams.eventType || 'regular'; // Tipo de evento: 'regular' o 'request'
+  const eventType = routeParams.eventType || 'regular';
   
-  // Estado
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [isAttending, setIsAttending] = useState(false);
   
-  // Contexto de autenticación
   const { user, isAuthenticated } = useAuth();
   
-  // Cargar detalles del evento al montar el componente
   useEffect(() => {
     if (eventId) {
       fetchEventDetails();
@@ -51,12 +49,10 @@ const EventDetail = ({ route, navigation }) => {
     }
   }, [eventId, eventType]);
   
-  // Verificar si el evento está en favoritos cuando cambia el evento
   useEffect(() => {
     if (event && event.id) {
       checkFavoriteStatus();
       
-      // Solo verificar asistencia si el evento no ha expirado y el usuario está autenticado
       const expired = isEventExpired(event);
       if (isAuthenticated && !expired) {
         checkUserAttendance();
@@ -64,16 +60,11 @@ const EventDetail = ({ route, navigation }) => {
     }
   }, [event, isAuthenticated]);
   
-  // Registrar visitas al evento
   useEffect(() => {
-    // Aquí se podría implementar la lógica para registrar visitas al evento
     console.log('EventDetail - Parámetros recibidos:', JSON.stringify(routeParams));
     console.log('EventDetail - ID procesado:', eventId, 'Tipo:', typeof eventId, 'EventType:', eventType);
   }, []);
   
-  /**
-   * Carga los detalles del evento desde el backend
-   */
   const fetchEventDetails = async () => {
     try {
       setLoading(true);
@@ -89,9 +80,6 @@ const EventDetail = ({ route, navigation }) => {
     }
   };
   
-  /**
-   * Verifica si el evento está en favoritos
-   */
   const checkFavoriteStatus = async () => {
     try {
       const favoriteStatus = await checkIsFavorite(eventId);
@@ -101,41 +89,29 @@ const EventDetail = ({ route, navigation }) => {
     }
   };
   
-  /**
-   * Verifica si el usuario está asistiendo al evento
-   */
   const checkUserAttendance = async () => {
     try {
       if (!isAuthenticated || !user) return;
       
-      // Envolver en un try-catch adicional para evitar que errores 500 interrumpan la experiencia
       try {
         const attendingStatus = await checkAttendance(eventId, user);
         setIsAttending(attendingStatus);
       } catch (attendanceError) {
-        // Simplemente registrar el error pero no mostrar nada al usuario
         console.error('Error interno al verificar asistencia:', attendanceError);
-        // Asumir que no está asistiendo en caso de error
         setIsAttending(false);
       }
     } catch (error) {
       console.error('Error general al verificar asistencia:', error);
-      // No mostrar ningún error al usuario
     }
   };
   
-  /**
-   * Maneja la acción de compartir el evento
-   */
+  
   const handleShare = () => {
     if (event) {
       shareEvent(event);
     }
   };
   
-  /**
-   * Maneja la acción de agregar/quitar de favoritos
-   */
   const handleToggleFavorite = async () => {
     try {
       const newFavoriteStatus = await toggleFavorite(event, isFavorite);
@@ -150,12 +126,8 @@ const EventDetail = ({ route, navigation }) => {
     }
   };
   
-  /**
-   * Maneja la acción de registrar asistencia
-   */
   const handleRegisterAttendance = async () => {
     try {
-      // Verificar si el evento ha expirado
       if (event && isEventExpired(event)) {
         Alert.alert(
           'Evento finalizado',
@@ -188,7 +160,6 @@ const EventDetail = ({ route, navigation }) => {
         }
       } catch (attendanceError) {
         console.error('Error al registrar asistencia:', attendanceError);
-        // Mostrar un mensaje de error más amigable
         Alert.alert(
           'Error',
           'No se pudo registrar tu asistencia. Por favor, intenta más tarde.'
@@ -196,13 +167,10 @@ const EventDetail = ({ route, navigation }) => {
       }
     } catch (error) {
       console.error('Error general al registrar asistencia:', error);
-      // No mostrar alerta para errores generales
     }
   };
   
-  /**
-   * Maneja la acción de cancelar asistencia
-   */
+ 
   const handleCancelAttendance = async () => {
     try {
       if (!isAuthenticated) return;
@@ -222,7 +190,6 @@ const EventDetail = ({ route, navigation }) => {
     }
   };
   
-  // Mostrar estados de carga o error
   if (loading || error) {
     return (
       <LoadingErrorState 
@@ -233,18 +200,14 @@ const EventDetail = ({ route, navigation }) => {
     );
   }
   
-  // Si no hay evento, no mostrar nada
   if (!event) {
     return null;
   }
-  
-  // Verificar si el evento ha expirado
   const expired = isEventExpired(event);
   
   return (
     <View style={styles.container}>
       <ScrollView>
-        {/* Encabezado del evento */}
         <EventHeader 
           event={event}
           isFavorite={isFavorite}
@@ -253,13 +216,12 @@ const EventDetail = ({ route, navigation }) => {
           onToggleFavorite={handleToggleFavorite}
         />
         
-        {/* Información del evento */}
         <EventInfo event={event} />
         
-        {/* Descripción del evento */}
+        
         <EventDescription description={event.descripcion} />
         
-        {/* Botón de asistencia */}
+        
         <AttendanceButton 
           isExpired={expired}
           isAttending={isAttending}

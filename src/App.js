@@ -1,3 +1,12 @@
+/**
+ * Componente principal de la aplicación
+ * - App
+ * - Navegación
+ * - Autenticación
+ * - Splash
+ * - UI
+ */
+
 import 'react-native-gesture-handler';
 import React, { useState, useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -7,23 +16,16 @@ import { StatusBar } from 'react-native';
 import * as SplashScreenNative from 'expo-splash-screen';
 import SplashScreen from './components/ui/SplashScreen';
 
-// Importar el navegador centralizado y el manejador de navegación
 import AppNavigator from './navigation/AppNavigator';
 import NavigationHandler from './components/navigation/NavigationHandler';
 
-// No necesitamos importar componentes individuales aquí ya que están en AppNavigator
-// Configuración para el splash screen nativo
-// Prevenir que se oculte automáticamente
 SplashScreenNative.preventAutoHideAsync().catch(console.warn);
 
 const App = () => {
     const [isLoading, setIsLoading] = useState(true);
-
-    // Ocultar la splash screen nativa lo antes posible
     useEffect(() => {
         const hideSplashScreen = async () => {
             try {
-                // Ocultar el splash screen nativo inmediatamente
                 await SplashScreenNative.hideAsync();
             } catch (error) {
                 console.warn('Error al ocultar el splash screen nativo:', error);
@@ -33,7 +35,6 @@ const App = () => {
     }, []);
 
     const handleSplashFinish = () => {
-        // Cambiar el estado para mostrar la navegación
         setIsLoading(false);
     };
 

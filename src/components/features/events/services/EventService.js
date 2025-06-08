@@ -1,7 +1,13 @@
+/**
+ * Este archivo maneja el servicio de eventos
+ * - API
+ * - Perfiles
+ * - Carga
+ */
+
 import axios from 'axios';
 import { BACKEND_URL } from '../../../../constants/config';
 
-// Cargar el perfil del artista
 export const loadArtistProfile = async (artistId) => {
   try {
     console.log('Intentando cargar perfil de artista con ID:', artistId);
@@ -28,7 +34,6 @@ export const loadArtistProfile = async (artistId) => {
   }
 };
 
-// Cargar eventos disponibles
 export const loadAvailableEvents = async (artistId) => {
   try {
     const response = await axios.get(`${BACKEND_URL}/api/event-attendances/available-events`);
@@ -36,12 +41,9 @@ export const loadAvailableEvents = async (artistId) => {
     if (response.data && response.data.success) {
       let events = response.data.events;
       
-      // Ordenar eventos del más reciente al más antiguo
       events = events.sort((a, b) => {
-        // Usar la fecha más relevante para cada evento (fechaInicio, fechaProgramada o fecha)
         const dateA = new Date(a.fechaInicio || a.fechaProgramada || a.fecha || 0);
         const dateB = new Date(b.fechaInicio || b.fechaProgramada || b.fecha || 0);
-        // Ordenar de más reciente a más antiguo (descendente)
         return dateB - dateA;
       });
       
@@ -52,7 +54,6 @@ export const loadAvailableEvents = async (artistId) => {
       
       console.warn('Verificando asistencias con artistId:', artistId);
       
-      // Verificar a cuáles eventos ya ha confirmado asistencia el artista
       const attendanceMap = {};
       await Promise.all(events.map(async (event) => {
         try {
@@ -78,7 +79,6 @@ export const loadAvailableEvents = async (artistId) => {
   }
 };
 
-// Confirmar asistencia a un evento
 export const attendEvent = async (eventId, artistId, artistProfile) => {
   try {
     if (!artistId) {
@@ -109,14 +109,12 @@ export const attendEvent = async (eventId, artistId, artistProfile) => {
   }
 };
 
-// Cancelar asistencia a un evento
 export const cancelAttendance = async (eventId, artistId) => {
   try {
     if (!artistId) {
       throw new Error('No se pudo obtener el ID del artista');
     }
     
-    // Usamos POST en lugar de DELETE ya que es lo que espera el backend
     const response = await axios.post(`${BACKEND_URL}/api/event-attendances/cancel`, {
       eventId,
       artistId
@@ -133,34 +131,26 @@ export const cancelAttendance = async (eventId, artistId) => {
   }
 };
 
-// Verificar si un evento ha expirado (1 hora después de la hora de inicio)
 export const isEventExpired = (event) => {
   const currentDate = new Date();
   
-  // Obtener la fecha del evento (puede estar en diferentes propiedades)
   const eventDate = event.fechaInicio || event.fechaProgramada || event.fecha;
   
   if (eventDate) {
     const eventDateTime = new Date(eventDate);
     
-    // Calcular la hora de fin (1 hora después del inicio)
     const endDateTime = new Date(eventDateTime);
     endDateTime.setHours(endDateTime.getHours() + 1);
     
-    // El evento ha expirado si la hora actual es mayor que la hora de inicio + 1 hora
     return currentDate > endDateTime;
   }
   
-  // Si hay fecha de finalización específica, la usamos
   if (event.fechaFin) {
     return new Date(event.fechaFin) < currentDate;
   }
-  
-  // Si no hay ninguna fecha, asumimos que no ha expirado
   return false;
-};
+};  
 
-// Formatear fecha
 export const formatDate = (dateString) => {
   if (!dateString) return 'Fecha no disponible';
   try {

@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja la tarjeta de solicitud
+ * - UI
+ * - Roles
+ * - Tarjeta
+ */
+
 import React from 'react';
 import { TouchableOpacity, Text } from 'react-native';
 import { styles } from '../../../../styles/ViewsRoleRequestStyles';

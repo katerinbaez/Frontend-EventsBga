@@ -1,10 +1,14 @@
+/**
+ * Este archivo maneja el estado de carga y error
+ * - UI
+ * - Estados
+ * - Acciones
+ */
+
 import React from 'react';
 import { View, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { styles } from '../../../../styles/EventDetailStyles';
 
-/**
- * Componente que muestra estados de carga y error
- */
 const LoadingErrorState = ({ isLoading, error, onRetry }) => {
   if (isLoading) {
     return (

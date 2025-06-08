@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el acceso administrativo
+ * - Autenticación
+ * - UI
+ * - Validación
+ */
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Modal, Keyboard,Vibration,Animated,TextInput,ActivityIndicator} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -6,7 +13,6 @@ import { useAuth } from '../../../../context/AuthContext';
 import { COLORS, COMMON_STYLES, SIZES } from '../../../../styles/theme';
 import { moderateScale, verticalScale, horizontalScale } from '../../../../utils/ResponsiveUtils';
 
-// Componente CustomInput integrado
 const CustomInput = ({
   icon,
   placeholder,
@@ -52,7 +58,6 @@ const CustomInput = ({
   );
 };
 
-// Componente CustomButton integrado
 const CustomButton = ({
   title,
   onPress,
@@ -222,10 +227,10 @@ const AdminAccess = () => {
                 placeholderTextColor="#999999"
                 style={{
                   color: '#FFFFFF',
-                  fontSize: 15,  // Aumentado el tamaño de la fuente para que los puntos sean más grandes
+                  fontSize: 15,
                   flex: 1,
                   textAlign: 'center',
-                  letterSpacing: 5  // Añadido espacio entre los puntos para mejor visibilidad
+                  letterSpacing: 5
                 }}
               />
             </View>

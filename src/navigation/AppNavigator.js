@@ -1,8 +1,16 @@
+/**
+ * Navegación principal de la aplicación
+ * - Navegación
+ * - Stack
+ * - Pantallas
+ * - Autenticación
+ * - Rutas
+ */
+
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useAuth } from '../context/AuthContext';
 
-// Importar componentes de pantallas existentes
 import HomeScreen from '../screens/HomeScreen';
 import LoginAuth from '../components/features/auth/login/LoginAuth';
 import DashboardUser from '../components/features/dashboard/user/views/DashboardUser';
@@ -28,17 +36,14 @@ import UserManagement from '../components/features/admin/users/UserManagement';
 import EventAttendance from '../components/features/events/views/EventAttendance';
 import ManageEvents from '../components/features/events/views/ManageEvents';
 
-// Importar conectores de navegación
 import CalendarScreen from '../screens/CalendarScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
 
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
-    // Usar useAuth para determinar rutas autenticadas vs no autenticadas
     const { isAuthenticated, userData } = useAuth();
     
-    // Determinar la pantalla inicial basada en el estado de autenticación
     const initialRouteName = isAuthenticated ? 
         (userData?.role === 'admin' ? 'DashboardAdmin' : 
          userData?.role === 'artist' ? 'DashboardArtist' : 
@@ -60,7 +65,6 @@ const AppNavigator = () => {
             }}
             initialRouteName={initialRouteName}
         >
-            {/* Rutas públicas */}
             <Stack.Screen
                 name="Home"
                 component={HomeScreen}
@@ -196,7 +200,6 @@ const AppNavigator = () => {
                 }}
             />
             
-            {/* Conectores de pantallas para mejor organización */}
             <Stack.Screen 
                 name="CalendarTab" 
                 component={CalendarScreen}
@@ -206,7 +209,6 @@ const AppNavigator = () => {
                 }}
             />
             
-            {/* Pantalla de respaldo para rutas no encontradas */}
             <Stack.Screen 
                 name="NotFound" 
                 component={NotFoundScreen}

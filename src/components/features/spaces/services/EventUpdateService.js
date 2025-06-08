@@ -1,16 +1,21 @@
+/**
+ * Este archivo maneja el servicio de actualización de eventos
+ * - Servicios
+ * - Espacios
+ * - Eventos
+ * - Actualización
+ */
+
 import axios from 'axios';
 import { BACKEND_URL } from '../../../../constants/config';
 
-// Función para actualizar un evento
 export const updateEvent = async (formData, managerId) => {
   try {
-    // Verificar que el evento tenga un ID válido
     const eventId = formData.id;
     if (!eventId) {
       throw new Error('No se pudo identificar el evento a actualizar');
     }
     
-    // Preparar los datos para actualización
     const datosActualizacion = {
       titulo: formData.titulo || '',
       descripcion: formData.descripcion || '',
@@ -19,7 +24,6 @@ export const updateEvent = async (formData, managerId) => {
       managerId: formData.managerId || managerId
     };
     
-    // Intentar con la primera ruta
     const updateUrl = `${BACKEND_URL}/api/events/${eventId}/update`;
     const response = await axios.post(updateUrl, datosActualizacion);
     
@@ -29,7 +33,6 @@ export const updateEvent = async (formData, managerId) => {
     
     throw new Error('No se pudo actualizar el evento');
   } catch (error) {
-    // Intentar con ruta alternativa
     try {
       const alternativeUrl = `${BACKEND_URL}/api/manager-events/update/${formData.id}`;
       const alternativeResponse = await axios.post(alternativeUrl, formData);

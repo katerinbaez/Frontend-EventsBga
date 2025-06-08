@@ -1,3 +1,11 @@
+/**
+ * Este archivo maneja la tarjeta de búsqueda de eventos
+ * - UI
+ * - Datos
+ * - Estado
+ * - Favoritos
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -5,29 +13,22 @@ import { formatDate, formatTime } from '../utils/dateUtilsSearch';
 import { isEventExpired } from '../utils/EventUtils';
 import { styles } from '../../../../styles/EventSearchStyles';
 
-/**
- * Componente para mostrar un evento individual
- */
+
 const EventCardSearch = ({ 
   event, 
   navigation, 
   isFavorite, 
   onToggleFavorite 
 }) => {
-  // Determinar si el evento ha expirado (1 hora después de la hora de inicio)
   const expired = isEventExpired(event);
   
-  // Obtener la fecha del evento (puede estar en diferentes propiedades)
   const eventDate = event.fechaInicio || event.fechaProgramada || event.fecha;
-  
-  // Manejar la navegación al detalle del evento
   const handleEventPress = () => {
     navigation.navigate('EventDetails', { 
       eventId: event.id || event._id,
     });
   };
   
-  // Obtener la categoría del evento
   const getEventCategory = () => {
     if (typeof (event.categoria || event.category) === 'object') {
       return (event.categoria || event.category).nombre || 'Sin categoría';
@@ -35,7 +36,6 @@ const EventCardSearch = ({
     return (event.categoria || event.category) || 'Sin categoría';
   };
   
-  // Obtener la ubicación del evento
   const getEventLocation = () => {
     return event.space?.nombre || event.ubicacion || 'Centro del oriente';
   };

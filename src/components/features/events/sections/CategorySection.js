@@ -1,17 +1,20 @@
+/**
+ * Este archivo maneja la sección de categorías
+ * - UI
+ * - Categorías
+ * - Selección
+ */
+
 import React from 'react';
 import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { styles } from '../../../../styles/EventSearchStyles';
 
-/**
- * Sección que muestra las categorías disponibles
- */
 const CategorySection = ({ 
   categories, 
   selectedCategory, 
   onSelectCategory, 
   loading 
 }) => {
-  // Si está cargando, mostrar indicador
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -20,18 +23,14 @@ const CategorySection = ({
     );
   }
   
-  // Si no hay categorías, no mostrar nada
   if (!categories || categories.length === 0) {
     return null;
   }
   
-  // Renderizar chip de categoría
   const renderCategoryChip = (category) => {
-    // Asegurarse de que la categoría tenga un ID válido
     const categoryId = category.id || category._id || category.nombre;
     const categoryName = category.nombre || 'Categoría';
     
-    // Convertir el nombre de la categoría a minúsculas y reemplazar espacios por guiones bajos
     const formattedName = categoryName.toLowerCase().replace(/ /g, '_');
     
     return (
@@ -60,7 +59,6 @@ const CategorySection = ({
       style={styles.categoriesContainer}
       contentContainerStyle={styles.categoriesContentContainer}
     >
-      {/* Categoría "Todo" */}
       <TouchableOpacity
         key="all"
         style={[

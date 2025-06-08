@@ -1,3 +1,11 @@
+/**
+ * Este archivo maneja la lista de eventos
+ * - UI
+ * - Espacios
+ * - Eventos
+ * - Lista
+ */
+
 import React from 'react';
 import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

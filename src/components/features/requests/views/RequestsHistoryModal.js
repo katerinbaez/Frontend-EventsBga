@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el modal de historial de solicitudes
+ * - UI
+ * - Solicitudes
+ * - Historial
+ */
+
 import React from 'react';
 import { 
   View, 
@@ -11,12 +18,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../../../context/AuthContext';
 import { styles } from '../../../../styles/RequestHistoryModalStyles';
 
-// Componentes UI
 import RequestItem from '../ui/RequestItem';
 import EmptyRequestsList from '../ui/EmptyRequestsList';
 import RequestDetailsModal from '../ui/RequestDetailsModal';
 
-// Hooks
 import useRequestsHistory from '../hooks/useRequestsHistory';
 
 const RequestsHistoryModal = ({ visible, onClose }) => {

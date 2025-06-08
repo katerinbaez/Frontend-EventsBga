@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja las operaciones del servicio de perfil
+ * - Carga
+ * - Guardado
+ * - Imágenes
+ */
+
 import axios from 'axios';
 import { BACKEND_URL } from '../../../../constants/config';
 import * as FileSystem from 'expo-file-system';
@@ -33,24 +40,14 @@ export const saveArtistProfile = async (userId, profileData, method = 'post') =>
   }
 };
 
-/**
- * Guarda una imagen en base64 en el almacenamiento local
- * @param {string} userId - ID del usuario/artista
- * @param {string} imageUri - URI de la imagen
- * @param {string} imageType - Tipo MIME de la imagen
- * @returns {Promise<string>} - URI de la imagen en base64
- */
 const saveImageToLocalStorage = async (userId, imageUri, imageType = 'image/jpeg') => {
   try {
-    // Convertir la imagen a base64
     const base64 = await FileSystem.readAsStringAsync(imageUri, {
       encoding: FileSystem.EncodingType.Base64,
     });
     
-    // Crear la URI de base64 completa
     const base64Uri = `data:${imageType};base64,${base64}`;
     
-    // Guardar en AsyncStorage
     await AsyncStorage.setItem(`artist_image_${userId}`, base64Uri);
     
     console.error(`Imagen guardada localmente para el artista ${userId}`);
@@ -61,20 +58,15 @@ const saveImageToLocalStorage = async (userId, imageUri, imageType = 'image/jpeg
   }
 };
 
-/**
- * Sube una imagen de perfil al servidor y la guarda localmente
- */
 export const uploadProfileImage = async (userId, imageUri) => {
   if (!imageUri) return { success: false, error: 'No hay imagen para subir' };
   
-  // Guardar la imagen localmente primero
   let localBase64Uri = null;
   
   try {
-    // Determinar el tipo de imagen basado en la extensión
     const uriParts = imageUri.split('/');
     const fileName = uriParts[uriParts.length - 1];
-    let fileType = 'image/jpeg'; // Por defecto
+    let fileType = 'image/jpeg';
     
     if (fileName.toLowerCase().endsWith('.png')) {
       fileType = 'image/png';
@@ -84,23 +76,17 @@ export const uploadProfileImage = async (userId, imageUri) => {
       fileType = 'image/webp';
     }
     
-    // Guardar la imagen localmente
     localBase64Uri = await saveImageToLocalStorage(userId, imageUri, fileType);
   } catch (localError) {
     console.error('Error al procesar imagen localmente:', localError);
   }
-  
-  // Intentar subir al servidor
   try {
-    // Crear un objeto FormData para enviar la imagen
     const formData = new FormData();
     
-    // Obtener el nombre del archivo de la URI
     const uriParts = imageUri.split('/');
     const fileName = uriParts[uriParts.length - 1];
     
-    // Determinar el tipo de imagen basado en la extensión
-    let fileType = 'image/jpeg'; // Por defecto
+    let fileType = 'image/jpeg';
     if (fileName.toLowerCase().endsWith('.png')) {
       fileType = 'image/png';
     } else if (fileName.toLowerCase().endsWith('.gif')) {
@@ -109,17 +95,14 @@ export const uploadProfileImage = async (userId, imageUri) => {
       fileType = 'image/webp';
     }
     
-    // Añadir la imagen al FormData
     formData.append('profileImage', {
       uri: imageUri,
       name: fileName,
       type: fileType
     });
     
-    // Añadir el userId al FormData para identificar al usuario
     formData.append('userId', userId);
     
-    // Enviar la imagen al servidor
     const response = await axios.put(
       `${BACKEND_URL}/api/artists/upload-profile-image/${encodeURIComponent(userId)}`,
       formData,
@@ -127,12 +110,11 @@ export const uploadProfileImage = async (userId, imageUri) => {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-        timeout: 30000 // Aumentar el timeout a 30 segundos para archivos grandes
+        timeout: 30000
       }
     );
     
     if (response.data.success) {
-      // Si tenemos una versión local, devolverla como alternativa
       if (localBase64Uri) {
         return { 
           success: true, 
@@ -142,7 +124,6 @@ export const uploadProfileImage = async (userId, imageUri) => {
       }
       return { success: true, imageUrl: response.data.imageUrl };
     } else {
-      // Si falló el servidor pero tenemos versión local, considerarlo éxito parcial
       if (localBase64Uri) {
         return { 
           success: true, 
@@ -156,7 +137,6 @@ export const uploadProfileImage = async (userId, imageUri) => {
   } catch (error) {
     console.error('Error al subir imagen de perfil:', error);
     
-    // Si tenemos una versión local, considerarlo éxito parcial
     if (localBase64Uri) {
       return { 
         success: true, 
@@ -166,9 +146,7 @@ export const uploadProfileImage = async (userId, imageUri) => {
       };
     }
     
-    // Intentar un enfoque alternativo si el servidor no responde correctamente
     try {
-      // Crear un objeto con los datos del perfil incluyendo la imagen en base64
       const response = await axios.post(
         `${BACKEND_URL}/api/artists/upload-profile-image-alternative/${encodeURIComponent(userId)}`,
         { imageUri },
@@ -186,16 +164,10 @@ export const uploadProfileImage = async (userId, imageUri) => {
   }
 };
 
-/**
- * Obtiene la imagen de perfil de un artista, intentando primero desde el almacenamiento local
- * @param {string} artistId - ID del artista
- * @returns {Promise<string>} - URL de la imagen
- */
 export const getProfileImage = async (artistId) => {
   if (!artistId) return null;
   
   try {
-    // Intentar obtener la imagen desde el almacenamiento local
     const localImage = await AsyncStorage.getItem(`artist_image_${artistId}`);
     if (localImage) {
       console.error(`Usando imagen en caché para el artista ${artistId}`);
@@ -205,6 +177,5 @@ export const getProfileImage = async (artistId) => {
     console.error('Error al obtener imagen local:', error);
   }
   
-  // Si no hay imagen local, devolver null para que se use la URL del servidor
   return null;
 };

@@ -1,10 +1,14 @@
+/**
+ * Este archivo maneja la descripción del evento
+ * - UI
+ * - Texto
+ */
+
 import React from 'react';
 import { View, Text } from 'react-native';
 import { styles } from '../../../../styles/EventDetailStyles';
 
-/**
- * Componente que muestra la descripción de un evento
- */
+
 const EventDescription = ({ description }) => {
   return (
     <View style={styles.descriptionSection}>

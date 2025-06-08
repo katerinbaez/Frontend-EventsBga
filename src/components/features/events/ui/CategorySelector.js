@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el selector de categorías
+ * - UI
+ * - Categorías
+ * - Selección
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import { styles } from '../../../../styles/EventProgrammingStyles';

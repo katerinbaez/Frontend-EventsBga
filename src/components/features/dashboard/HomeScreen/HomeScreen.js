@@ -1,3 +1,11 @@
+/**
+ * Este archivo maneja la pantalla principal
+ * - UI
+ * - Autenticación
+ * - Eventos
+ * - Navegación
+ */
+
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Dimensions, ActivityIndicator, ImageBackground, Image, Linking, SafeAreaView, StatusBar, Platform } from 'react-native';
 import { useAuth } from '../../../../context/AuthContext';
@@ -9,16 +17,15 @@ import * as WebBrowser from 'expo-web-browser';
 import axios from 'axios';
 import { BACKEND_URL, AUTH0_DOMAIN, AUTH0_CLIENT_ID, REDIRECT_URI } from '../../../../constants/config';
 
-// Datos de muestra para la sección de conexión cultural
 const culturalData = {
   title: "Bucaramanga",
   subtitle: "Donde los artistas y espacios culturales se encuentran",
   description: "Descubre cómo los artistas locales y los espacios culturales trabajan juntos para crear una escena artística vibrante en nuestra ciudad.",
   backgroundImage: "https://images.unsplash.com/photo-1608501078713-8e445a709b39?q=80&w=2070",
   stats: [
-    { icon: "brush-outline", label: "Artistas", count: "250+", color: "#FF3A5E" },
-    { icon: "location", label: "Espacios", count: "45+", color: "#3A9BFF" },
-    { icon: "calendar", label: "Eventos", count: "100+", color: "#FFD700" }
+    { icon: "brush-outline", count: "¡Únete a nuestra\n comunidad!", color: "#FF3A5E" },
+    { icon: "location", count: "¡Descubre\nnuevos lugares!", color: "#3A9BFF" },
+    { icon: "calendar", count: "¡No te pierdas\nnada!", color: "#FFD700" }
   ],
   featuredArtist: {
     name: "María González",
@@ -133,7 +140,6 @@ const HomeScreen = ({ navigation }) => {
                 </View>
             </View>
 
-            {/* Sección de Conexión Cultural */}
             <View style={styles.culturalHeroSection}>
                 <ImageBackground 
                     source={{ uri: culturalData.backgroundImage }}
@@ -167,7 +173,6 @@ const HomeScreen = ({ navigation }) => {
                 </ImageBackground>
             </View>
 
-            {/* Sección de Destacados */}
             <View style={styles.featuredSection}>
                 <Text style={styles.sectionTitle}>Conexión Artística</Text>
                 <View style={styles.featuredContainer}>
@@ -215,18 +220,15 @@ const HomeScreen = ({ navigation }) => {
                 </View>
             </View>
 
-            {/* Sección del Calendario */}
             <View style={styles.calendarSection}>
                 <Text style={styles.sectionTitle}>Calendario de Eventos</Text>
                 <View style={styles.calendarWrapper}>
-                    {/* Usamos un View con collapsable={false} para mejorar el rendimiento */}
                     <View collapsable={false} style={{ flex: 1 }}>
                         <EventCalendar inHomeScreen={true} />
                     </View>
                 </View>
             </View>
             
-            {/* Banner de invitación a iniciar sesión (solo se muestra si no está autenticado) */}
             {!isAuthenticated && (
                 <View style={styles.loginBanner}>
                     <Text style={styles.loginBannerTitle}>¡Descubre todas las funcionalidades!</Text>

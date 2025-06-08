@@ -1,12 +1,17 @@
+/**
+ * Este archivo maneja el ítem de lista de artista
+ * - UI
+ * - Favoritos
+ * - Manejo de imágenes
+ */
+
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from '../../../../styles/ArtistProfilesModalStyles';
 import { BACKEND_URL } from '../../../../constants/config';
 
-/**
- * Componente para mostrar un artista en la lista
- */
+
 const ArtistListItem = ({ 
   item, 
   isSelected, 
@@ -14,19 +19,15 @@ const ArtistListItem = ({
   onPress, 
   onToggleFavorite 
 }) => {
-  // Estado para controlar si hay error al cargar la imagen
   const [imageError, setImageError] = useState(false);
   
-  // Función para obtener la URL correcta de la imagen
   const getImageUrl = () => {
     if (!item.fotoPerfil) return null;
     
-    // Si ya es una URL completa o una ruta de archivo local, usarla directamente
     if (item.fotoPerfil.startsWith('http') || item.fotoPerfil.startsWith('file://')) {
       return item.fotoPerfil;
     }
     
-    // Si es una ruta relativa, convertirla a absoluta
     const prefix = item.fotoPerfil.startsWith('/') ? '' : '/';
     return `${BACKEND_URL}${prefix}${item.fotoPerfil}`;
   };
@@ -75,7 +76,7 @@ const ArtistListItem = ({
         <TouchableOpacity 
           style={styles.favoriteButton}
           onPress={(e) => {
-            e.stopPropagation(); // Evitar que el toque se propague al elemento padre
+            e.stopPropagation();
             onToggleFavorite();
           }}
         >

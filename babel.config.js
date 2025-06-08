@@ -1,3 +1,12 @@
+/**
+ * Configuración de Babel para transpilación
+ * - Babel
+ * - Presets
+ * - Plugins
+ * - Aliases
+ * - Rutas
+ */
+
 module.exports = function(api) {
   api.cache(true);
   return {

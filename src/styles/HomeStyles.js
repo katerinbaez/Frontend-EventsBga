@@ -430,24 +430,25 @@ export const styles = ResponsiveStyleSheet.create({
   },
   statsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: verticalScale(1),
-    marginBottom: verticalScale(2),
-    paddingHorizontal: horizontalScale(5),
+    justifyContent: 'flex-start',
+    marginTop: verticalScale(2),
+    marginBottom: verticalScale(3),
+    paddingHorizontal: horizontalScale(10),
+    marginLeft: horizontalScale(-15),
   },
   statItem: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: horizontalScale(2),
+    marginHorizontal: horizontalScale(5),
   },
   statIconContainer: {
-    width: moderateScale(50),
-    height: moderateScale(50),
-    borderRadius: moderateScale(25),
+    width: moderateScale(60),
+    height: moderateScale(60),
+    borderRadius: moderateScale(30),
     backgroundColor: '#FF3A5E', // Color de acento rojo preferido por el usuario para el primer ícono
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: verticalScale(5),
+    marginBottom: verticalScale(10),
     shadowColor: '#000',
     shadowOffset: { width: 0, height: verticalScale(1) },
     shadowOpacity: 0.3,
@@ -455,13 +456,17 @@ export const styles = ResponsiveStyleSheet.create({
     elevation: 2,
   },
   statCount: {
-    fontSize: moderateScale(20),
+    fontSize: moderateScale(11),
     fontWeight: 'bold',
     color: '#FFFFFF',
     marginBottom: verticalScale(2),
     textShadowColor: 'rgba(0,0,0,0.3)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
+    lineHeight: moderateScale(14),
+    textAlign: 'center',
+    width: '100%',
+    flexWrap: 'wrap'
   },
   // Estilos para los íconos
   iconLarge: {

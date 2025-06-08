@@ -1,3 +1,11 @@
+/**
+ * Este archivo maneja el dashboard del artista
+ * - UI
+ * - Navegación
+ * - Sesión
+ * - Modales
+ */
+
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, ActivityIndicator, Modal, Alert, StatusBar, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -33,7 +41,6 @@ const DashboardArtist = () => {
       setArtistData(result.artist);
       setIsLoading(false);
     } else if (result.error === 'not_found') {
-      // No existe perfil, redirigir a registro
       navigation.replace('ArtistRegistration');
     } else {
       Alert.alert('Error', 'No se pudo verificar el perfil de artista');
@@ -72,7 +79,6 @@ const DashboardArtist = () => {
           />
         </ScrollView>
         
-        {/* Modal para la búsqueda de espacios culturales */}
         <Modal
           visible={spaceSearchVisible}
           animationType="slide"
@@ -81,13 +87,10 @@ const DashboardArtist = () => {
           <SpaceSearch onClose={() => setSpaceSearchVisible(false)} />
         </Modal>
 
-        {/* Modal para eventos disponibles */}
         <AvailableEventsModal 
           visible={eventsModalVisible}
           onClose={() => setEventsModalVisible(false)}
         />
-
-        {/* Modal para historial de solicitudes */}
         <RequestsHistoryModal
           visible={requestsHistoryVisible}
           onClose={() => setRequestsHistoryVisible(false)}

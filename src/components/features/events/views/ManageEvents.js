@@ -1,9 +1,15 @@
+/**
+ * Este archivo maneja la gestión de eventos
+ * - UI
+ * - Eventos
+ * - Gestión
+ */
+
 import React from 'react';
 import { View, StyleSheet, StatusBar } from 'react-native';
 import ManageSpaceEvents from '../../../features/spaces/views/ManageSpaceEvents';
 
 const ManageEvents = ({ navigation, route }) => {
-  // Extraer parámetros de navegación
   const managerId = route.params?.managerId || '';
   const spaceId = route.params?.spaceId || '';
   const spaceName = route.params?.spaceName || 'Mi Espacio Cultural';

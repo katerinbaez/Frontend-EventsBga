@@ -1,11 +1,13 @@
+/**
+ * Este archivo maneja el servicio de asistencia a eventos
+ * - API
+ * - Eventos
+ * - Gestión
+ */
+
 import axios from 'axios';
 import { BACKEND_URL } from '../../../../constants/config';
 
-/**
- * Carga los eventos asociados a un manager específico
- * @param {string} managerId - ID del manager
- * @returns {Promise<Array>} - Lista de eventos
- */
 export const loadManagerEvents = async (managerId) => {
   try {
     const response = await axios.get(`${BACKEND_URL}/api/manager-events/manager/${managerId}`);
@@ -20,11 +22,6 @@ export const loadManagerEvents = async (managerId) => {
   }
 };
 
-/**
- * Formatea una fecha en formato legible
- * @param {string} dateString - La fecha en formato ISO
- * @returns {string} - La fecha formateada
- */
 export const formatDate = (dateString) => {
   if (!dateString) return 'Fecha no disponible';
   

@@ -1,11 +1,15 @@
+/**
+ * Este archivo maneja la UI de lista de eventos vacíos
+ * - UI
+ * - Mensaje
+ * - Icono
+ */
+
 import React from 'react';
 import { View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../../../../styles/EventAttendanceStyles';
 
-/**
- * Componente que muestra un mensaje cuando no hay eventos
- */
 const EmptyEventsList = () => {
   return (
     <View style={styles.emptyContainer}>

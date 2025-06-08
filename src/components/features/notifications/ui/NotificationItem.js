@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el ítem de notificación
+ * - UI
+ * - Notificaciones
+ * - Elementos
+ */
+
 import React from 'react';
 import { View, Text } from 'react-native';
 import { styles } from '../../../../styles/NotificationCenterStyles';

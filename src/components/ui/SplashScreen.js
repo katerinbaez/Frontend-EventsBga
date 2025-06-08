@@ -1,3 +1,12 @@
+/**
+ * Pantalla de inicio con animación y barra de progreso
+ * - UI
+ * - Splash
+ * - Animación
+ * - Barra de progreso
+ * - Fondo animado
+ */
+
 import React, { useEffect, useRef } from 'react';
 import { View, Text, Dimensions, Animated, Image, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -10,19 +19,17 @@ const SplashScreen = ({ onFinish }) => {
   const progressAnim = useRef(new Animated.Value(0)).current;
   
   useEffect(() => {
-    // Animación de la barra de progreso
     Animated.timing(progressAnim, {
       toValue: 1,
-      duration: 5000, // 5 segundos para que la barra se llene completamente
-      useNativeDriver: false // No podemos usar native driver para animar width
+      duration: 5000,
+      useNativeDriver: false
     }).start();
 
-    // Configurar un temporizador para llamar a onFinish después de 6 segundos
     const timer = setTimeout(() => {
       if (onFinish) {
         onFinish();
       }
-    }, 6000); // 6 segundos en total
+    }, 6000);
 
     return () => clearTimeout(timer);
   }, [onFinish, progressAnim]);
@@ -30,12 +37,9 @@ const SplashScreen = ({ onFinish }) => {
 
   return (
     <View style={styles.container}>
-      {/* Fondo animado con partículas */}
       <AnimatedBackground />
       
-      {/* Panel principal con contenido */}
       <View style={styles.panel}>
-        {/* Icono principal */}
         <View style={styles.iconContainer}>
           <LinearGradient
             colors={['#FF3A5E', '#3A7AFF']}
@@ -46,21 +50,18 @@ const SplashScreen = ({ onFinish }) => {
             <Ionicons name="calendar" size={70} color="#FFFFFF" />
           </LinearGradient>
           
-          {/* Icono superpuesto */}
           <View style={styles.iconOverlay}>
             <Ionicons name="people" size={36} color="#FFFFFF" />
           </View>
         </View>
         
-        {/* Línea divisoria */}
         <View style={styles.divider} />
         
-        {/* Título y subtítulo */}
         <Text style={styles.title}>EventsBga</Text>
         <Text style={styles.subtitle}>Plataforma Cultural de</Text>
         <Text style={styles.subtitle}>Bucaramanga</Text>
         
-        {/* Barra de progreso */}
+        
         <View style={styles.progressContainer}>
           <View style={styles.progressBar}>
             <Animated.View 
@@ -74,7 +75,6 @@ const SplashScreen = ({ onFinish }) => {
           </View>
         </View>
         
-        {/* Texto de carga */}
         <Text style={styles.loadingText}>Cargando experiencias culturales...</Text>
       </View>
     </View>

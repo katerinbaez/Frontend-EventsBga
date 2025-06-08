@@ -1,13 +1,16 @@
+/**
+ * Este archivo maneja el botón de asistencia
+ * - UI
+ * - Estado
+ * - Interacción
+ */
+
 import React from 'react';
 import { TouchableOpacity, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../../../../styles/EventDetailStyles';
 
-/**
- * Componente que muestra el botón de asistencia a un evento
- */
 const AttendanceButton = ({ isExpired, isAttending, onRegister, onCancel, showDetailsOnly }) => {
-  // Si el evento ha expirado o solo se deben mostrar detalles, mostrar mensaje de evento finalizado
   if (isExpired || showDetailsOnly) {
     return (
       <View style={styles.expiredEventNotice}>
@@ -19,7 +22,6 @@ const AttendanceButton = ({ isExpired, isAttending, onRegister, onCancel, showDe
     );
   }
   
-  // Si el evento no ha expirado, mostrar botón de asistencia
   return (
     <TouchableOpacity
       style={[
@@ -27,7 +29,7 @@ const AttendanceButton = ({ isExpired, isAttending, onRegister, onCancel, showDe
         isAttending ? styles.attendingButton : {}
       ]}
       onPress={isAttending ? onCancel : onRegister}
-      disabled={isExpired} // Deshabilitar el botón si el evento ha expirado
+      disabled={isExpired}
     >
       <Text style={styles.registerButtonText}>
         {isAttending ? 'Cancelar Asistencia' : 'Confirmar Asistencia'}

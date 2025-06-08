@@ -1,3 +1,11 @@
+/**
+ * Este archivo maneja el contenedor de opciones del usuario
+ * - UI
+ * - Navegación
+ * - Gestión de opciones
+ * - Roles
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -73,7 +81,6 @@ const UserOptionsContainer = ({
 
       
 
-      {/* Los botones de perfil de artista y gestor se muestran en DashboardUser, no aquí */}
     </View>
   );
 };

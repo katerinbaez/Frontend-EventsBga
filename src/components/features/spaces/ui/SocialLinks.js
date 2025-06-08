@@ -1,3 +1,11 @@
+/**
+ * Este archivo maneja los enlaces sociales
+ * - UI
+ * - Espacios
+ * - Redes Sociales
+ * - Enlaces
+ */
+
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Linking, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,17 +18,13 @@ const SocialLinks = ({ redesSociales, isEditing, onInputChange }) => {
     twitter: ''
   });
 
-  // Función para validar URL sin usar expresiones regulares complejas
   const isValidURL = (url) => {
-    if (!url || url.trim() === '') return true; // Permitir campos vacíos
+    if (!url || url.trim() === '') return true; 
     
     try {
-      // Intentar crear un objeto URL para validar
-      // Si la URL no tiene protocolo, agregar https://
       const urlToTest = url.startsWith('http') ? url : `https://${url}`;
       new URL(urlToTest);
       
-      // Verificar que tenga un dominio válido con al menos un punto
       const hasDomain = url.includes('.') && url.split('.')[1]?.length > 0;
       return hasDomain;
     } catch (e) {
@@ -28,37 +32,29 @@ const SocialLinks = ({ redesSociales, isEditing, onInputChange }) => {
     }
   };
 
-  // Función para manejar cambios en los campos de redes sociales
   const handleSocialInputChange = (field, text) => {
-    // Siempre actualizar el valor mientras el usuario escribe
     onInputChange(field, text);
     
-    // Limpiar cualquier error previo
     setErrors(prev => ({ ...prev, [field.split('.')[1]]: '' }));
   };
   
-  // Función para validar al perder el foco
   const handleBlur = (field) => {
-    // Extraer el nombre del campo de manera segura
     let fieldName = '';
     if (field === 'redesSociales.facebook') fieldName = 'facebook';
     else if (field === 'redesSociales.instagram') fieldName = 'instagram';
     else if (field === 'redesSociales.twitter') fieldName = 'twitter';
-    else return; // Si no es un campo válido, salir
+    else return;
     
-    // Obtener el valor del campo de manera segura
     let value = '';
     if (fieldName === 'facebook') value = redesSociales.facebook || '';
     else if (fieldName === 'instagram') value = redesSociales.instagram || '';
     else if (fieldName === 'twitter') value = redesSociales.twitter || '';
     
     if (value && value.trim() !== '' && !isValidURL(value)) {
-      // Si no es una URL válida, mostrar error
       const newErrors = { ...errors };
       newErrors[fieldName] = 'URL inválida';
       setErrors(newErrors);
       
-      // Limpiar el campo después de un breve retraso
       setTimeout(() => {
         onInputChange(field, '');
         const clearedErrors = { ...errors };
@@ -70,7 +66,6 @@ const SocialLinks = ({ redesSociales, isEditing, onInputChange }) => {
 
   const handleOpenLink = (url) => {
     if (url && url.trim() !== '') {
-      // Asegurarse de que la URL tenga el formato correcto
       const formattedUrl = url.startsWith('http') ? url : `https://${url}`;
       Linking.openURL(formattedUrl);
     }

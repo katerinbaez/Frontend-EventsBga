@@ -1,31 +1,28 @@
-// Utilidades para el componente SpaceSchedule
+/**
+ * Este archivo maneja las utilidades de programación
+ * - UI
+ * - Espacios
+ * - Programación
+ * - Utilidades
+ * - Horarios
+ */
 
-// Función para obtener el nombre del día de la semana
 export const getDayName = (dayIndex) => {
   const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
   return days[dayIndex];
 };
 
-// Función para obtener el nombre corto del día de la semana
 export const getShortDayName = (dayIndex) => {
   const shortDays = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
   return shortDays[dayIndex];
 };
-
-// Función para inicializar los días de la semana con fechas
 export const initializeWeekDays = (selectedDate = new Date()) => {
-  // Obtener el día de la semana (0 = domingo, 1 = lunes, ..., 6 = sábado)
   const currentDay = selectedDate.getDay();
-  
-  // Ajustar para que la semana comience en lunes (1)
   const firstDayOfWeek = 1; // Lunes
-  
-  // Calcular el lunes de la semana actual
   const mondayOffset = currentDay === 0 ? -6 : firstDayOfWeek - currentDay;
   const monday = new Date(selectedDate);
   monday.setDate(selectedDate.getDate() + mondayOffset);
   
-  // Generar fechas para cada día de la semana (lunes a domingo)
   const weekDays = [];
   for (let i = 0; i < 7; i++) {
     const currentDate = new Date(monday);
@@ -46,7 +43,6 @@ export const initializeWeekDays = (selectedDate = new Date()) => {
   return weekDays;
 };
 
-// Función para formatear una fecha a YYYY-MM-DD
 export const formatDateToYYYYMMDD = (date) => {
   const year = date.getFullYear();
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -54,7 +50,6 @@ export const formatDateToYYYYMMDD = (date) => {
   return `${year}-${month}-${day}`;
 };
 
-// Función para formatear una fecha a DD/MM/YYYY
 export const formatDateToDDMMYYYY = (date) => {
   const day = date.getDate().toString().padStart(2, '0');
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -62,7 +57,6 @@ export const formatDateToDDMMYYYY = (date) => {
   return `${day}/${month}/${year}`;
 };
 
-// Función para generar franjas horarias (de 6am a 10pm)
 export const generateTimeSlots = () => {
   return Array.from({ length: 17 }, (_, index) => {
     const hour = index + 6;
@@ -74,7 +68,6 @@ export const generateTimeSlots = () => {
   });
 };
 
-// Función para depurar los días de la semana
 export const debugWeekDays = (weekDaysWithDates) => {
   console.log('🔍 Depurando días de la semana:');
   weekDaysWithDates.forEach(day => {
@@ -82,16 +75,11 @@ export const debugWeekDays = (weekDaysWithDates) => {
   });
 };
 
-// Función para depurar los slots bloqueados
 export const debugBlockedSlots = (blockedSlots, blockedSlotsByDate) => {
   console.log(`🔍 Depurando slots bloqueados (total: ${blockedSlots.length}):`);
-  
-  // Mostrar todos los slots bloqueados
   blockedSlots.forEach((slot, index) => {
     console.log(`- Slot ${index + 1}: día=${slot.day} (${slot.dayName || 'Sin nombre'}), hora=${slot.hour}, fecha=${slot.date || 'Sin fecha'}`);
   });
-  
-  // Mostrar slots bloqueados por fecha
   console.log('🔍 Slots bloqueados por fecha:');
   Object.keys(blockedSlotsByDate).forEach(date => {
     const slots = blockedSlotsByDate[date];
@@ -102,20 +90,13 @@ export const debugBlockedSlots = (blockedSlots, blockedSlotsByDate) => {
   });
 };
 
-// Función para actualizar los días de la semana basados en una fecha
 export const updateWeekDays = (date) => {
-  // Obtener el día de la semana (0 = domingo, 1 = lunes, ..., 6 = sábado)
   const currentDay = date.getDay();
-  
-  // Ajustar para que la semana comience en lunes (1)
   const firstDayOfWeek = 1; // Lunes
-  
-  // Calcular el lunes de la semana actual
   const mondayOffset = currentDay === 0 ? -6 : firstDayOfWeek - currentDay;
   const monday = new Date(date);
   monday.setDate(date.getDate() + mondayOffset);
   
-  // Generar fechas para cada día de la semana (lunes a domingo)
   const newDays = [];
   for (let i = 0; i < 7; i++) {
     const currentDate = new Date(monday);

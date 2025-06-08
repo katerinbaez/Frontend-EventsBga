@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el servicio de favoritos
+ * - Servicios
+ * - Espacios
+ * - Favoritos
+ */
+
 import axios from 'axios';
 import { BACKEND_URL } from '../../../../constants/config';
 

@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el hook del formulario de solicitud de rol
+ * - Hooks
+ * - Roles
+ * - Formulario
+ */
+
 import { useState, useEffect } from 'react';
 import { Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -23,9 +30,8 @@ const useRoleRequestForm = () => {
   const { user, token, isAuthenticated } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedRole, setSelectedRole] = useState('');
-  const [portfolioUrls, setPortfolioUrls] = useState(''); // URLs separadas por comas
+  const [portfolioUrls, setPortfolioUrls] = useState(''); 
 
-  // Estado inicial del formulario
   const initialFormState = {
     justificacion: '',
     trayectoriaArtistica: '',
@@ -58,7 +64,6 @@ const useRoleRequestForm = () => {
     return !Object.values(newErrors).some(error => error);
   };
 
-  // Verificar que el usuario está autenticado al cargar el componente
   useEffect(() => {
     console.log('Estado de autenticación:', { isAuthenticated, user });
     if (!isAuthenticated || !user) {
@@ -111,7 +116,6 @@ const useRoleRequestForm = () => {
     try {
       setIsSubmitting(true);
 
-      // Validar campos
       if (!validateFields()) {
         Alert.alert('Error', 'Por favor completa todos los campos requeridos');
         return;
@@ -123,12 +127,9 @@ const useRoleRequestForm = () => {
         return;
       }
 
-      // Procesar URLs del portafolio
       const portafolioArray = portfolioUrls
         ? portfolioUrls.split(',').map(url => url.trim()).filter(url => url !== '')
         : [];
-
-      // Construir el objeto de solicitud
       const requestData = {
         userId: userId,
         rolSolicitado: selectedRole === 'Manager' ? 'GestorEventos' : 'Artista',
@@ -165,7 +166,6 @@ const useRoleRequestForm = () => {
           }]
         );
 
-        // Limpiar el formulario
         setFormData(initialFormState);
         setSelectedRole('');
         setPortfolioUrls('');

@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el contenedor de opciones del artista
+ * - UI
+ * - Navegación
+ * - Gestión de opciones
+ */
+
 import React from 'react';
 import { View } from 'react-native';
 import ArtistOptionCard from './ArtistOptionCard';

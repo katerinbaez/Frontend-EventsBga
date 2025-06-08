@@ -1,3 +1,12 @@
+/**
+ * Este archivo maneja la lista de espacios culturales
+ * - UI
+ * - Espacios
+ * - Lista
+ * - Carga
+ * - Favoritos
+ */
+
 import React from 'react';
 import { View, Text, FlatList, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

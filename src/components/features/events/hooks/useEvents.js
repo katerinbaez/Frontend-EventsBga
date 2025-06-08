@@ -1,20 +1,20 @@
+/**
+ * Este archivo maneja el hook personalizado para eventos
+ * - Estado
+ * - Carga
+ * - Filtrado
+ */
+
 import { useState, useEffect, useCallback } from 'react';
 import { Alert } from 'react-native';
 import axios from 'axios';
 import { BACKEND_URL } from '../../../../constants/config';
 
-/**
- * Hook personalizado para gestionar la carga y filtrado de eventos
- * @param {Array} categories - Lista de categorías disponibles
- * @param {string} externalSelectedCategory - Categoría seleccionada desde fuera del hook
- */
 const useEvents = (categories, externalSelectedCategory) => {
-  // Estados
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   
-  // Estados para los filtros
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(externalSelectedCategory || '');
   const [startDate, setStartDate] = useState(null);
@@ -22,7 +22,6 @@ const useEvents = (categories, externalSelectedCategory) => {
   const [location, setLocation] = useState('');
   const [filtersApplied, setFiltersApplied] = useState(false);
   
-  // Función para buscar eventos
   const searchEvents = useCallback(async () => {
     setLoading(true);
     try {
@@ -34,7 +33,6 @@ const useEvents = (categories, externalSelectedCategory) => {
         location
       });
       
-      // Construir parámetros de búsqueda
       const params = {};
       
       if (searchQuery) {
@@ -42,7 +40,6 @@ const useEvents = (categories, externalSelectedCategory) => {
       }
       
       if (startDate) {
-        // Usar directamente el formato YYYY-MM-DD sin ajustes adicionales
         const dateString = startDate.toISOString().split('T')[0];
         params.fechaInicio = dateString;
         console.log('Fecha inicio (parámetro):', params.fechaInicio);
@@ -50,7 +47,6 @@ const useEvents = (categories, externalSelectedCategory) => {
       }
       
       if (endDate) {
-        // Usar directamente el formato YYYY-MM-DD sin ajustes adicionales
         const dateString = endDate.toISOString().split('T')[0];
         params.fechaFin = dateString;
         console.log('Fecha fin (parámetro):', params.fechaFin);
@@ -66,7 +62,6 @@ const useEvents = (categories, externalSelectedCategory) => {
       
       let allEvents = [];
       
-      // Verificar la estructura de la respuesta
       if (Array.isArray(response.data)) {
         allEvents = response.data;
         console.log('Eventos encontrados (total):', allEvents.length);
@@ -78,13 +73,10 @@ const useEvents = (categories, externalSelectedCategory) => {
         allEvents = [];
       }
       
-      // Ordenar todos los eventos por fecha (más recientes primero)
       allEvents.sort((a, b) => {
-        // Obtener las fechas de los eventos, considerando diferentes formatos posibles
         const dateA = new Date(a.fechaProgramada || a.fechaInicio || a.fecha || 0);
         const dateB = new Date(b.fechaProgramada || b.fechaInicio || b.fecha || 0);
         
-        // Ordenar de más reciente a más antiguo
         return dateB - dateA;
       });
       
@@ -92,11 +84,9 @@ const useEvents = (categories, externalSelectedCategory) => {
       
       console.log(`Se encontraron ${allEvents.length} eventos en total`);
       
-      // Filtrar por categoría si es necesario (esto podría hacerse en el backend)
       if (selectedCategory) {
         console.log('Filtrando por categoría:', selectedCategory);
         
-        // Buscar el nombre de la categoría seleccionada
         let categoryName = selectedCategory;
         if (categories && Array.isArray(categories) && categories.length > 0) {
           const category = categories.find(cat => 
@@ -110,12 +100,10 @@ const useEvents = (categories, externalSelectedCategory) => {
           }
         }
         
-        // Filtrar eventos por categoría
         const filteredEvents = allEvents.filter(event => {
           const eventCategory = event.categoria || event.category;
           if (!eventCategory) return false;
           
-          // La categoría puede ser un objeto o un string
           if (typeof eventCategory === 'object') {
             return (eventCategory.id === selectedCategory || 
                   eventCategory._id === selectedCategory || 
@@ -141,31 +129,26 @@ const useEvents = (categories, externalSelectedCategory) => {
     }
   }, [searchQuery, selectedCategory, startDate, endDate, location, categories]);
   
-  // Sincronizar la categoría seleccionada externa con el estado interno
   useEffect(() => {
     if (externalSelectedCategory !== undefined && externalSelectedCategory !== selectedCategory) {
       setSelectedCategory(externalSelectedCategory);
     }
   }, [externalSelectedCategory]);
   
-  // Cargar eventos cuando cambian los filtros
   useEffect(() => {
     searchEvents();
   }, [searchEvents]);
   
-  // Función para refrescar eventos
   const refreshEvents = useCallback(() => {
     setRefreshing(true);
     searchEvents();
   }, [searchEvents]);
   
-  // Función para aplicar filtros
   const applyFilters = useCallback(() => {
     setFiltersApplied(true);
     searchEvents();
   }, [searchEvents]);
   
-  // Función para limpiar filtros
   const clearFilters = useCallback(() => {
     setStartDate(null);
     setEndDate(null);

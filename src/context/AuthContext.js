@@ -1,3 +1,12 @@
+/**
+ * Contexto de autenticación para manejar el estado de sesión
+ * - Contexto
+ * - Autenticación
+ * - Estado
+ * - Usuario
+ * - Token
+ */
+
 import React, { createContext, useState, useContext } from 'react';
 
 const AuthContext = createContext();

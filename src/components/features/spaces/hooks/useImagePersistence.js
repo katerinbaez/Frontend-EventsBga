@@ -1,21 +1,18 @@
+/**
+ * Este archivo maneja la persistencia de imágenes
+ * - Hooks
+ * - Espacios
+ * - Imágenes
+ */
+
 import { useState, useEffect } from 'react';
 import { isLocalDevicePath, convertLocalPathToUrl, getSpaceImage } from '../services/ImageService';
 
-/**
- * Hook personalizado para manejar la persistencia de imágenes entre dispositivos
- * @param {Array} spaces - Lista de espacios culturales
- * @returns {Object} - Espacios actualizados con URLs persistentes y funciones auxiliares
- */
 const useImagePersistence = (initialSpaces) => {
   const [spaces, setSpaces] = useState(initialSpaces || []);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processedSpaces, setProcessedSpaces] = useState([]);
 
-  /**
-   * Convierte imágenes locales a URLs persistentes para un espacio cultural
-   * @param {Object} space - Espacio cultural
-   * @returns {Promise<Object>} - Espacio actualizado con URLs persistentes
-   */
   const convertLocalImagesToUrls = async (space) => {
     if (!space || !space.id || (!space.images && !space.imagenes)) return space;
 
@@ -23,14 +20,12 @@ const useImagePersistence = (initialSpaces) => {
       let hasChanges = false;
       let updatedSpace = { ...space };
 
-      // Procesar imágenes en el campo 'images'
       if (space.images && space.images.length > 0) {
         const updatedImages = [];
         
         for (let i = 0; i < space.images.length; i++) {
           const imagePath = space.images[i];
           if (isLocalDevicePath(imagePath)) {
-            // Si es una ruta local, convertirla a URL persistente
             const persistentUrl = await getSpaceImage(space.id, imagePath, i);
             if (persistentUrl) {
               updatedImages.push(persistentUrl);
@@ -49,7 +44,6 @@ const useImagePersistence = (initialSpaces) => {
         }
       }
 
-      // Procesar imágenes en el campo 'imagenes'
       if (space.imagenes && space.imagenes.length > 0) {
         const updatedImagenes = [];
         let imagenesHasChanges = false;
@@ -57,7 +51,6 @@ const useImagePersistence = (initialSpaces) => {
         for (let i = 0; i < space.imagenes.length; i++) {
           const imagePath = space.imagenes[i];
           if (isLocalDevicePath(imagePath)) {
-            // Si es una ruta local, convertirla a URL persistente
             const persistentUrl = await getSpaceImage(space.id, imagePath, i + 100); // Offset para diferenciar
             if (persistentUrl) {
               updatedImagenes.push(persistentUrl);
@@ -84,9 +77,6 @@ const useImagePersistence = (initialSpaces) => {
     }
   };
 
-  /**
-   * Procesa todos los espacios para convertir imágenes locales a URLs persistentes
-   */
   const processAllSpaces = async () => {
     if (!spaces || spaces.length === 0 || isProcessing) return;
     
@@ -96,18 +86,15 @@ const useImagePersistence = (initialSpaces) => {
       const updatedSpaces = [];
       let hasChanges = false;
 
-      // Procesar cada espacio
       for (let i = 0; i < spaces.length; i++) {
         const updatedSpace = await convertLocalImagesToUrls(spaces[i]);
         updatedSpaces.push(updatedSpace);
         
-        // Verificar si hubo cambios
         if (updatedSpace !== spaces[i]) {
           hasChanges = true;
         }
       }
 
-      // Actualizar el estado solo si hubo cambios
       if (hasChanges) {
         setProcessedSpaces(updatedSpaces);
       } else {
@@ -121,14 +108,12 @@ const useImagePersistence = (initialSpaces) => {
     }
   };
 
-  // Procesar espacios cuando cambian
   useEffect(() => {
     if (initialSpaces && initialSpaces.length > 0) {
       setSpaces(initialSpaces);
     }
   }, [initialSpaces]);
 
-  // Procesar espacios cuando se actualiza el estado
   useEffect(() => {
     if (spaces.length > 0) {
       processAllSpaces();

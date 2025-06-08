@@ -1,3 +1,11 @@
+/**
+ * Este archivo maneja el administrador de horarios
+ * - UI
+ * - Espacios
+ * - Horarios
+ * - Gestión
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

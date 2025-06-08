@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja la tarjeta de artista
+ * - UI
+ * - Animaciones
+ * - Interacción
+ */
+
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, Animated } from 'react-native';
 import { styles } from '../../../../styles/HomeStyles';

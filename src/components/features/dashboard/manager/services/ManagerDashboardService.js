@@ -1,8 +1,14 @@
+/**
+ * Este archivo maneja el servicio del dashboard del gestor
+ * - Perfil
+ * - Verificación
+ * - API
+ */
+
 import axios from 'axios';
 import { BACKEND_URL } from '../../../../../constants/config';
 
 const ManagerDashboardService = {
-  // Verificar si el usuario tiene un perfil de gestor
   checkManagerProfile: async (userId) => {
     try {
       const response = await axios.get(`${BACKEND_URL}/api/managers/profile/${userId}`);
@@ -12,7 +18,6 @@ const ManagerDashboardService = {
       return { success: false, error: 'No se encontró el perfil' };
     } catch (error) {
       if (error.response?.status === 404) {
-        // No existe perfil
         return { success: false, error: 'not_found' };
       } else {
         console.error('Error al verificar perfil:', error);

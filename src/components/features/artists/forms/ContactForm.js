@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el formulario de contacto
+ * - Campos de texto
+ * - Estilos
+ * - Manejo de cambios
+ */
+
 import React from 'react';
 import { View, Text, TextInput } from 'react-native';
 import { styles } from '../../../../styles/ArtistProfileStyles';

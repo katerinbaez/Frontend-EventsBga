@@ -1,3 +1,13 @@
+/**
+ * Configuración de Jest para pruebas
+ * - Jest
+ * - Pruebas
+ * - Transformación
+ * - Cobertura
+ * - Reportes
+ * - Módulos
+ */
+
 module.exports = {
   preset: 'jest-expo',
   transformIgnorePatterns: [

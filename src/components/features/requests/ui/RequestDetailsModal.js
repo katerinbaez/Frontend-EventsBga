@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el modal de detalles de solicitud
+ * - UI
+ * - Roles
+ * - Modal
+ */
+
 import React from 'react';
 import { View, Text, Modal, TouchableOpacity, ScrollView } from 'react-native';
 import { styles } from '../../../../styles/ViewsRoleRequestStyles';

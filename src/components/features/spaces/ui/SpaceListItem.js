@@ -1,9 +1,17 @@
+/**
+ * Este archivo maneja el ítem de la lista del espacio
+ * - UI
+ * - Espacios
+ * - Ítem
+ * - Lista
+ * - Tarjeta
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 const SpaceListItem = ({ space, onPress, distance, styles }) => {
-  // Verificar si hay una imagen disponible
   const hasImage = space.imagen && space.imagen.trim() !== '';
   
   return (

@@ -3,8 +3,6 @@
 
 import EventCalendar from '../components/features/calendar/views/EventCalendar';
 
-// Componente conector que proporciona la estructura básica para la pantalla de calendario
-// Mantiene el estilo visual consistente con el diseño original
 import React from 'react';
 import { StyleSheet, View, Text, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

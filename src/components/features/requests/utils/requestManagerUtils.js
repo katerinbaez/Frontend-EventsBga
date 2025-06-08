@@ -1,7 +1,12 @@
-// Funciones de utilidad para las solicitudes de eventos (gestor)
+/**
+ * Este archivo maneja las utilidades para el gestor de solicitudes
+ * - Utilidades
+ * - Gestor
+ * - Formateo
+ */
+
 import { Linking, Alert } from 'react-native';
 
-// Función para obtener el color según el estado de la solicitud
 export const getStatusColor = (estado) => {
   if (!estado) return '#999999';
 
@@ -17,7 +22,6 @@ export const getStatusColor = (estado) => {
   }
 };
 
-// Función para obtener el icono según el estado de la solicitud
 export const getStatusIcon = (estado) => {
   if (!estado) return 'help-circle-outline';
 
@@ -33,7 +37,6 @@ export const getStatusIcon = (estado) => {
   }
 };
 
-// Función para formatear la fecha en español (29 de abril de 2025)
 export const formatDate = (dateString) => {
   if (!dateString) return '29 de abril de 2025';
 
@@ -99,7 +102,6 @@ export const getArtistName = (artistId) => {
   return 'Artista';
 };
 
-// Función para abrir enlaces
 export const openLink = (url) => {
   if (!url) return;
 
@@ -116,7 +118,6 @@ export const openLink = (url) => {
   });
 };
 
-// Función para enviar email
 export const sendEmail = (email) => {
   if (!email) return;
 
@@ -126,7 +127,6 @@ export const sendEmail = (email) => {
   });
 };
 
-// Función para llamar por teléfono
 export const callPhone = (phone) => {
   if (!phone) return;
 

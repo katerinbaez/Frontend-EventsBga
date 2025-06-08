@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el registro de artistas
+ * - Formulario
+ * - Autenticación
+ * - API
+ */
+
 import React, { useState } from 'react';
 import {
   View,

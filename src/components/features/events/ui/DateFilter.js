@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el filtro de fechas
+ * - UI
+ * - Calendario
+ * - Selección
+ */
+
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Calendar } from 'react-native-calendars';
@@ -5,9 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { formatDate } from '../utils/dateUtilsSearch';
 import { styles } from '../../../../styles/EventSearchStyles';
 
-/**
- * Componente para seleccionar fechas de inicio y fin
- */
+
 const DateFilter = ({ 
   startDate, 
   endDate, 
@@ -17,13 +22,11 @@ const DateFilter = ({
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectingStartDate, setSelectingStartDate] = useState(true);
   
-  // Formatear las fechas para el calendario
   const formatCalendarDate = (date) => {
     if (!date) return '';
-    return date.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+    return date.toISOString().split('T')[0];
   };
   
-  // Crear objeto de marcas para el calendario
   const getMarkedDates = () => {
     const markedDates = {};
     
@@ -46,13 +49,10 @@ const DateFilter = ({
     return markedDates;
   };
   
-  // Manejar la selección de fecha en el calendario
   const handleDateSelect = (day) => {
     console.log('Día seleccionado (calendario):', day.dateString);
     
-    // Crear la fecha directamente del string YYYY-MM-DD sin conversión de zona horaria
     const [year, month, dayOfMonth] = day.dateString.split('-').map(Number);
-    // Crear fecha con año, mes (0-11), día, y hora fija (mediodía UTC)
     const selectedDate = new Date(Date.UTC(year, month - 1, dayOfMonth, 12, 0, 0));
     
     if (selectingStartDate) {
@@ -83,7 +83,6 @@ const DateFilter = ({
 
   return (
     <View style={styles.dateFilterContainer}>
-      {/* Mostrar fechas seleccionadas */}
       <View style={styles.dateDisplay}>
         <View style={styles.dateItem}>
           <Text style={styles.dateLabel}>Desde:</Text>
@@ -118,7 +117,6 @@ const DateFilter = ({
         </View>
       </View>
       
-      {/* Calendario */}
       {showCalendar && (
         <View style={styles.calendarContainer}>
           <View style={styles.calendarHeader}>

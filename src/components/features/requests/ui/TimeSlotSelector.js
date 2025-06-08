@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el selector de slots de tiempo
+ * - UI
+ * - Eventos
+ * - Selector
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,7 +17,6 @@ const TimeSlotSelector = ({
   loadingSlots,
   calculateTotalDuration
 }) => {
-  // Renderizar un slot de tiempo
   const renderTimeSlot = (slot) => {
     const isSelected = selectedTimeSlots.some(s => s.hour === slot.hour);
     
@@ -43,10 +49,8 @@ const TimeSlotSelector = ({
     );
   };
   
-  // Calcular la duración total seleccionada
   const totalDuration = calculateTotalDuration();
   
-  // Obtener el nombre del día de la semana a partir de la fecha
   const getDayName = (date) => {
     const days = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
     return days[date.getDay()];

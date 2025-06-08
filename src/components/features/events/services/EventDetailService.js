@@ -1,14 +1,15 @@
+/**
+ * Este archivo maneja el servicio de detalles del evento
+ * - API
+ * - Carga
+ * - Datos
+ */
+
 import axios from 'axios';
 import { Alert, Share } from 'react-native';
 import { BACKEND_URL } from '../../../../constants/config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-/**
- * Carga los detalles de un evento específico
- * @param {string} eventId - ID del evento a cargar
- * @param {string} eventType - Tipo de evento ('regular' o 'request')
- * @returns {Promise<Object>} - Detalles del evento
- */
 export const loadEventDetails = async (eventId, eventType) => {
   try {
     if (!eventId) {
@@ -17,7 +18,6 @@ export const loadEventDetails = async (eventId, eventType) => {
 
     console.log(`Cargando detalles del evento ${eventId} (tipo: ${eventType})`);
     
-    // Determinar la URL del endpoint según el tipo de evento
     const endpoint = eventType === 'request' 
       ? `${BACKEND_URL}/api/event-requests/${eventId}`
       : `${BACKEND_URL}/api/events/${eventId}`;
@@ -26,12 +26,10 @@ export const loadEventDetails = async (eventId, eventType) => {
     let eventData = null;
     
     if (eventType === 'request') {
-      // Para solicitudes de eventos, el evento está en response.data.request
       if (response.data && response.data.success && response.data.request) {
         eventData = response.data.request;
       }
     } else {
-      // Para eventos regulares, el evento está en response.data.event
       if (response.data && response.data.success && response.data.event) {
         eventData = response.data.event;
       }
@@ -41,8 +39,6 @@ export const loadEventDetails = async (eventId, eventType) => {
       throw new Error('No se pudo cargar la información del evento');
     }
     
-    // Si el evento tiene un espacioId o spaceId pero no tiene la información completa del espacio,
-    // intentamos cargar los detalles del espacio
     if ((eventData.espacioId || eventData.spaceId) && !eventData.space?.nombre) {
       try {
         const spaceId = eventData.espacioId || eventData.spaceId;
@@ -56,11 +52,9 @@ export const loadEventDetails = async (eventId, eventType) => {
         }
       } catch (spaceError) {
         console.error('Error al cargar detalles del espacio:', spaceError);
-        // No lanzamos error aquí, solo registramos el problema
       }
     }
     
-    // Asegurarnos de que la ubicación esté disponible
     if (eventData.space?.nombre && !eventData.ubicacion) {
       eventData.ubicacion = eventData.space.nombre;
     }
@@ -73,44 +67,29 @@ export const loadEventDetails = async (eventId, eventType) => {
   }
 };
 
-/**
- * Verifica si un evento ha expirado (1 hora después de la hora de inicio)
- * @param {Object} event - Evento a verificar
- * @returns {boolean} - true si el evento ha expirado
- */
+
 export const isEventExpired = (event) => {
   if (!event) return false;
   
   const currentDate = new Date();
   
-  // Obtener la fecha del evento (puede estar en diferentes propiedades)
   const eventDate = event.fechaInicio || event.fechaProgramada || event.fecha;
   
   if (eventDate) {
     const eventDateTime = new Date(eventDate);
     
-    // Calcular la hora de fin (1 hora después del inicio)
     const endDateTime = new Date(eventDateTime);
     endDateTime.setHours(endDateTime.getHours() + 1);
     
-    // El evento ha expirado si la hora actual es mayor que la hora de inicio + 1 hora
     return currentDate > endDateTime;
   }
   
-  // Si hay fecha de finalización específica, la usamos
   if (event.fechaFin) {
     return new Date(event.fechaFin) < currentDate;
   }
-  
-  // Si no hay ninguna fecha, asumimos que no ha expirado
   return false;
 };
 
-/**
- * Formatea una fecha en formato legible
- * @param {string} dateString - Fecha en formato ISO
- * @returns {string} - Fecha formateada
- */
 export const formatDate = (dateString) => {
   if (!dateString) return 'Fecha no disponible';
   
@@ -130,10 +109,6 @@ export const formatDate = (dateString) => {
   }
 };
 
-/**
- * Comparte un evento a través de las opciones de compartir del dispositivo
- * @param {Object} event - Evento a compartir
- */
 export const shareEvent = async (event) => {
   try {
     if (!event) return;
@@ -153,13 +128,6 @@ export const shareEvent = async (event) => {
     Alert.alert('Error', 'No se pudo compartir el evento');
   }
 };
-
-/**
- * Guarda o elimina un evento de favoritos
- * @param {Object} event - Evento a guardar/eliminar
- * @param {boolean} isFavorite - Si el evento ya es favorito
- * @returns {Promise<boolean>} - Nuevo estado de favorito
- */
 export const toggleFavorite = async (event, isFavorite) => {
   try {
     if (!event) {
@@ -170,7 +138,6 @@ export const toggleFavorite = async (event, isFavorite) => {
     
     console.log(`toggleFavorite: ${isFavorite ? 'Eliminando de' : 'Agregando a'} favoritos el evento:`, event.id);
     
-    // Obtener favoritos actuales
     const favoritesJson = await AsyncStorage.getItem('favoriteEvents');
     let favorites = [];
     
@@ -184,20 +151,17 @@ export const toggleFavorite = async (event, isFavorite) => {
       }
     }
     
-    // Asegurarse de que favorites sea un array
     if (!Array.isArray(favorites)) {
       console.error('toggleFavorite: favorites no es un array, reiniciando');
       favorites = [];
     }
     
     if (isFavorite) {
-      // Eliminar de favoritos
       const newFavorites = favorites.filter(fav => String(fav.id) !== String(event.id));
       console.log(`toggleFavorite: Eliminado. Nuevos favoritos: ${newFavorites.length}`);
       await AsyncStorage.setItem('favoriteEvents', JSON.stringify(newFavorites));
       return false;
     } else {
-      // Agregar a favoritos
       const eventToSave = {
         id: event.id,
         titulo: event.titulo || event.nombre || 'Evento sin título',
@@ -220,11 +184,6 @@ export const toggleFavorite = async (event, isFavorite) => {
   }
 };
 
-/**
- * Verifica si un evento está en favoritos
- * @param {string} eventId - ID del evento
- * @returns {Promise<boolean>} - true si el evento es favorito
- */
 export const checkIsFavorite = async (eventId) => {
   try {
     if (!eventId) return false;
@@ -239,13 +198,6 @@ export const checkIsFavorite = async (eventId) => {
     return false;
   }
 };
-
-/**
- * Registra asistencia a un evento
- * @param {string} eventId - ID del evento
- * @param {Object} user - Usuario actual
- * @returns {Promise<Object>} - Resultado de la operación
- */
 export const registerAttendance = async (eventId, user) => {
   try {
     if (!eventId || !user) {
@@ -272,12 +224,6 @@ export const registerAttendance = async (eventId, user) => {
   }
 };
 
-/**
- * Cancela asistencia a un evento
- * @param {string} eventId - ID del evento
- * @param {Object} user - Usuario actual
- * @returns {Promise<Object>} - Resultado de la operación
- */
 export const cancelAttendance = async (eventId, user) => {
   try {
     if (!eventId || !user) {
@@ -302,16 +248,8 @@ export const cancelAttendance = async (eventId, user) => {
   }
 };
 
-/**
- * Verifica si un usuario está asistiendo a un evento
- * @param {string} eventId - ID del evento
- * @param {Object} user - Usuario actual
- * @returns {Promise<boolean>} - true si el usuario está asistiendo
- */
 export const checkAttendance = async (eventId, user) => {
-  // Evitar que cualquier error se propague
   try {
-    // Validaciones básicas
     if (!eventId || !user) {
       console.log('checkAttendance: No hay eventId o user');
       return false;
@@ -320,7 +258,6 @@ export const checkAttendance = async (eventId, user) => {
     const userId = user.sub || user.id;
     console.log(`checkAttendance: Verificando asistencia para evento ${eventId} y usuario ${userId}`);
     
-    // Intentar usar AsyncStorage primero como alternativa más segura
     try {
       const attendancesJson = await AsyncStorage.getItem('eventAttendances');
       if (attendancesJson) {
@@ -334,36 +271,28 @@ export const checkAttendance = async (eventId, user) => {
       }
     } catch (storageError) {
       console.log('No se pudo verificar asistencia local:', storageError);
-      // Continuar con el intento de API
     }
     
-    // Intentar con la API, pero con un timeout para evitar bloqueos
     try {
-      // Crear una promesa con timeout para evitar esperas largas
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error('Timeout al verificar asistencia')), 3000);
       });
       
-      // Crear la promesa de la petición API
       const apiPromise = axios.get(`${BACKEND_URL}/api/event-attendances/confirmed-users/${eventId}`);
       
-      // Usar Promise.race para tomar la que se resuelva primero
       const response = await Promise.race([apiPromise, timeoutPromise]);
       
       if (response.data && response.data.success && response.data.attendances) {
         console.log(`checkAttendance: Asistentes encontrados: ${response.data.attendances.length}`);
         
-        // Verificar si el usuario está en la lista de asistentes
         const isAttending = response.data.attendances.some(attendance => 
           String(attendance.userId) === String(userId)
         );
         
-        // Guardar en AsyncStorage para futuras referencias
         try {
           const attendancesJson = await AsyncStorage.getItem('eventAttendances');
           let attendances = attendancesJson ? JSON.parse(attendancesJson) : [];
           
-          // Si está asistiendo y no está en la lista local, agregarlo
           if (isAttending && !attendances.some(att => 
             String(att.eventId) === String(eventId) && 
             String(att.userId) === String(userId)
@@ -382,12 +311,10 @@ export const checkAttendance = async (eventId, user) => {
       console.log('checkAttendance: No hay datos de asistencia en la respuesta');
       return false;
     } catch (requestError) {
-      // Capturar cualquier error de la API y simplemente devolver false
       console.error('Error al verificar asistencia con API:', requestError.message);
       return false;
     }
   } catch (error) {
-    // Capturar cualquier error inesperado
     console.error('Error general al verificar asistencia:', error);
     return false;
   }

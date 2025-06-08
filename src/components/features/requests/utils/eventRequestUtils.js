@@ -1,10 +1,15 @@
-// Función auxiliar para obtener el nombre del día a partir de su ID
+/**
+ * Este archivo maneja las utilidades para solicitudes de eventos
+ * - Utilidades
+ * - Eventos
+ * - Formateo
+ */
+
 export const getDayName = (dayId) => {
     const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
     return days[dayId] || 'Desconocido';
   };
   
-  // Función para convertir el valor de la categoría a un texto más legible
   export const getCategoryLabel = (category) => {
     const categoryLabels = {
       'musica': 'Música',
@@ -19,7 +24,6 @@ export const getDayName = (dayId) => {
     return categoryLabels[category] || (category ? category.charAt(0).toUpperCase() + category.slice(1) : 'No especificada');
   };
   
-  // Función para calcular la duración del evento
   export const calculateEventDuration = (startTime, endTime) => {
     const startHour = startTime.getHours();
     const startMinutes = startTime.getMinutes();
@@ -32,7 +36,6 @@ export const getDayName = (dayId) => {
     return `${durationHours} horas y ${durationMinutes} minutos`;
   };
   
-  // Función para formatear la fecha
   export const formatDate = (date) => {
     if (!date) return '';
     

@@ -1,4 +1,10 @@
-// c:\Users\123\EventsBga\components\features\requests\views\RoleRequestFormView.js
+/**
+ * Este archivo maneja el formulario de solicitud de rol
+ * - UI
+ * - Roles
+ * - Formulario
+ */
+
 import React from 'react';
 import { View, Text, TextInput, ScrollView } from 'react-native';
 import styles from '../../../../styles/RoleRequestFormStyles';

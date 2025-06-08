@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el ítem de solicitud de gestor
+ * - UI
+ * - Solicitudes
+ * - Ítem
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -5,7 +12,6 @@ import { styles } from '../../../../styles/RequestModalStyles';
 import { getStatusColor, getStatusIcon, formatDate } from '../utils/requestManagerUtils';
 
 const ManagerRequestItem = ({ request, onPress }) => {
-  // Normalizar los datos de la solicitud para manejar diferentes formatos
   const normalizedRequest = {
     id: request.id,
     title: request.title || request.eventName || request.titulo || 'Sin título',
@@ -20,7 +26,7 @@ const ManagerRequestItem = ({ request, onPress }) => {
     category: request.category || request.categoria || 'No especificada'
   };
 
-  // Formatear fechas para mostrar
+  
   const formattedDate = formatDate(normalizedRequest.date);
   const formattedCreatedDate = formatDate(normalizedRequest.createdAt);
 

@@ -1,12 +1,17 @@
+/**
+ * Este archivo maneja el modal de agregar proyecto
+ * - Formulario
+ * - Selección de imagen
+ * - Carga a Cloudinary
+ */
+
 import React, { useState } from 'react';
 import { View, Text, Modal, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView, Image, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-// Importación absoluta para evitar problemas de rutas relativas
 import CloudinaryService from '../../../features/spaces/services/CloudinaryService';
 import { styles } from '../../../../styles/ArtistPortfolioStyles';
 
-// Colores de acento del tema importados desde el archivo de estilos
 const { ACCENT_COLOR, LIGHT_TEXT } = styles;
 
 const AddProjectModal = ({ 
@@ -37,31 +42,26 @@ const AddProjectModal = ({
       });
       
       if (!result.canceled && result.assets && result.assets.length > 0) {
-        // Obtener las URIs de las imágenes seleccionadas
         const selectedImages = result.assets.map(asset => asset.uri);
         
-        // Mostrar indicador de carga
         setIsLoading(true);
         
         try {
-          // Subir imágenes a Cloudinary
           console.warn('Subiendo imágenes a Cloudinary...');
           const cloudinaryUrls = await CloudinaryService.uploadMultipleImages(selectedImages);
           console.warn('Imágenes subidas a Cloudinary:', cloudinaryUrls);
           
-          // Actualizar el estado con las URLs de Cloudinary
           setNewItem({
             ...newItem,
-            images: [...newItem.images, ...cloudinaryUrls].slice(0, 5) // Limitar a 5 imágenes
+            images: [...newItem.images, ...cloudinaryUrls].slice(0, 5)
           });
           
           Alert.alert('Éxito', 'Imágenes subidas correctamente');
         } catch (cloudinaryError) {
           console.error('Error subiendo a Cloudinary:', cloudinaryError);
-          // Si falla, usar las URIs locales
           setNewItem({
             ...newItem,
-            images: [...newItem.images, ...selectedImages].slice(0, 5) // Limitar a 5 imágenes
+            images: [...newItem.images, ...selectedImages].slice(0, 5)
           });
           Alert.alert('Advertencia', 'No se pudieron subir las imágenes a la nube. Se usarán las imágenes locales temporalmente.');
         } finally {
@@ -75,7 +75,6 @@ const AddProjectModal = ({
   };
 
   const handleRemoveImage = (indexToRemove) => {
-    // Filtrar el array de imágenes para eliminar la imagen en el índice especificado
     const updatedImages = newItem.images.filter((_, index) => index !== indexToRemove);
     setNewItem({ ...newItem, images: updatedImages });
   };

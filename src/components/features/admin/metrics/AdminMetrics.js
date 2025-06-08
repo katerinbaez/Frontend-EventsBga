@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja las métricas del administrador
+ * - Muestra estadísticas de la plataforma
+ * - Visualiza datos en gráficos
+ * - Carga datos del backend
+ */
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, Dimensions } from 'react-native';
 import { LineChart, BarChart, PieChart } from 'react-native-chart-kit';
@@ -20,7 +27,6 @@ const AdminMetrics = () => {
 
   const loadMetrics = async () => {
     try {
-      // Valores predeterminados para las métricas
       let generalData = { 
         totalUsers: 0, 
         totalEvents: 0, 
@@ -34,10 +40,9 @@ const AdminMetrics = () => {
       let usersData = {};
       let categoriesData = { distribution: [] };
       let spacesData = { topSpaces: { labels: [], datasets: [{ data: [] }] } };
-      let requestCategoriesData = []; // Para almacenar las categorías de EventRequest
+      let requestCategoriesData = [];
       
       try {
-        // Obtener métricas generales
         const response = await fetch(`${BACKEND_URL}/api/metrics/general`);
         const data = await response.json();
         
@@ -53,7 +58,6 @@ const AdminMetrics = () => {
           console.error('Error en la respuesta de métricas generales:', data?.error || 'Respuesta inválida');
         }
         
-        // Obtener otras métricas
         const [events, users, categories, spaces] = await Promise.all([
           fetch(`${BACKEND_URL}/api/metrics/events`).then(res => res.json()).catch(() => eventsData),
           fetch(`${BACKEND_URL}/api/metrics/users`).then(res => res.json()).catch(() => usersData),
@@ -61,19 +65,15 @@ const AdminMetrics = () => {
           fetch(`${BACKEND_URL}/api/metrics/spaces`).then(res => res.json()).catch(() => spacesData)
         ]);
         
-        // Actualizar con datos reales si están disponibles
         if (events && !events.error) eventsData = events;
         if (users && !users.error) usersData = users;
         if (categories && !categories.error) categoriesData = categories;
         if (spaces && !spaces.error) spacesData = spaces;
         
-        // Las categorías de Events y EventRequests ya se obtienen combinadas desde el backend
-        // gracias al parámetro includeEventRequests=true en la solicitud inicial
       } catch (error) {
         console.error('Error al cargar métricas:', error.message);
       }
       
-      // Asegurar que todos los datos de gráficos tengan el formato correcto
       const formattedMetrics = {
         general: generalData,
         eventMetrics: {
@@ -109,7 +109,6 @@ const AdminMetrics = () => {
 
   const screenWidth = Dimensions.get('window').width;
 
-  // Configuración común para todos los gráficos
   const chartConfig = {
     backgroundColor: '#ffffff',
     backgroundGradientFrom: '#ffffff',
@@ -129,7 +128,6 @@ const AdminMetrics = () => {
 
   return (
     <ScrollView style={styles.container}>
-      {/* Resumen General */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Resumen General</Text>
         <View style={styles.generalStatsGrid}>
@@ -153,7 +151,6 @@ const AdminMetrics = () => {
         </View>
       </View>
 
-      {/* Métricas Detalladas */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Métricas Detalladas</Text>
         <View style={styles.detailedStatsGrid}>
@@ -175,7 +172,6 @@ const AdminMetrics = () => {
         </View>
       </View>
 
-      {/* Tendencia de Eventos */}
       {metrics.eventMetrics?.trend?.labels && metrics.eventMetrics?.trend?.datasets && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Tendencia de Eventos</Text>
@@ -218,7 +214,6 @@ const AdminMetrics = () => {
         </View>
       )}
 
-      {/* Distribución por Categoría */}
       {metrics.categoryMetrics?.distribution?.length > 0 && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Eventos por Categoría</Text>
@@ -235,34 +230,29 @@ const AdminMetrics = () => {
         </View>
       )}
 
-      {/* Espacios más Activos */}
       {metrics.spaceMetrics?.topSpaces?.datasets?.[0]?.data?.length > 0 && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Espacios más Activos</Text>
           <View style={styles.chartWrapper}>
-            {/* Crear barras personalizadas con colores diferentes */}
             <View style={styles.customBarChart}>
               {metrics.spaceMetrics.topSpaces.datasets[0].data.map((value, index) => {
-                // Definir la paleta de colores (igual que en la leyenda)
                 const colorPalette = [
-                  '#FF3A5E', // Rojo principal
-                  '#007AFF', // Azul
-                  '#4CD964', // Verde
-                  '#FF9500', // Naranja
-                  '#5856D6', // Púrpura
-                  '#FF2D55', // Rosa
-                  '#5AC8FA', // Azul claro
-                  '#FFCC00', // Amarillo
-                  '#34C759', // Verde claro
-                  '#AF52DE'  // Violeta
+                  '#FF3A5E',
+                  '#007AFF',
+                  '#4CD964',
+                  '#FF9500',
+                  '#5856D6',
+                  '#FF2D55',
+                  '#5AC8FA',
+                  '#FFCC00',
+                  '#34C759',
+                  '#AF52DE'
                 ];
                 
-                // Obtener el color correspondiente
                 const barColor = colorPalette[index % colorPalette.length];
                 
-                // Calcular la altura de la barra en proporción al valor máximo
                 const maxValue = Math.max(...metrics.spaceMetrics.topSpaces.datasets[0].data);
-                const barHeight = (value / maxValue) * 150; // 150px es la altura máxima de la barra
+                const barHeight = (value / maxValue) * 150;
                 
                 return (
                   <View key={`bar-${index}`} style={styles.customBarContainer}>
@@ -278,21 +268,19 @@ const AdminMetrics = () => {
               })}
             </View>
             
-            {/* Leyenda personalizada con nombres y colores */}
             <View style={styles.customLegendContainer}>
               {metrics.spaceMetrics.topSpaces.labels.map((label, index) => {
-                // Definir la paleta de colores
                 const colorPalette = [
-                  '#FF3A5E', // Rojo principal
-                  '#007AFF', // Azul
-                  '#4CD964', // Verde
-                  '#FF9500', // Naranja
-                  '#5856D6', // Púrpura
-                  '#FF2D55', // Rosa
-                  '#5AC8FA', // Azul claro
-                  '#FFCC00', // Amarillo
-                  '#34C759', // Verde claro
-                  '#AF52DE'  // Violeta
+                  '#FF3A5E',
+                  '#007AFF',
+                  '#4CD964',
+                  '#FF9500',
+                  '#5856D6',
+                  '#FF2D55',
+                  '#5AC8FA',
+                  '#FFCC00',
+                  '#34C759',
+                  '#AF52DE'
                 ];
                 const barColor = colorPalette[index % colorPalette.length];
                 
@@ -312,7 +300,6 @@ const AdminMetrics = () => {
         </View>
       )}
 
-      {/* Métricas de Usuarios */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Métricas de Usuarios</Text>
         <View style={styles.userMetrics}>
@@ -339,7 +326,6 @@ const AdminMetrics = () => {
         </View>
       </View>
 
-      {/* Impacto Cultural */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Impacto Cultural</Text>
         <View style={styles.impactMetrics}>

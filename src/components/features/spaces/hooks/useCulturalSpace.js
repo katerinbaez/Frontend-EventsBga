@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el hook de espacio cultural
+ * - Hooks
+ * - Espacios
+ * - Gestor
+ */
+
 import { useState, useEffect } from 'react';
 import { Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
@@ -9,9 +16,7 @@ import CloudinaryService from '../services/CloudinaryService';
 const useCulturalSpace = (navigation, route) => {
   const { user } = useAuth();
   
-  // Función para asegurar que disponibilidad siempre tenga un formato válido
   const getDisponibilidadValida = (disponibilidadData) => {
-    // Si disponibilidad no existe o no es un array, devolver estructura predeterminada
     if (!disponibilidadData || !Array.isArray(disponibilidadData) || disponibilidadData.length === 0) {
       return [
         { dayOfWeek: 'Lunes', isOpen: true, timeSlots: [{ start: '08:00', end: '18:00' }] },
@@ -24,7 +29,6 @@ const useCulturalSpace = (navigation, route) => {
       ];
     }
     
-    // Si disponibilidad existe pero algún día no tiene timeSlots válidos, corregirlo
     return disponibilidadData.map(dia => {
       if (!dia.timeSlots || !Array.isArray(dia.timeSlots) || dia.timeSlots.length === 0) {
         return {
@@ -66,12 +70,10 @@ const useCulturalSpace = (navigation, route) => {
   const [nuevaInstalacion, setNuevaInstalacion] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Generar horas disponibles para seleccionar (de 00:00 a 24:00 en incrementos de 30 min)
   const availableTimes = [];
   for (let hour = 0; hour <= 24; hour++) {
     const hourFormatted = hour < 10 ? `0${hour}` : `${hour}`;
     availableTimes.push(`${hourFormatted}:00`);
-    // Sólo agregar minutos :30 si no es la hora 24
     if (hour < 24) {
       availableTimes.push(`${hourFormatted}:30`);
     }
@@ -81,7 +83,6 @@ const useCulturalSpace = (navigation, route) => {
     if (route.params?.spaceId) {
       loadSpaceData();
     } else if (route.params?.userId) {
-      // Si se proporciona userId, cargar datos del perfil del gestor
       loadManagerProfile();
     }
   }, [route.params?.spaceId, route.params?.userId]);
@@ -89,13 +90,11 @@ const useCulturalSpace = (navigation, route) => {
   const loadManagerProfile = async () => {
     try {
       setLoading(true);
-      // Intentar cargar datos del perfil del gestor
       const managerData = await ManagerProfileService.getManagerProfile(route.params.userId);
       
       if (managerData) {
-        console.log('Datos del gestor cargados:', managerData); // Log para depuración
+        console.log('Datos del gestor cargados:', managerData); 
         
-        // Asegurarse de que las instalaciones y las imágenes sean arrays
         const instalaciones = Array.isArray(managerData.instalaciones) ? 
           managerData.instalaciones : 
           (managerData.instalaciones ? [managerData.instalaciones] : []);
@@ -104,16 +103,12 @@ const useCulturalSpace = (navigation, route) => {
           managerData.imagenes : 
           (managerData.imagenes ? [managerData.imagenes] : []);
         
-        // También intentar cargar datos del espacio cultural si existe
         try {
-          // Buscar un espacio con el mismo managerId
           const existingSpace = await CulturalSpaceService.findSpaceByManagerId(route.params.userId);
           
           if (existingSpace) {
             console.log('Espacio cultural encontrado en la tabla CulturalSpaces:', existingSpace);
             
-            // Combinar datos del perfil del gestor y del espacio cultural
-            // Asegurarse de que los datos de contacto se carguen correctamente
             const contactoData = managerData.contacto || { email: '', telefono: '' };
             
             console.log('Datos de contacto del gestor:', contactoData);
@@ -128,26 +123,21 @@ const useCulturalSpace = (navigation, route) => {
               images: existingSpace.images || imagenes,
               disponibilidad: getDisponibilidadValida(existingSpace.disponibilidad || managerData.disponibilidad || prevState.disponibilidad),
               managerId: route.params.userId,
-              // Priorizar datos de contacto del gestor sobre los del espacio cultural
               contacto: {
                 email: contactoData.email || (existingSpace.contacto ? existingSpace.contacto.email : ''),
                 telefono: contactoData.telefono || (existingSpace.contacto ? existingSpace.contacto.telefono : '')
               },
-              // Cargar redes sociales del espacio cultural
               redesSociales: existingSpace.redesSociales || prevState.redesSociales
             }));
             
-            // Activar modo visualización inicialmente
             setIsEditing(false);
             return;
           }
         } catch (spaceError) {
           console.error('Error al buscar espacio cultural:', spaceError);
-          // Continuar con los datos del perfil del gestor si no se puede cargar el espacio cultural
+          
         }
         
-        // Si no se encuentra un espacio cultural, usar solo los datos del perfil del gestor
-        // Asegurarse de que los datos de contacto se carguen correctamente
         const contactoData = managerData.contacto || { email: '', telefono: '' };
         
         console.log('Datos de contacto del gestor (sin espacio cultural):', contactoData);
@@ -162,16 +152,13 @@ const useCulturalSpace = (navigation, route) => {
           images: imagenes,
           disponibilidad: getDisponibilidadValida(managerData.disponibilidad || prevState.disponibilidad),
           managerId: route.params.userId,
-          // Cargar datos de contacto del gestor
           contacto: {
             email: contactoData.email || '',
             telefono: contactoData.telefono || ''
           },
-          // Mantener las redes sociales vacías si no existen
           redesSociales: prevState.redesSociales
         }));
         
-        // Activar modo edición para permitir actualizar los datos
         setIsEditing(true);
       }
     } catch (error) {
@@ -203,10 +190,8 @@ const useCulturalSpace = (navigation, route) => {
     try {
       setLoading(true);
       
-      // Procesar todas las imágenes para subirlas a Cloudinary
       let cloudinaryImages = [];
       try {
-        // Verificar si hay imágenes locales que necesitan ser subidas
         const hasLocalImages = space.images.some(uri => !CloudinaryService.isCloudinaryUrl(uri));
         
         if (hasLocalImages) {
@@ -217,11 +202,9 @@ const useCulturalSpace = (navigation, route) => {
         }
       } catch (imageError) {
         console.warn('Error al subir imágenes a Cloudinary:', imageError);
-        // Continuar con las imágenes originales si falla la subida
         cloudinaryImages = space.images;
       }
       
-      // Actualizar el espacio con las URLs de Cloudinary
       const updatedSpace = {
         ...space,
         images: cloudinaryImages
@@ -229,33 +212,29 @@ const useCulturalSpace = (navigation, route) => {
       
       let response;
       
-      // Verificar el tamaño de las imágenes procesadas
       const totalSize = updatedSpace.images.reduce((size, img) => size + (img?.length || 0), 0);
       console.warn(`Tamaño total de imágenes: ${(totalSize / (1024 * 1024)).toFixed(2)} MB`);
       
       if (route.params?.spaceId) {
-        // Actualizar espacio existente
         response = await CulturalSpaceService.updateSpace(route.params.spaceId, updatedSpace);
       } else if (route.params?.userId) {
-        // Actualizar perfil del gestor con los datos del espacio
         const managerProfileData = {
           nombreEspacio: updatedSpace.nombre,
           direccion: updatedSpace.direccion,
           capacidad: updatedSpace.capacidad,
           descripcion: updatedSpace.descripcion,
           instalaciones: updatedSpace.instalaciones,
-          imagenes: updatedSpace.images, // Usar las URLs de Cloudinary
-          disponibilidad: updatedSpace.disponibilidad, // Incluir la disponibilidad en la actualización
-          horarios: updatedSpace.disponibilidad, // Guardar también en la columna horarios de Managers
+          imagenes: updatedSpace.images,
+          disponibilidad: updatedSpace.disponibilidad,
+          horarios: updatedSpace.disponibilidad,
           contacto: {
             email: updatedSpace.contacto?.email || '',
             telefono: updatedSpace.contacto?.telefono || ''
-          } // Asegurar que los datos de contacto tengan la estructura correcta
+          }
         };
         
-        console.log('Guardando datos del gestor:', managerProfileData); // Log para depuración
+        console.log('Guardando datos del gestor:', managerProfileData); 
         
-        // Guardar en el perfil del gestor
         try {
           response = await ManagerProfileService.updateManagerProfile(route.params.userId, managerProfileData);
         } catch (managerError) {
@@ -264,9 +243,8 @@ const useCulturalSpace = (navigation, route) => {
           setLoading(false);
           return;
         }
-                // También guardar en la tabla CulturalSpaces
+        
         try {
-          // Crear directamente un nuevo espacio cultural con el managerId correcto
           const spaceData = {
             nombre: updatedSpace.nombre,
             direccion: updatedSpace.direccion,
@@ -274,14 +252,12 @@ const useCulturalSpace = (navigation, route) => {
             descripcion: updatedSpace.descripcion,
             instalaciones: updatedSpace.instalaciones,
             disponibilidad: updatedSpace.disponibilidad,
-            images: updatedSpace.images, // Usar las URLs de Cloudinary
-            managerId: route.params.userId, // Asegurar que el managerId se envíe correctamente
-            // Asegurar que los datos de contacto tengan la estructura correcta
+            images: updatedSpace.images,
+            managerId: route.params.userId,
             contacto: {
               email: updatedSpace.contacto?.email || '',
               telefono: updatedSpace.contacto?.telefono || ''
             },
-            // Asegurar que las redes sociales tengan la estructura correcta
             redesSociales: {
               facebook: updatedSpace.redesSociales?.facebook || '',
               instagram: updatedSpace.redesSociales?.instagram || '',
@@ -291,27 +267,22 @@ const useCulturalSpace = (navigation, route) => {
           
           console.log('Datos a guardar en CulturalSpaces:', spaceData);
           
-          // Verificar primero si ya existe un espacio para este gestor
           const existingSpace = await CulturalSpaceService.findSpaceByManagerId(route.params.userId);
           
           if (existingSpace) {
-            // Si existe, actualizar
             console.log('Espacio existente encontrado, actualizando:', existingSpace.id);
             await CulturalSpaceService.updateSpace(existingSpace.id, spaceData);
             console.log('Espacio cultural actualizado en la tabla CulturalSpaces');
           } else {
-            // Si no existe, crear nuevo
             console.log('No se encontró espacio existente, creando nuevo');
             await CulturalSpaceService.createSpace(spaceData);
             console.log('Espacio cultural creado en la tabla CulturalSpaces');
           }
         } catch (spaceError) {
           console.error('Error al guardar en la tabla CulturalSpaces:', spaceError);
-          // No lanzar el error aquí, ya que los datos del gestor se guardaron correctamente
           Alert.alert('Advertencia', 'Se guardó la información del gestor, pero hubo un problema al actualizar el espacio cultural.');
         }
       } else {
-        // Crear nuevo espacio (caso poco común)
         try {
           response = await CulturalSpaceService.createSpace(updatedSpace);
         } catch (createError) {
@@ -351,7 +322,6 @@ const useCulturalSpace = (navigation, route) => {
 
   const handlePickImage = async () => {
     try {
-      // Solicitar permisos si es necesario
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
         Alert.alert('Permiso denegado', 'Se necesita acceso a la galería para seleccionar imágenes');
@@ -368,14 +338,11 @@ const useCulturalSpace = (navigation, route) => {
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const selectedImage = result.assets[0];
         
-        // Mostrar indicador de carga
         setLoading(true);
         
         try {
-          // Subir la imagen a Cloudinary
           const cloudinaryUrl = await CloudinaryService.uploadImage(selectedImage.uri);
           
-          // Actualizar el estado con la URL de Cloudinary
           setSpace(prevState => ({
             ...prevState,
             images: [...prevState.images, cloudinaryUrl]
@@ -386,7 +353,6 @@ const useCulturalSpace = (navigation, route) => {
           console.warn('Error al subir imagen a Cloudinary:', uploadError);
           Alert.alert('Error', 'No se pudo subir la imagen a la nube. Se guardará localmente por ahora.');
           
-          // Si falla la subida, guardar la URI local como respaldo
           setSpace(prevState => ({
             ...prevState,
             images: [...prevState.images, selectedImage.uri]
@@ -425,7 +391,6 @@ const useCulturalSpace = (navigation, route) => {
       const newDisponibilidad = [...prevState.disponibilidad];
       const day = newDisponibilidad[dayIndex];
       
-      // Añadir un nuevo slot con horarios predeterminados
       newDisponibilidad[dayIndex] = {
         ...day,
         timeSlots: [...day.timeSlots, { start: '09:00', end: '18:00' }]
@@ -440,12 +405,10 @@ const useCulturalSpace = (navigation, route) => {
       const newDisponibilidad = [...prevState.disponibilidad];
       const day = newDisponibilidad[dayIndex];
       
-      // Si solo queda un slot, no permitir eliminarlo
       if (day.timeSlots.length <= 1) {
         return prevState;
       }
       
-      // Eliminar el slot específico
       newDisponibilidad[dayIndex] = {
         ...day,
         timeSlots: day.timeSlots.filter((_, i) => i !== slotIndex)

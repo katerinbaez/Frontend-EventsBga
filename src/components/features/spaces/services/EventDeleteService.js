@@ -1,16 +1,21 @@
+/**
+ * Este archivo maneja el servicio de eliminación de eventos
+ * - Servicios
+ * - Espacios
+ * - Eventos
+ * - Eliminación
+ */
+
 import axios from 'axios';
 import { BACKEND_URL } from '../../../../constants/config';
 import { Alert } from 'react-native';
 
-/**
- * Función para eliminar un evento - implementación exacta del archivo original ManageSpaceEvents.js
- */
+
 export const deleteEvent = async (event, token, loadData, setLoading) => {
   try {
     setLoading(true);
     console.log('Intentando eliminar evento con ID:', event.id);
     
-    // Configuración con token para autenticación
     const authConfig = {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -18,7 +23,6 @@ export const deleteEvent = async (event, token, loadData, setLoading) => {
       }
     };
     
-    // Si no hay token válido, intentar con headers de manager como respaldo
     if (!token) {
       console.log('No hay token válido, usando headers de manager como respaldo');
       authConfig.headers['x-user-role'] = 'manager';
@@ -27,7 +31,6 @@ export const deleteEvent = async (event, token, loadData, setLoading) => {
     }
     
     try {
-      // Primero intentar con la ruta normal de eventos
       const deleteUrl = `${BACKEND_URL}/api/events/${event.id}`;
       console.log('Intentando eliminar con URL:', deleteUrl);
       
@@ -38,10 +41,8 @@ export const deleteEvent = async (event, token, loadData, setLoading) => {
     } catch (error) {
       console.error('Error al eliminar evento:', error.response?.status, error.message);
       
-      // Si el error es 404, intentar con ruta alternativa
       if (error.response?.status === 404) {
         try {
-          // Intentar con la ruta de manager-events
           const alternativeUrl = `${BACKEND_URL}/api/manager-events/${event.id}`;
           console.log('Intentando eliminar con URL alternativa:', alternativeUrl);
           

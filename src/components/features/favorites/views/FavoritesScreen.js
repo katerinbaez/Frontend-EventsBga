@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja la pantalla de favoritos
+ * - UI
+ * - Favoritos
+ * - Pantalla
+ */
+
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useAuth } from '../../../../context/AuthContext';

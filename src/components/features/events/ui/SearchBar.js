@@ -1,11 +1,16 @@
+/**
+ * Este archivo maneja la barra de búsqueda
+ * - UI
+ * - Búsqueda
+ * - Filtros
+ */
+
 import React from 'react';
 import { View, TextInput, TouchableOpacity, Platform, StatusBar } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../../../../styles/EventSearchStyles';
 
-/**
- * Componente de barra de búsqueda para eventos
- */
+
 const SearchBar = ({ value, onChangeText, onFilterPress, filtersApplied }) => {
   return (
     <View style={styles.searchContainer}>

@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el modo de vista del perfil
+ * - UI
+ * - Secciones
+ * - Interacción
+ */
+
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

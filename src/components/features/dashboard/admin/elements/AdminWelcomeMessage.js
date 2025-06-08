@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el mensaje de bienvenida del dashboard administrativo
+ * - UI
+ * - Mensaje
+ * - Interacción
+ */
+
 import React from 'react';
 import { View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

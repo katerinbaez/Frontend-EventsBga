@@ -1,3 +1,11 @@
+/**
+ * Este archivo maneja las redes sociales del espacio
+ * - UI
+ * - Espacios
+ * - Redes Sociales
+ * - Enlaces
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

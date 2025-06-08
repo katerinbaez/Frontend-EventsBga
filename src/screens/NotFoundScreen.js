@@ -3,5 +3,4 @@
 
 import FallbackScreen from '../components/ui/FallbackScreen';
 
-// Simplemente re-exporta el componente FallbackScreen
 export default FallbackScreen;

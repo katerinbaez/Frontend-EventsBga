@@ -1,11 +1,16 @@
+/**
+ * Este archivo maneja los detalles del artista
+ * - Perfil
+ * - Trabajos
+ * - Contacto
+ */
+
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image, Linking, ActivityIndicator, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from '../../../../styles/ArtistProfilesModalStyles';
 
-/**
- * Componente para mostrar los detalles de un artista
- */
+
 const ArtistDetails = ({ 
   artist, 
   loadingDetails, 
@@ -34,16 +39,12 @@ const ArtistDetails = ({
         </View>
       ) : (
         <ScrollView style={styles.detailsScrollView}>
-          {/* Biografía */}
           <BiografiaSection biografia={artist.biografia} />
           
-          {/* Información de contacto */}
           <ContactoSection contacto={artist.contacto} />
           
-          {/* Habilidades */}
           <HabilidadesSection habilidades={artist.habilidades} />
           
-          {/* Portfolio */}
           <PortfolioSection 
             portfolio={artist.portfolio} 
             artistId={artist.id}
@@ -51,7 +52,6 @@ const ArtistDetails = ({
             setExpandedTrabajoId={setExpandedTrabajoId}
           />
           
-          {/* Redes Sociales */}
           <RedesSocialesSection redesSociales={artist.redesSociales} />
           
           <View style={styles.bottomSpace} />
@@ -61,9 +61,6 @@ const ArtistDetails = ({
   );
 };
 
-/**
- * Sección de biografía
- */
 const BiografiaSection = ({ biografia }) => (
   <View style={styles.detailSection}>
     <Text style={styles.sectionTitle}>Biografía</Text>
@@ -73,14 +70,10 @@ const BiografiaSection = ({ biografia }) => (
   </View>
 );
 
-/**
- * Sección de información de contacto
- */
 const ContactoSection = ({ contacto }) => (
   <View style={styles.detailSection}>
     <Text style={styles.sectionTitle}>Información de Contacto</Text>
     
-    {/* Verificar si existe contacto y sus propiedades */}
     {contacto && contacto.email && (
       <TouchableOpacity 
         onPress={() => Linking.openURL(`mailto:${contacto.email}`)}
@@ -108,7 +101,6 @@ const ContactoSection = ({ contacto }) => (
       </View>
     )}
     
-    {/* Verificar si no hay información de contacto */}
     {(!contacto || 
       (!contacto.email && !contacto.telefono && !contacto.ciudad)) && (
       <Text style={styles.noDataText}>No hay información de contacto disponible</Text>
@@ -116,9 +108,6 @@ const ContactoSection = ({ contacto }) => (
   </View>
 );
 
-/**
- * Sección de habilidades
- */
 const HabilidadesSection = ({ habilidades }) => (
   <View style={styles.detailSection}>
     <Text style={styles.sectionTitle}>Habilidades</Text>
@@ -136,11 +125,7 @@ const HabilidadesSection = ({ habilidades }) => (
   </View>
 );
 
-/**
- * Componente para mostrar un trabajo individual del portfolio
- */
 const TrabajoItem = ({ trabajo, index, artistId, expandedTrabajoId, setExpandedTrabajoId }) => {
-  // Si trabajo es null o undefined, mostrar un mensaje genérico
   if (!trabajo) {
     return (
       <View style={styles.portfolioItemContainer}>
@@ -152,7 +137,6 @@ const TrabajoItem = ({ trabajo, index, artistId, expandedTrabajoId, setExpandedT
     );
   }
   
-  // Si trabajo es un string, mostrarlo directamente
   if (typeof trabajo === 'string') {
     return (
       <View style={styles.portfolioItemContainer}>
@@ -164,11 +148,9 @@ const TrabajoItem = ({ trabajo, index, artistId, expandedTrabajoId, setExpandedT
     );
   }
   
-  // Crear un ID único para este trabajo
   const trabajoId = `${artistId}-${index}`;
   const isExpanded = expandedTrabajoId === trabajoId;
   
-  // Para trabajos que son objetos
   return (
     <View style={styles.portfolioItemContainer}>
       <TouchableOpacity 
@@ -188,12 +170,10 @@ const TrabajoItem = ({ trabajo, index, artistId, expandedTrabajoId, setExpandedT
           />
         </View>
         
-        {/* Información básica siempre visible */}
         {trabajo.fecha && (
           <Text style={styles.portfolioItemDate}>{trabajo.fecha}</Text>
         )}
         
-        {/* Mostrar una vista previa de la descripción si existe */}
         {trabajo.descripcion && (
           <Text style={styles.portfolioItemPreview} numberOfLines={1}>
             {trabajo.descripcion}
@@ -201,12 +181,10 @@ const TrabajoItem = ({ trabajo, index, artistId, expandedTrabajoId, setExpandedT
         )}
       </TouchableOpacity>
       
-      {/* Detalles expandibles */}
       {isExpanded && (
         <View style={styles.portfolioItemDetails}>
           <Text style={styles.detailSectionTitle}>Detalles del trabajo</Text>
           
-          {/* Mostrar el título del trabajo */}
           {(trabajo.titulo || trabajo.title) && (
             <View style={styles.portfolioTitleContainer}>
               <Text style={styles.portfolioDetailTitle}>
@@ -215,16 +193,12 @@ const TrabajoItem = ({ trabajo, index, artistId, expandedTrabajoId, setExpandedT
             </View>
           )}
           
-          {/* Carrusel de imágenes */}
           {(() => {
-            // Obtener todas las imágenes del trabajo
             const images = [];
             
-            // Verificar si hay una imagen principal
             const mainImage = trabajo.imageUrl || trabajo.ImageUrl || trabajo.imagenUrl || trabajo.imagen;
             if (mainImage) images.push(mainImage);
             
-            // Verificar si hay un array de imágenes
             if (trabajo.images && Array.isArray(trabajo.images) && trabajo.images.length > 0) {
               // Añadir todas las imágenes del array que no sean la principal
               trabajo.images.forEach(img => {
@@ -232,10 +206,8 @@ const TrabajoItem = ({ trabajo, index, artistId, expandedTrabajoId, setExpandedT
               });
             }
             
-            // Si no hay imágenes, no mostrar nada
             if (images.length === 0) return null;
             
-            // Si solo hay una imagen, mostrarla sin carrusel
             if (images.length === 1) {
               return (
                 <View style={styles.portfolioImageContainer}>
@@ -248,11 +220,9 @@ const TrabajoItem = ({ trabajo, index, artistId, expandedTrabajoId, setExpandedT
               );
             }
             
-            // Referencia para el ScrollView
             const scrollViewRef = React.useRef(null);
             const [currentImageIndex, setCurrentImageIndex] = useState(0);
             
-            // Función para manejar el cambio de imagen
             const handleScroll = (event) => {
               const contentOffsetX = event.nativeEvent.contentOffset.x;
               const width = event.nativeEvent.layoutMeasurement.width;
@@ -263,11 +233,8 @@ const TrabajoItem = ({ trabajo, index, artistId, expandedTrabajoId, setExpandedT
               }
             };
             
-            // Calcular el ancho exacto para cada imagen (ancho de la pantalla menos el padding del modal)
             const screenWidth = Dimensions.get('window').width;
-            // Obtener el ancho del contenedor padre (normalmente es el ancho de la pantalla menos el padding del modal)
-            // Usamos un valor fijo para asegurar que las imágenes se alineen correctamente con el deslizamiento
-            const imageWidth = screenWidth - 40; // Ajusta este valor según sea necesario
+            const imageWidth = screenWidth - 40;
             
             return (
               <View style={styles.carouselContainer}>
@@ -277,8 +244,8 @@ const TrabajoItem = ({ trabajo, index, artistId, expandedTrabajoId, setExpandedT
                   pagingEnabled
                   showsHorizontalScrollIndicator={false}
                   onMomentumScrollEnd={handleScroll}
-                  snapToInterval={imageWidth} // Hace que el scroll se detenga exactamente en cada imagen
-                  decelerationRate="fast" // Hace que el deslizamiento sea más rápido y preciso
+                  snapToInterval={imageWidth} 
+                  decelerationRate="fast" 
                   contentContainerStyle={{ flexGrow: 0 }}
                 >
                   {images.map((imageUri, index) => (
@@ -306,12 +273,9 @@ const TrabajoItem = ({ trabajo, index, artistId, expandedTrabajoId, setExpandedT
             );
           })()}
           
-          {/* Mostrar campos seleccionados del trabajo */}
           {Object.entries(trabajo).map(([key, value]) => {
-            // Ignorar campos específicos que no queremos mostrar o que ya se muestran
             if (["titulo", "title", "id", "imageUrl", "ImageUrl", "imagenUrl", "imagen"].includes(key)) return null;
             
-            // Ignorar cualquier campo que contenga URLs o rutas de archivo
             const valueStr = String(value).toLowerCase();
             if (valueStr.includes("http://") || 
                 valueStr.includes("https://") || 
@@ -324,12 +288,10 @@ const TrabajoItem = ({ trabajo, index, artistId, expandedTrabajoId, setExpandedT
               return null;
             }
             
-            // Si el valor es un objeto o array, convertirlo a string
             const displayValue = typeof value === "object" 
               ? JSON.stringify(value) 
               : String(value);
             
-            // Formatear el nombre del campo para mostrarlo
             const fieldName = key.charAt(0).toUpperCase() + key.slice(1);
             
             return (
@@ -340,7 +302,6 @@ const TrabajoItem = ({ trabajo, index, artistId, expandedTrabajoId, setExpandedT
             );
           })}
           
-          {/* Botón para ver más detalles solo si hay URL */}
           {trabajo.url && (
             <TouchableOpacity 
               style={styles.portfolioLink}
@@ -351,7 +312,6 @@ const TrabajoItem = ({ trabajo, index, artistId, expandedTrabajoId, setExpandedT
             </TouchableOpacity>
           )}
           
-          {/* Mensaje si el objeto está vacío */}
           {Object.keys(trabajo).length === 0 && (
             <Text style={styles.noDataText}>No hay detalles disponibles para este trabajo.</Text>
           )}
@@ -361,16 +321,13 @@ const TrabajoItem = ({ trabajo, index, artistId, expandedTrabajoId, setExpandedT
   );
 };
 
-/**
- * Sección de portfolio
- */
+
 const PortfolioSection = ({ portfolio, artistId, expandedTrabajoId, setExpandedTrabajoId }) => (
   <View style={styles.detailSection}>
     <Text style={styles.sectionTitle}>Portfolio</Text>
     
     {portfolio ? (
       <>
-        {/* Trabajos */}
         {portfolio.trabajos && portfolio.trabajos.length > 0 ? (
           <View style={styles.portfolioSection}>
             <Text style={styles.portfolioSubtitle}>Trabajos Destacados</Text>
@@ -389,14 +346,12 @@ const PortfolioSection = ({ portfolio, artistId, expandedTrabajoId, setExpandedT
           <Text style={styles.noDataText}>No hay trabajos en el portfolio</Text>
         )}
         
-        {/* Imágenes */}
         {portfolio.imagenes && portfolio.imagenes.length > 0 ? (
           <View style={styles.portfolioImagesSection}>
             <Text style={styles.portfolioSubtitle}>Galería</Text>
             <Text style={styles.portfolioImagesCount}>
               {portfolio.imagenes.length} imagen(es) disponible(s)
             </Text>
-            {/* Lista de imágenes */}
             <View style={styles.imageGrid}>
               {portfolio.imagenes.map((imagen, index) => (
                 <View key={index} style={styles.imageContainer}>
@@ -414,9 +369,6 @@ const PortfolioSection = ({ portfolio, artistId, expandedTrabajoId, setExpandedT
   </View>
 );
 
-/**
- * Sección de redes sociales
- */
 const RedesSocialesSection = ({ redesSociales }) => {
   if (!redesSociales || Object.keys(redesSociales).length === 0) return null;
   

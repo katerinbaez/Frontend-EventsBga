@@ -1,3 +1,11 @@
+/**
+ * Este archivo maneja el mapa completo del espacio
+ * - UI
+ * - Espacios
+ * - Mapa
+ * - Completo
+ */
+
 import React from 'react';
 import { View, Modal, TouchableOpacity, Platform, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -45,7 +53,6 @@ const SpaceFullScreenMap = ({
             loadingIndicatorColor="#FF3A5E"
             loadingBackgroundColor="#1E1E1E"
           >
-            {/* Marcador para la ubicación del usuario */}
             {userLocation && (
               <Marker
                 coordinate={{
@@ -58,7 +65,6 @@ const SpaceFullScreenMap = ({
               />
             )}
             
-            {/* Marcadores para espacios culturales */}
             {spaces.map((space, index) => {
               // Convertir coordenadas a números
               const lat = parseFloat(space.latitud);
@@ -88,7 +94,6 @@ const SpaceFullScreenMap = ({
               );
             })}
             
-            {/* Marcador para la ubicación seleccionada con OpenStreetMap */}
             {selectedPlace && (
               <Marker
                 key="selected-place"
@@ -111,7 +116,6 @@ const SpaceFullScreenMap = ({
           </MapView>
         )}
         
-        {/* Botón para cerrar el mapa */}
         <TouchableOpacity style={styles.closeMapButton} onPress={onClose}>
           <Ionicons name="close" size={24} color="#FFF" />
         </TouchableOpacity>

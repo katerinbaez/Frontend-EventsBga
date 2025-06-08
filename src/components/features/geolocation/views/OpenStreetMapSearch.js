@@ -1,25 +1,29 @@
+/**
+ * Este archivo maneja la búsqueda de OpenStreetMap
+ * - UI
+ * - Búsqueda
+ * - Mapa
+ */
+
 import React, { useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator } from 'react-native';
 import { styles } from '../../../../styles/OpenSteetMapStyles';
 
-// Componentes UI
 import SearchBar from '../ui/SearchBar';
 import CurrentLocationButton from '../ui/CurrentLocationButton';
 import CategoryList from '../ui/CategoryList';
 import SearchResultItem from '../ui/SearchResultItem';
 import PlaceDetailModal from '../ui/PlaceDetailModal';
 
-// Hooks personalizados
 import useGeolocation from '../hooks/useGeolocation';
 import useSearch from '../hooks/useSearch';
 
 const OpenStreetMapSearch = ({ onLocationSelect }) => {
-  // Estados para la vista detallada
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [showPlaceDetail, setShowPlaceDetail] = useState(false);
   const [showCategories, setShowCategories] = useState(true);
   
-  // Usar hooks personalizados
+  
   const { 
     userLocation, 
     loading: locationLoading, 
@@ -36,7 +40,6 @@ const OpenStreetMapSearch = ({ onLocationSelect }) => {
     clearSearch
   } = useSearch(userLocation);
   
-  // Función para manejar la selección de categoría
   const handleCategorySelect = (categoryId) => {
     let searchQuery = '';
     
@@ -66,18 +69,14 @@ const OpenStreetMapSearch = ({ onLocationSelect }) => {
     searchPlaces(searchQuery);
   };
   
-  // Función para manejar la selección de un lugar
   const handlePlaceSelect = (place) => {
     setSelectedPlace(place);
     setShowPlaceDetail(true);
   };
   
-  // Función para seleccionar un lugar y cerrar el modal
   const selectPlace = (place) => {
-    // Cerrar el modal
     setShowPlaceDetail(false);
     
-    // Notificar al componente padre
     if (onLocationSelect) {
       onLocationSelect({
         latitude: place.latitude,
@@ -88,64 +87,53 @@ const OpenStreetMapSearch = ({ onLocationSelect }) => {
     }
   };
   
-  // Función para actualizar la ubicación y buscar lugares cercanos
   const handleLocationRefresh = async () => {
     const result = await refreshUserLocation();
     
     if (result.coords) {
-      // Si hay texto en el campo de búsqueda, actualizar los resultados
       if (searchText.trim()) {
         searchPlaces(searchText);
       } else {
-        // Si no hay búsqueda activa, mostrar lugares cercanos de interés
         searchPlaces('lugares cerca');
       }
     }
   };
   
-  // Renderizar el componente principal
   return (
     <View style={styles.container}>
-      {/* Barra de búsqueda */}
       <SearchBar 
         searchText={searchText}
         onSearchChange={searchPlaces}
         onClearSearch={clearSearch}
       />
       
-      {/* Botón de ubicación actual */}
       <CurrentLocationButton 
         loading={locationLoading}
         onPress={handleLocationRefresh}
       />
       
-      {/* Mostrar error de ubicación si existe */}
       {locationError && (
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>{locationError}</Text>
         </View>
       )}
       
-      {/* Categorías populares */}
       {showCategories && searchText.length < 3 && !searchLoading && predictions.length === 0 && (
         <CategoryList onCategorySelect={handleCategorySelect} />
       )}
       
-      {/* Indicador de carga */}
       {searchLoading && (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="small" color="#FF3A5E" />
         </View>
       )}
       
-      {/* Mostrar error de búsqueda si existe */}
       {searchError && (
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>{searchError}</Text>
         </View>
       )}
       
-      {/* Lista de resultados */}
       {predictions.length > 0 && (
         <FlatList
           data={predictions}
@@ -161,7 +149,6 @@ const OpenStreetMapSearch = ({ onLocationSelect }) => {
         />
       )}
       
-      {/* Modal de detalles */}
       <PlaceDetailModal 
         visible={showPlaceDetail}
         place={selectedPlace}

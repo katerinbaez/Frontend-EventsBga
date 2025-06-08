@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el contenedor de opciones del gestor
+ * - UI
+ * - Navegación
+ * - Gestión de opciones
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,7 +14,6 @@ import { styles } from '../../../../../styles/DashboardManagerStyles';
 const ManagerOptionsContainer = ({ navigation, user, managerData, onOpenRequestsModal, setSelectedEvent, setAttendeesModalVisible }) => {
   return (
     <View style={styles.optionsContainer}>
-      {/* Primera fila de opciones - 6 tarjetas en 3 filas de 2 */}
       <ManagerOptionCard 
         title="Mi Espacio"
         description="Gestionar espacio cultural"
@@ -65,7 +71,7 @@ const ManagerOptionsContainer = ({ navigation, user, managerData, onOpenRequests
       <ManagerOptionCard 
         title="Mis eventos"
         description="Ver y editar eventos programados"
-        iconName="calendar-outline" // Cambiado de "list" a "calendar-outline" para diferenciarlo de Solicitudes
+        iconName="calendar-outline" 
         iconColor="#FF3A5E"
         requiresNavigation={true}
         navigationTarget="ManageEvents"
@@ -77,7 +83,6 @@ const ManagerOptionsContainer = ({ navigation, user, managerData, onOpenRequests
         navigation={navigation}
       />
 
-      {/* Cuadro de ancho completo para la última opción */}
       <View style={{ width: '100%', marginBottom: 20 }}>
         <View style={[styles.optionCard, { width: '100%' }]}>
           <Ionicons name="people" size={32} color="#FFFFFF" />

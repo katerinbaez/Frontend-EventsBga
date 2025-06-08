@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja la imagen del perfil
+ * - UI
+ * - Carga
+ * - Manejo de errores
+ */
+
 import React, { useState, useEffect } from 'react';
 import { View, Image, TouchableOpacity, Text, ActivityIndicator, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,10 +21,8 @@ const ProfileImage = ({ profile, pickImage, isEditing, tempImageUri }) => {
   const [retryCount, setRetryCount] = useState(0);
   const [timestamp, setTimestamp] = useState(Date.now());
   
-  // Efecto para cargar la imagen desde el almacenamiento local o normalizar la URL
   useEffect(() => {
     const loadImage = async () => {
-      // Si hay una imagen temporal (durante la edición), usarla directamente
       if (isEditing && tempImageUri) {
         setImageUrl(tempImageUri);
         setHasError(false);
@@ -30,9 +35,7 @@ const ProfileImage = ({ profile, pickImage, isEditing, tempImageUri }) => {
       }
       
       try {
-        // Normalizar la URL directamente sin usar caché
         const url = normalizeImageUrl(profile.fotoPerfil);
-        // Añadir un timestamp para evitar caché
         setImageUrl(`${url}?t=${timestamp}`);
         setHasError(false);
       } catch (error) {
@@ -44,55 +47,45 @@ const ProfileImage = ({ profile, pickImage, isEditing, tempImageUri }) => {
     loadImage();
   }, [profile?.id, profile?.fotoPerfil, timestamp, isEditing, tempImageUri]);
   
-  // Normalizar la URL de la imagen
   const normalizeImageUrl = (url) => {
     if (!url) return null;
     
-    // Convertir a string por si acaso
     const urlStr = String(url);
     
-    // Si ya tiene un esquema http o https, devolverla tal cual
     if (urlStr.startsWith('http://') || urlStr.startsWith('https://')) {
       return urlStr;
     }
     
-    // Si comienza con una barra, es una ruta relativa al backend
     if (urlStr.startsWith('/')) {
-      // Verificar si la ruta contiene 'uploads/profile-pics'
       if (urlStr.includes('uploads/profile-pics')) {
         return `${BACKEND_URL}${urlStr}`;
       } else {
-        // Asegurarse de que la ruta sea correcta para las imágenes de perfil
         return `${BACKEND_URL}/uploads/profile-pics/${urlStr.split('/').pop()}`;
       }
     }
     
-    // En cualquier otro caso, asumir que es una ruta relativa sin barra inicial
     return `${BACKEND_URL}/${urlStr}`;
   };
   
-  // Manejar eventos de carga de imagen
   const handleImageLoad = () => {
     setIsLoading(false);
     setHasError(false);
-    setRetryCount(0); // Resetear contador de intentos cuando la carga es exitosa
+    setRetryCount(0);
   };
   
   const handleImageError = () => {
     setIsLoading(false);
     
-    // Intentar recargar la imagen hasta 3 veces
     if (retryCount < 3) {
       console.warn(`Reintentando cargar imagen (intento ${retryCount + 1} de 3)`);
       setRetryCount(prevCount => prevCount + 1);
-      setTimestamp(Date.now()); // Actualizar timestamp para forzar recarga
+      setTimestamp(Date.now());
     } else {
       setHasError(true);
       console.error('Error al cargar la imagen de perfil después de 3 intentos');
     }
   };
   
-  // Función para forzar la recarga de la imagen
   const forceReload = async () => {
     if (hasError && profile?.fotoPerfil) {
       setHasError(false);
@@ -100,7 +93,6 @@ const ProfileImage = ({ profile, pickImage, isEditing, tempImageUri }) => {
       setTimestamp(Date.now());
       setIsLoading(true);
       
-      // Si la imagen es local, intentar convertirla a base64 y guardarla
       if (profile.fotoPerfil.startsWith('file://') && profile.id) {
         try {
           const base64 = await FileSystem.readAsStringAsync(profile.fotoPerfil, {
@@ -121,9 +113,7 @@ const ProfileImage = ({ profile, pickImage, isEditing, tempImageUri }) => {
     }
   };
   
-  // Determinar qué imagen mostrar
   const renderImage = () => {
-    // Si la URL comienza con 'data:', es una imagen en base64
     const isBase64Image = imageUrl && imageUrl.startsWith('data:');
     
     if (isEditing && tempImageUri) {
@@ -161,15 +151,12 @@ const ProfileImage = ({ profile, pickImage, isEditing, tempImageUri }) => {
             onLoadStart={() => isBase64Image ? setIsLoading(false) : setIsLoading(true)}
             onLoad={handleImageLoad}
             onError={handleImageError}
-            // Deshabilitar caché de imágenes (excepto para base64)
             cachePolicy={isBase64Image ? "default" : "reload"}
-            // Forzar la recarga de la imagen
             key={`profile-image-${isBase64Image ? 'base64' : timestamp}`}
           />
         </>
       );
     } else if (hasError) {
-      // Si hay error, mostrar un placeholder con opción para reintentar
       return (
         <TouchableOpacity 
           style={[styles.profileImage, styles.profileImagePlaceholder]}

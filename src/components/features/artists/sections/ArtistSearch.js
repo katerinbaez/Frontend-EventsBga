@@ -1,11 +1,16 @@
+/**
+ * Este archivo maneja la búsqueda y filtrado de artistas
+ * - Búsqueda
+ * - Filtros
+ * - UI de búsqueda
+ */
+
 import React from 'react';
 import { View, TextInput, TouchableOpacity, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from '../../../../styles/ArtistProfilesModalStyles';
 
-/**
- * Componente para la búsqueda y filtrado de artistas
- */
+
 const ArtistSearch = ({ 
   searchQuery, 
   setSearchQuery, 

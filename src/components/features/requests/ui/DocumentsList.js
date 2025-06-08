@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja la lista de documentos
+ * - UI
+ * - Roles
+ * - Lista
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { styles } from '../../../../styles/ViewsRoleRequestStyles';

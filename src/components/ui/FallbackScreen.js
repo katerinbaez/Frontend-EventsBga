@@ -1,3 +1,8 @@
+/**
+ * Pantalla de respaldo para manejar errores de navegación
+ * Se muestra cuando hay un problema con la navegación o cuando una ruta no existe
+ * Proporciona información detallada para facilitar la depuración
+ */
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation, CommonActions, useNavigationState } from '@react-navigation/native';
@@ -5,28 +10,21 @@ import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../../styles/theme';
 import { useAuth } from '../../context/AuthContext';
 
-/**
- * Pantalla de respaldo para manejar errores de navegación
- * Se muestra cuando hay un problema con la navegación o cuando una ruta no existe
- * Proporciona información detallada para facilitar la depuración
- */
+
 const FallbackScreen = ({ route }) => {
   const navigation = useNavigation();
   const { isAuthenticated, user } = useAuth();
   const navState = useNavigationState(state => state);
   
-  // Obtener información detallada sobre el error
   const errorMessage = route?.params?.error || 'Ha ocurrido un error en la navegación';
   const targetRoute = route?.params?.targetRoute || 'Ruta desconocida';
   
-  // Registrar información de depuración cuando se monta el componente
   useEffect(() => {
     console.error('Error de navegación detectado:');
     console.error('Mensaje:', errorMessage);
     console.error('Ruta objetivo:', targetRoute);
     console.error('Estado de navegación actual:', JSON.stringify(navState, null, 2));
     
-    // Registrar rutas disponibles en linkingConfig
     try {
       const { linkingConfig } = require('../navigation/NavigationHandler');
       console.error('Rutas configuradas en linkingConfig:', 
@@ -36,7 +34,6 @@ const FallbackScreen = ({ route }) => {
     }
   }, []);
 
-  // Determinar la pantalla de inicio según el rol del usuario
   const getHomeScreen = () => {
     if (!isAuthenticated) return 'Home';
     
@@ -52,7 +49,6 @@ const FallbackScreen = ({ route }) => {
     }
   };
 
-  // Navegar a la pantalla de inicio
   const navigateToHome = () => {
     const homeScreen = getHomeScreen();
     navigation.dispatch(
@@ -63,7 +59,6 @@ const FallbackScreen = ({ route }) => {
     );
   };
 
-  // Volver a la pantalla anterior
   const goBack = () => {
     if (navigation.canGoBack()) {
       navigation.goBack();
@@ -72,7 +67,6 @@ const FallbackScreen = ({ route }) => {
     }
   };
 
-  // Obtener información sobre las rutas disponibles
   const getAvailableRoutes = () => {
     try {
       const { linkingConfig } = require('../navigation/NavigationHandler');

@@ -1,3 +1,12 @@
+/**
+ * Este archivo maneja la vista del modal de detalles del espacio
+ * - UI
+ * - Espacios
+ * - Detalles
+ * - Modal
+ * - Vista
+ */
+
 import React from 'react';
 import { View, Text, Modal, TouchableOpacity, Image, ScrollView, Linking, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -12,20 +21,16 @@ const SpaceDetailsModalView = ({
 }) => {
   if (!space) return null;
   
-  // Verificar si hay una imagen disponible
   const hasImage = space.imagen && space.imagen.trim() !== '';
   
-  // Verificar si hay datos de contacto
   const hasPhone = space.telefono && space.telefono.trim() !== '';
   const hasEmail = space.correo && space.correo.trim() !== '';
   const hasWebsite = space.sitioWeb && space.sitioWeb.trim() !== '';
   
-  // Verificar si hay redes sociales
   const hasFacebook = space.facebook && space.facebook.trim() !== '';
   const hasInstagram = space.instagram && space.instagram.trim() !== '';
   const hasTwitter = space.twitter && space.twitter.trim() !== '';
   
-  // Verificar si hay ubicación
   const hasLocation = space.latitud && space.longitud;
   
   return (
@@ -62,17 +67,14 @@ const SpaceDetailsModalView = ({
               )}
             </View>
             
-            {/* Información básica */}
             <View style={styles.modalSection}>
               <Text style={styles.sectionTitle}>Información</Text>
               
-              {/* Dirección */}
               <View style={styles.infoRow}>
                 <Ionicons name="location-outline" size={20} color="#FF3A5E" style={styles.infoIcon} />
                 <Text style={styles.infoText}>{space.direccion || 'Sin dirección'}</Text>
               </View>
               
-              {/* Categoría */}
               {space.categoria && (
                 <View style={styles.infoRow}>
                   <Ionicons name="pricetag-outline" size={20} color="#FF3A5E" style={styles.infoIcon} />
@@ -80,7 +82,6 @@ const SpaceDetailsModalView = ({
                 </View>
               )}
               
-              {/* Descripción */}
               {space.descripcion && (
                 <View style={styles.descriptionContainer}>
                   <Text style={styles.descriptionText}>{space.descripcion}</Text>
@@ -88,12 +89,10 @@ const SpaceDetailsModalView = ({
               )}
             </View>
             
-            {/* Información de contacto */}
             {(hasPhone || hasEmail || hasWebsite) && (
               <View style={styles.modalSection}>
                 <Text style={styles.sectionTitle}>Contacto</Text>
                 
-                {/* Teléfono */}
                 {hasPhone && (
                   <TouchableOpacity 
                     style={styles.contactRow}
@@ -105,7 +104,6 @@ const SpaceDetailsModalView = ({
                   </TouchableOpacity>
                 )}
                 
-                {/* Email */}
                 {hasEmail && (
                   <TouchableOpacity 
                     style={styles.contactRow}
@@ -117,7 +115,6 @@ const SpaceDetailsModalView = ({
                   </TouchableOpacity>
                 )}
                 
-                {/* Sitio web */}
                 {hasWebsite && (
                   <TouchableOpacity 
                     style={styles.contactRow}
@@ -131,12 +128,10 @@ const SpaceDetailsModalView = ({
               </View>
             )}
             
-            {/* Redes sociales */}
             {(hasFacebook || hasInstagram || hasTwitter) && (
               <View style={styles.modalSection}>
                 <Text style={styles.sectionTitle}>Redes Sociales</Text>
                 
-                {/* Facebook */}
                 {hasFacebook && (
                   <TouchableOpacity 
                     style={styles.socialRow}
@@ -148,7 +143,6 @@ const SpaceDetailsModalView = ({
                   </TouchableOpacity>
                 )}
                 
-                {/* Instagram */}
                 {hasInstagram && (
                   <TouchableOpacity 
                     style={styles.socialRow}
@@ -160,7 +154,6 @@ const SpaceDetailsModalView = ({
                   </TouchableOpacity>
                 )}
                 
-                {/* Twitter */}
                 {hasTwitter && (
                   <TouchableOpacity 
                     style={styles.socialRow}
@@ -175,9 +168,7 @@ const SpaceDetailsModalView = ({
             )}
           </ScrollView>
           
-          {/* Botones de acción */}
           <View style={styles.actionButtonsContainer}>
-            {/* Botón para ver ubicación */}
             {hasLocation && (
               <TouchableOpacity 
                 style={styles.viewLocationButton}
@@ -190,7 +181,6 @@ const SpaceDetailsModalView = ({
               </TouchableOpacity>
             )}
             
-            {/* Botón para solicitar evento */}
             <TouchableOpacity 
               style={styles.requestEventButton}
               onPress={() => onRequestEvent(space)}

@@ -1,3 +1,12 @@
+/**
+ * Este archivo maneja el gestor de eventos del espacio
+ * - UI
+ * - Espacios
+ * - Eventos
+ * - Gestor
+ * - CRUD
+ */
+
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -26,7 +35,6 @@ const ManageSpaceEvents = ({ navigation, route }) => {
   const [currentEvent, setCurrentEvent] = useState(null);
   const [categories, setCategories] = useState([]);
   
-  // Usar el managerId proporcionado o el del usuario autenticado
   const managerId = route.params?.managerId || user?.id || user?.sub;
   const spaceName = route.params?.spaceName || 'Mi Espacio Cultural';
 
@@ -37,11 +45,9 @@ const ManageSpaceEvents = ({ navigation, route }) => {
   const loadData = async () => {
     setIsLoading(true);
     try {
-      // Cargar eventos del espacio cultural
       const eventsResponse = await axios.get(`${BACKEND_URL}/api/events/by-manager/${managerId}`);
       setEvents(eventsResponse.data || []);
       
-      // Cargar categorías
       const categoriesResponse = await axios.get(`${BACKEND_URL}/api/categories`);
       setCategories(categoriesResponse.data || []);
     } catch (error) {
@@ -116,7 +122,6 @@ const ManageSpaceEvents = ({ navigation, route }) => {
     setShowEditModal(true);
   };
 
-  // Funciones auxiliares
   const getCategoryColor = (categoryId) => {
     const category = categories.find(c => c._id === categoryId);
     return category?.color || '#999';
@@ -137,7 +142,6 @@ const ManageSpaceEvents = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity 
           style={styles.backButton}
@@ -156,7 +160,6 @@ const ManageSpaceEvents = ({ navigation, route }) => {
         </TouchableOpacity>
       </View>
       
-      {/* Contenido principal */}
       {isLoading ? (
         <View style={[styles.container, styles.centerContent]}>
           <ActivityIndicator size="large" color="#FF3A5E" />
@@ -228,7 +231,6 @@ const ManageSpaceEvents = ({ navigation, route }) => {
         </ScrollView>
       )}
       
-      {/* Modales para crear y editar eventos */}
       <Modal
         visible={showCreateModal}
         animationType="slide"

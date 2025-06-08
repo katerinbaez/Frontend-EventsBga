@@ -1,4 +1,10 @@
-// Función para convertir el valor de la categoría a un texto más legible
+/**
+ * Este archivo maneja las utilidades de categorías
+ * - Utilidades
+ * - Categorías
+ * - Etiquetas
+ */
+
 export const getCategoryLabel = (category) => {
     const categoryLabels = {
       'musica': 'Música',

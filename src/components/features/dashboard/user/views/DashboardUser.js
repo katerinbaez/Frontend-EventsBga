@@ -1,3 +1,12 @@
+/**
+ * Este archivo maneja el dashboard del usuario
+ * - UI
+ * - Navegación
+ * - Sesión
+ * - Modales
+ * - Roles
+ */
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Modal, Alert, SafeAreaView, StatusBar, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,12 +16,10 @@ import axios from 'axios';
 import { BACKEND_URL } from '../../../../../constants/config';
 import { styles } from '../../../../../styles/DashboardUserStyles';
 
-// Componentes refactorizados
 import UserHeader from '../elements/UserHeader';
 import UserOptionsContainer from '../elements/UserOptionsContainer';
 import UserDashboardService from '../services/UserDashboardService';
 
-// Componentes externos
 import ArtistProfilesModal from '../../../artists/modals/ArtistProfilesModal';
 import CulturalSpacesModal from '../../../spaces/views/CulturalSpacesModal';
 import NotificationCenter from '../../../notifications/Views/NotificationCenter';
@@ -43,24 +50,18 @@ const DashboardUser = () => {
     }
   }, [user]);
 
-  // Verificar si hay parámetros de navegación para mostrar el modal de artistas
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      // Verificar si hay parámetros para mostrar el modal de artistas
       const params = navigation.getState().routes.find(route => route.name === 'Dashboard')?.params;
       
       if (params?.showArtistModal) {
-        // Guardar el ID del artista seleccionado
         if (params.selectedArtistId) {
           console.log('ID de artista recibido:', params.selectedArtistId);
           setSelectedArtistId(params.selectedArtistId);
         }
         
-        // Mostrar el modal de artistas
         setShowArtistProfilesModal(true);
         
-        // Limpiar los parámetros para evitar que se muestre el modal nuevamente
-        // al navegar a otra pantalla y volver
         navigation.setParams({ showArtistModal: undefined, selectedArtistId: undefined });
       }
     });
@@ -76,7 +77,6 @@ const DashboardUser = () => {
     }
   }, [user]);
 
-  // Verificar si el usuario tiene perfil de artista
   const checkArtistProfile = async () => {
     if (!user?.id) return;
     
@@ -86,7 +86,6 @@ const DashboardUser = () => {
     }
   };
 
-  // Verificar si el usuario tiene perfil de gestor
   const checkManagerProfile = async () => {
     if (!user?.id) return;
     
@@ -96,7 +95,6 @@ const DashboardUser = () => {
     }
   };
 
-  // Obtener notificaciones del usuario
   const fetchNotifications = async () => {
     if (!user?.id) return;
     
@@ -106,7 +104,6 @@ const DashboardUser = () => {
     }
   };
 
-  // Función para eliminar perfil de artista
   const deleteArtistProfile = async () => {
     Alert.alert(
       'Eliminar Perfil de Artista',
@@ -138,7 +135,6 @@ const DashboardUser = () => {
     );
   };
 
-  // Función para eliminar perfil de gestor cultural
   const deleteManagerProfile = async () => {
     Alert.alert(
       'Eliminar Perfil de Espacio Cultural',
@@ -183,22 +179,17 @@ const DashboardUser = () => {
     setShowRoleRequest(true);
   };
 
-  // Función para ir al perfil de artista
   const goToArtistDashboard = () => {
     navigation.replace('DashboardArtist');
   };
-
-  // Función para ir al perfil de gestor cultural
   const goToManagerDashboard = () => {
     navigation.replace('DashboardManager');
   };
 
-  // Función para manejar el clic en 'Ir a Mi Perfil de Artista' desde notificaciones
   const handleArtistProfileNavigation = () => {
     if (hasArtistProfile) {
       navigation.navigate('DashboardArtist');
     } else {
-      // Redirigir directamente al registro sin mensaje
       navigation.navigate('ArtistRegistration');
     }
   };
@@ -217,7 +208,6 @@ const DashboardUser = () => {
     }
   };
 
-  // Calcular el padding superior según la plataforma
   const statusBarHeight = Platform.OS === 'ios' ? 44 : StatusBar.currentHeight || 35;
 
   return (
@@ -232,7 +222,6 @@ const DashboardUser = () => {
             onRoleRequest={() => setShowRoleRequest(true)}
           />
 
-        {/* Botones de acceso rápido a perfiles (solo se muestran si existen) */}
         <View style={styles.profileButtonsContainer}>
           {hasArtistProfile && (
             <View style={styles.profileSection}>
@@ -310,7 +299,6 @@ const DashboardUser = () => {
         />
       </Modal>
 
-      {/* Modal de Espacios Culturales */}
       {showCulturalSpacesModal && (
         <CulturalSpacesModal 
           visible={showCulturalSpacesModal}

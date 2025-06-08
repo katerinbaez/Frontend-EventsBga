@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el filtro de categorías
+ * - UI
+ * - Roles
+ * - Filtro
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { styles } from '../../../../styles/RequestModalStyles';

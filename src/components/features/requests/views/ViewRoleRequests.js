@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja la visualización de solicitudes de rol
+ * - UI
+ * - Roles
+ * - Vista
+ */
+
 import React from 'react';
 import { View, Text, FlatList } from 'react-native';
 import { styles } from '../../../../styles/ViewsRoleRequestStyles';

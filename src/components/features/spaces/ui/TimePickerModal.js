@@ -1,3 +1,11 @@
+/**
+ * Este archivo maneja el selector de hora
+ * - UI
+ * - Espacios
+ * - Horas
+ * - Selector
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity, Modal, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

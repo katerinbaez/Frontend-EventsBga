@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el subidor de documentos
+ * - UI
+ * - Roles
+ * - Subidor
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

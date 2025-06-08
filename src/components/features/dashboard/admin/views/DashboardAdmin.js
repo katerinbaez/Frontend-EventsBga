@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el dashboard administrativo
+ * - UI
+ * - Navegación
+ * - Sesión
+ */
+
 import React from 'react';
 import { ScrollView, SafeAreaView, StatusBar, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';

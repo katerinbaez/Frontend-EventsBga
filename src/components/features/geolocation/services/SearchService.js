@@ -1,13 +1,13 @@
+/**
+ * Este archivo maneja el servicio de búsqueda
+ * - Servicios
+ * - Búsqueda
+ * - Lugares
+ */
 import * as Location from 'expo-location';
 
-// API de OpenStreetMap Nominatim para búsqueda de lugares (gratuita y sin clave API)
 const NOMINATIM_API_URL = 'https://nominatim.openstreetmap.org';
 
-/**
- * Verifica si la búsqueda es de una categoría específica
- * @param {string} text - Texto de búsqueda
- * @returns {Object} Objeto con flags para diferentes tipos de búsqueda
- */
 export const getSearchType = (text) => {
   const lowerText = text.toLowerCase();
   
@@ -65,18 +65,11 @@ export const getSearchType = (text) => {
   };
 };
 
-/**
- * Calcula la distancia entre dos puntos geográficos
- * @param {number} lat1 - Latitud del punto 1
- * @param {number} lon1 - Longitud del punto 1
- * @param {number} lat2 - Latitud del punto 2
- * @param {number} lon2 - Longitud del punto 2
- * @returns {number} Distancia en kilómetros
- */
+
 export const calculateDistance = (lat1, lon1, lat2, lon2) => {
   if (!lat1 || !lon1 || !lat2 || !lon2) return null;
   
-  const R = 6371; // Radio de la Tierra en km
+  const R = 6371; 
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLon = (lon2 - lon1) * Math.PI / 180;
   const a = 
@@ -84,43 +77,31 @@ export const calculateDistance = (lat1, lon1, lat2, lon2) => {
     Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
     Math.sin(dLon/2) * Math.sin(dLon/2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  const distance = R * c; // Distancia en km
+  const distance = R * c; 
   
   return distance;
 };
 
-/**
- * Busca lugares usando la API de Nominatim
- * @param {string} text - Texto de búsqueda
- * @param {Object} userLocation - Ubicación del usuario
- * @returns {Promise<Array>} Lista de lugares encontrados
- */
 export const searchNominatim = async (text, userLocation) => {
   try {
-    // Construir la URL de búsqueda
     let searchUrl;
     const searchTypes = getSearchType(text);
     
-    // Procesamiento especial para búsquedas culturales
     if (searchTypes.isCulturalSearch) {
       return await searchCulturalSpaces(text, userLocation);
     }
     
-    // Priorizar resultados en Bucaramanga y Colombia
-    const viewbox = '73.0,-7.2,73.2,-7.0'; // Aproximadamente el área de Bucaramanga
-    const countryCode = 'co'; // Colombia
+    const viewbox = '73.0,-7.2,73.2,-7.0'; 
+    const countryCode = 'co'; 
     
-    // Construir la URL base
     searchUrl = `${NOMINATIM_API_URL}/search?format=json&q=${encodeURIComponent(text)}&countrycodes=${countryCode}&addressdetails=1&limit=15`;
     
-    // Si tenemos la ubicación del usuario, añadir parámetros para ordenar por cercanía
     if (userLocation) {
       searchUrl += `&lat=${userLocation.latitude}&lon=${userLocation.longitude}`;
     }
     
     console.log('URL de búsqueda:', searchUrl);
     
-    // Realizar la solicitud HTTP
     const response = await fetch(searchUrl, {
       headers: {
         'User-Agent': 'EventsBga-App/1.0',
@@ -135,9 +116,7 @@ export const searchNominatim = async (text, userLocation) => {
     
     const data = await response.json();
     
-    // Procesar los resultados
     let results = data.map(item => {
-      // Calcular la distancia si tenemos la ubicación del usuario
       let distance = null;
       if (userLocation && item.lat && item.lon) {
         distance = calculateDistance(
@@ -148,7 +127,6 @@ export const searchNominatim = async (text, userLocation) => {
         );
       }
       
-      // Determinar el tipo de lugar basado en las categorías de OSM
       let type = 'Lugar';
       if (item.class === 'amenity') {
         if (item.type === 'restaurant') type = 'Restaurante';
@@ -173,7 +151,6 @@ export const searchNominatim = async (text, userLocation) => {
         type = 'Ocio';
       }
       
-      // Extraer la dirección formateada
       let address = item.display_name;
       
       return {
@@ -188,7 +165,6 @@ export const searchNominatim = async (text, userLocation) => {
       };
     });
     
-    // Ordenar por distancia si está disponible
     if (userLocation) {
       results.sort((a, b) => {
         if (a.distance === null && b.distance === null) return 0;
@@ -205,23 +181,14 @@ export const searchNominatim = async (text, userLocation) => {
   }
 };
 
-/**
- * Busca espacios culturales combinando múltiples fuentes
- * @param {string} text - Texto de búsqueda
- * @param {Object} userLocation - Ubicación del usuario
- * @returns {Promise<Array>} Lista de espacios culturales
- */
 export const searchCulturalSpaces = async (text, userLocation) => {
-  // Sistema de caché para espacios culturales
   const cacheKey = 'culturalSearchCache';
   const cacheKeyTimestamp = 'culturalSearchCacheTimestamp';
   
-  // Intentar obtener resultados de caché
   let cachedResults;
   let cacheTimestamp;
   
   try {
-    // Usar global para React Native y localStorage para web si está disponible
     if (typeof localStorage !== 'undefined') {
       const cachedData = localStorage.getItem(cacheKey);
       const cachedTime = localStorage.getItem(cacheKeyTimestamp);
@@ -238,7 +205,6 @@ export const searchCulturalSpaces = async (text, userLocation) => {
     console.error('Error al acceder a la caché:', e);
   }
   
-  // Verificar si la caché es válida (menos de 24 horas)
   const now = Date.now();
   const cacheValid = cacheTimestamp && (now - cacheTimestamp < 24 * 60 * 60 * 1000);
   
@@ -247,11 +213,9 @@ export const searchCulturalSpaces = async (text, userLocation) => {
     return processCulturalResults(cachedResults, text, userLocation);
   }
   
-  // Si no hay caché válida, realizar búsqueda combinada
   try {
     console.log('Realizando búsqueda combinada para espacios culturales');
     
-    // Búsqueda en Nominatim para museos, galerías, etc.
     const culturalQueries = [
       'museo bucaramanga',
       'galeria arte bucaramanga',
@@ -260,7 +224,6 @@ export const searchCulturalSpaces = async (text, userLocation) => {
       'biblioteca bucaramanga'
     ];
     
-    // Realizar todas las búsquedas en paralelo
     const searchPromises = culturalQueries.map(query => 
       fetch(`${NOMINATIM_API_URL}/search?format=json&q=${encodeURIComponent(query)}&countrycodes=co&addressdetails=1&limit=5`, {
         headers: {
@@ -271,21 +234,17 @@ export const searchCulturalSpaces = async (text, userLocation) => {
       }).then(response => response.json())
     );
     
-    // Esperar a que todas las búsquedas terminen
     const results = await Promise.all(searchPromises);
     
-    // Combinar y eliminar duplicados
     let combinedResults = [];
     results.forEach(resultSet => {
       combinedResults = [...combinedResults, ...resultSet];
     });
     
-    // Eliminar duplicados por place_id
     const uniqueResults = combinedResults.filter((item, index, self) =>
       index === self.findIndex(t => t.place_id === item.place_id)
     );
     
-    // Guardar en caché
     try {
       if (typeof localStorage !== 'undefined') {
         localStorage.setItem(cacheKey, JSON.stringify(uniqueResults));
@@ -302,25 +261,15 @@ export const searchCulturalSpaces = async (text, userLocation) => {
   } catch (error) {
     console.error('Error en búsqueda cultural:', error);
     
-    // Si falla, intentar con búsqueda normal
     return searchNominatim(text, userLocation);
   }
 };
 
-/**
- * Procesa los resultados de espacios culturales
- * @param {Array} results - Resultados sin procesar
- * @param {string} text - Texto de búsqueda original
- * @param {Object} userLocation - Ubicación del usuario
- * @returns {Array} Resultados procesados
- */
 const processCulturalResults = (results, text, userLocation) => {
-  // Filtrar por relevancia con el texto de búsqueda
   const filteredResults = results.filter(item => {
     const lowerName = item.display_name.toLowerCase();
     const lowerText = text.toLowerCase();
     
-    // Si es una búsqueda específica, filtrar más estrictamente
     if (lowerText.length > 3 && !lowerText.includes('cultural') && !lowerText.includes('museo')) {
       return lowerName.includes(lowerText);
     }
@@ -328,9 +277,7 @@ const processCulturalResults = (results, text, userLocation) => {
     return true;
   });
   
-  // Procesar los resultados
   let processedResults = filteredResults.map(item => {
-    // Calcular la distancia si tenemos la ubicación del usuario
     let distance = null;
     if (userLocation && item.lat && item.lon) {
       distance = calculateDistance(
@@ -341,7 +288,6 @@ const processCulturalResults = (results, text, userLocation) => {
       );
     }
     
-    // Determinar el tipo de lugar
     let type = 'Espacio Cultural';
     if (item.type === 'museum' || item.display_name.toLowerCase().includes('museo')) {
       type = 'Museo';
@@ -365,7 +311,6 @@ const processCulturalResults = (results, text, userLocation) => {
     };
   });
   
-  // Ordenar por distancia si está disponible
   if (userLocation) {
     processedResults.sort((a, b) => {
       if (a.distance === null && b.distance === null) return 0;

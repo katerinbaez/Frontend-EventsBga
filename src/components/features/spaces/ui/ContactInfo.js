@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja la UI de información de contacto
+ * - UI
+ * - Espacios
+ * - Contacto
+ */
+
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

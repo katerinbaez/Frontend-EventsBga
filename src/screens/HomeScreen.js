@@ -3,5 +3,4 @@
 
 import HomeScreen from '../components/features/dashboard/HomeScreen/HomeScreen';
 
-// Simplemente re-exporta el componente original
 export default HomeScreen;

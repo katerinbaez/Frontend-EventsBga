@@ -1,3 +1,11 @@
+/**
+ * Este archivo maneja el dashboard del gestor
+ * - UI
+ * - Navegación
+ * - Sesión
+ * - Modales
+ */
+
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, ActivityIndicator, Alert, Modal, SafeAreaView, StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -34,7 +42,6 @@ const DashboardManager = () => {
       setManagerData(result.manager);
       setIsLoading(false);
     } else if (result.error === 'not_found') {
-      // No existe perfil, redirigir a registro
       navigation.replace('ManagerRegistration');
     } else {
       Alert.alert('Error', 'No se pudo verificar el perfil de gestor cultural');
@@ -74,13 +81,10 @@ const DashboardManager = () => {
             setAttendeesModalVisible={setAttendeesModalVisible}
           />
 
-          {/* Modal para gestionar solicitudes de eventos */}
           <RequestsModal 
             visible={requestsModalVisible}
             onClose={() => setRequestsModalVisible(false)}
           />
-
-          {/* Modal para ver artistas confirmados */}
           <EventAttendeesModal
             visible={attendeesModalVisible}
             onClose={() => setAttendeesModalVisible(false)}

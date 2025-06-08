@@ -1,11 +1,16 @@
+/**
+ * Este archivo maneja la sección de lista de eventos
+ * - UI
+ * - Eventos
+ * - Navegación
+ */
+
 import React from 'react';
 import { View, Text, FlatList, ActivityIndicator } from 'react-native';
 import EventCardSearch from '../ui/EventCardSearch';
 import { styles } from '../../../../styles/EventSearchStyles';
 
-/**
- * Sección que muestra la lista de eventos
- */
+
 const EventListSection = ({ 
   events, 
   loading, 
@@ -15,7 +20,6 @@ const EventListSection = ({
   refreshing,
   onRefresh
 }) => {
-  // Si está cargando y no hay eventos, mostrar indicador
   if (loading && (!events || !Array.isArray(events) || events.length === 0)) {
     return (
       <View style={styles.loadingContainer}>
@@ -24,7 +28,6 @@ const EventListSection = ({
     );
   }
   
-  // Si no hay eventos, mostrar mensaje
   if (!events || !Array.isArray(events) || events.length === 0) {
     return (
       <View style={styles.emptyContainer}>

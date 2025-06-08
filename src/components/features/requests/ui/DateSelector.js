@@ -1,3 +1,10 @@
+/**
+ * Este archivo maneja el selector de fecha
+ * - UI
+ * - Eventos
+ * - Selector
+ */
+
 import React from 'react';
 import { View, Text, TouchableOpacity, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
