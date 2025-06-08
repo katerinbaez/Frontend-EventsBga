@@ -152,13 +152,13 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   title: {
-    fontSize: 35,
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#FFFFFF',
     textShadowColor: 'rgba(255, 255, 255, 0.8)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 10,
-    letterSpacing: 1.5,
+    letterSpacing: 1.2,
     marginBottom: 5,
   },
   subtitle: {

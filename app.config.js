@@ -10,7 +10,7 @@
 
 const config = {
   expo: {
-    owner: "adminkate",
+    owner: "developerkate",
     name: "EventsBga",
     slug: "EventsBga",
     version: "1.0.0",
@@ -36,6 +36,11 @@ const config = {
         backgroundColor: "#ffffff"
       },
       package: "com.katerinbaez.EventsBga",
+      config: {
+        googleMaps: {
+          apiKey: process.env.GOOGLE_MAPS_API_KEY || "AIzaSyCMU89H8fISyKNOMSt2bSy0wtWdfFjs4Ag",
+        },
+      },
       permissions: [
         "ACCESS_FINE_LOCATION",
         "INTERNET",
@@ -70,8 +75,8 @@ const config = {
       router: {
         origin: false
       },
-      eas: {
-        "projectId": "79449c76-f236-460d-bb22-60b95f30211e"
+      "eas": {
+        "projectId": "08ace7e4-1145-4097-9436-68b4ba1e5b0c"
       }
     },
     jsEngine: "hermes",

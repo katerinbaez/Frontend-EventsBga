@@ -254,13 +254,3 @@ El sistema de gestión de eventos incluye:
 - **Estados de Eventos**: Seguimiento desde solicitud hasta finalización
 - **Métricas de Asistencia**: Conteo real de asistentes a eventos culturales
 
-## 🤝 Contribución
-
-¡Las contribuciones son bienvenidas! Si deseas contribuir al proyecto:
-
-1. Haz un fork del repositorio
-2. Crea una rama para tu característica (`git checkout -b feature/nueva-caracteristica`)
-3. Realiza tus cambios y haz commit (`git commit -m 'Añadir nueva característica'`)
-4. Sube tus cambios (`git push origin feature/nueva-caracteristica`)
-5. Abre un Pull Request
-

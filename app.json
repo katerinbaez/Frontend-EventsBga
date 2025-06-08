@@ -14,7 +14,7 @@
     "ios": {
       "supportsTablet": true,
       "config": {
-        "googleMapsApiKey": "AIzaSyCMU89H8fISyKNOMSt2bSy0wtWdfFjs4Ag"
+        "googleMapsApiKey": "YOUR_API_KEY"
       }
     },
     "android": {
@@ -53,7 +53,7 @@
       ],
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyCMU89H8fISyKNOMSt2bSy0wtWdfFjs4Ag"
+          "apiKey": "YOUR_API_KEY"
         }
       },
       "gradlePluginVersion": "8.6.0",
@@ -98,10 +98,12 @@
         }
       ]
     ],
-
     "extra": {
+      "router": {
+        "origin": false
+      },
       "eas": {
-        "projectId": "79449c76-f236-460d-bb22-60b95f30211e"
+        "projectId": "08ace7e4-1145-4097-9436-68b4ba1e5b0c"
       }
     }
   }

@@ -181,7 +181,11 @@ export const styles = ResponsiveStyleSheet.create({
     },
     modalContainer: {
       flex: 1,
-      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'flex-end',
+    },
+    keyboardAvoidingView: {
+      flex: 1,
       justifyContent: 'flex-end',
     },
     modalContent: {
@@ -205,7 +209,11 @@ export const styles = ResponsiveStyleSheet.create({
       fontWeight: 'bold',
     },
     modalBody: {
-      padding: moderateScale(15),
+      padding: moderateScale(16),
+      flexGrow: 1,
+    },
+    modalBodyContent: {
+      paddingBottom: verticalScale(20),
     },
     dateFilterContainer: {
       marginBottom: verticalScale(15),

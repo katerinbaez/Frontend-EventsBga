@@ -199,6 +199,14 @@ const AppNavigator = () => {
                     headerShown: false
                 }}
             />
+            <Stack.Screen 
+                name="ManagerRegistration" 
+                component={ManagerRegistration}
+                options={{ 
+                    title: 'Registro de Espacio Cultural',
+                    headerShown: true
+                }}
+            />
             
             <Stack.Screen 
                 name="CalendarTab" 

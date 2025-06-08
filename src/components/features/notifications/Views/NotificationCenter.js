@@ -12,7 +12,7 @@ import NotificationItem from '../ui/NotificationItem';
 import EmptyNotificationView from '../ui/EmptyNotificationView';
 import useNotifications from '../hooks/useNotifications';
 
-const NotificationCenter = ({ onAction, onProfileNavigation }) => {
+const NotificationCenter = ({ onAction, onProfileNavigation, onDismiss, onArtistProfileClick }) => {
   const {
     notifications,
     refreshing,
@@ -39,7 +39,6 @@ const NotificationCenter = ({ onAction, onProfileNavigation }) => {
         renderItem={renderNotificationItem}
         keyExtractor={item => item.id.toString()}
         contentContainerStyle={styles.listContent}
-        ListEmptyComponent={<EmptyNotificationView />}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
