@@ -13,7 +13,7 @@ import { styles } from '../../../../styles/ArtistProfileStyles';
 import ProfileViewMode from '../views/ProfileViewMode';
 import ProfileEditMode from '../views/ProfileEditMode';
 import { loadArtistProfile, saveArtistProfile, uploadProfileImage } from '../services/ProfileService';
-import CloudinaryService from '../../../../features/spaces/services/CloudinaryService';
+import CloudinaryService from '../../spaces/services/CloudinaryService';
 
 const ArtistProfile = ({ route, navigation }) => {
   const { user } = useAuth();

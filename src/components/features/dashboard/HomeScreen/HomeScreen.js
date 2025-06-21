@@ -6,8 +6,25 @@
  * - Navegación
  */
 
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Dimensions, ActivityIndicator, ImageBackground, Image, Linking, SafeAreaView, StatusBar, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { 
+  View, 
+  Text, 
+  ScrollView, 
+  TouchableOpacity, 
+  Dimensions, 
+  ActivityIndicator, 
+  ImageBackground, 
+  Image, 
+  Linking, 
+  SafeAreaView, 
+  StatusBar, 
+  Platform,
+  Modal,
+  Alert,
+} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { WebView } from 'react-native-webview';
 import { useAuth } from '../../../../context/AuthContext';
 import { styles } from '../../../../styles/HomeStyles';
 import AdminAccess from '../../../../components/features/auth/admin/AdminAccess';
@@ -39,18 +56,77 @@ const culturalData = {
   }
 };
 
-
 axios.defaults.headers.common['Origin'] = REDIRECT_URI;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 
 const HomeScreen = ({ navigation }) => {
     const { isAuthenticated, handleLogin } = useAuth();
     const [loading, setLoading] = useState(false);
+    const [showPolicies, setShowPolicies] = useState(false);
+    const [policyAccepted, setPolicyAccepted] = useState(false);
+    const [error, setError] = useState(null);
     const { width } = Dimensions.get('window');
 
+    // Verificar si ya aceptó las políticas al cargar el componente
+    useEffect(() => {
+        const checkPolicyAcceptance = async () => {
+            try {
+                const accepted = await AsyncStorage.getItem('policy_accepted');
+                if (accepted === 'true') {
+                    setPolicyAccepted(true);
+                }
+            } catch (error) {
+                console.error('Error al verificar políticas:', error);
+            }
+        };
+        
+        checkPolicyAcceptance();
+    }, []);
+
     const handleLoginPress = async () => {
+        if (isAuthenticated) {
+            navigation.replace('Dashboard');
+            return;
+        }
+        
+        // Si ya aceptó las políticas, proceder directamente al login
+        if (policyAccepted) {
+            startAuth0Login();
+            return;
+        }
+        
+        // Mostrar políticas si no las ha aceptado
+        setShowPolicies(true);
+    };
+
+    const handlePolicyResponse = async (event) => {
+        try {
+            const data = JSON.parse(event.nativeEvent.data);
+            if (data.action === 'POLICY_RESPONSE') {
+                setShowPolicies(false);
+                if (data.accepted) {
+                    // Guardar aceptación en AsyncStorage
+                    await AsyncStorage.setItem('policy_accepted', 'true');
+                    setPolicyAccepted(true);
+                    startAuth0Login();
+                } else {
+                    Alert.alert(
+                        'Políticas Requeridas',
+                        'Debes aceptar nuestras políticas de privacidad para acceder a la aplicación',
+                        [{ text: 'Entendido' }]
+                    );
+                }
+            }
+        } catch (e) {
+            console.error('Error parsing policy response', e);
+            setShowPolicies(false);
+        }
+    };
+
+    const startAuth0Login = async () => {
         try {
             setLoading(true);
+            setError(null);
             
             const authUrl = `https://${AUTH0_DOMAIN}/authorize?` +
                 `response_type=token` +
@@ -249,6 +325,45 @@ const HomeScreen = ({ navigation }) => {
                 </View>
             )}
             </ScrollView>
+
+            {/* Modal de Políticas de Privacidad */}
+            <Modal
+                visible={showPolicies}
+                animationType="slide"
+                transparent={false}
+                onRequestClose={() => setShowPolicies(false)}
+            >
+                <SafeAreaView style={{ flex: 1 }}>
+                    <WebView
+                        source={{ uri: 'https://politicas-privacidad-eventsbga.netlify.app/' }}
+                        onMessage={handlePolicyResponse}
+                        injectedJavaScript={`
+                            window.ReactNativeWebView = window.ReactNativeWebView || null;
+                            true;
+                        `}
+                        style={{ flex: 1 }}
+                        startInLoadingState={true}
+                        scalesPageToFit={true}
+                        javaScriptEnabled={true}
+                        domStorageEnabled={true}
+                        mixedContentMode="always"
+                    />
+                    <TouchableOpacity
+                        style={{
+                            position: 'absolute',
+                            top: Platform.OS === 'ios' ? 40 : 20,
+                            right: 20,
+                            backgroundColor: 'rgba(0,0,0,0.5)',
+                            borderRadius: 15,
+                            padding: 5,
+                            zIndex: 1000
+                        }}
+                        onPress={() => setShowPolicies(false)}
+                    >
+                        <Ionicons name="close" size={24} color="white" />
+                    </TouchableOpacity>
+                </SafeAreaView>
+            </Modal>
         </SafeAreaView>
     );
 };
